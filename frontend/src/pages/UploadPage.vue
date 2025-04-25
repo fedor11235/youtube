@@ -1,0 +1,276 @@
+<template>
+  <q-page padding>
+    <div class="row justify-center">
+      <div class="col-12 col-md-8">
+        <q-card flat bordered>
+          <q-card-section>
+            <div class="text-h5">{{ t('video.upload.title') }}</div>
+          </q-card-section>
+          <q-separator />
+
+          <q-card-section>
+            <div v-show="!selectedVideo" class="upload-area q-pa-xl">
+              <q-file
+                v-model="videoFile"
+                accept="video/*"
+                @update:model-value="handleVideoSelect"
+                style="display: none"
+                ref="fileInput"
+              />
+              
+              <div class="text-center cursor-pointer" @click="triggerFileInput">
+                <q-icon name="cloud_upload" size="48px" color="grey" />
+                <div class="text-h6 q-mt-sm">{{ t('video.upload.dragDrop') }}</div>
+                <div class="text-grey">{{ t('video.upload.orClick') }}</div>
+                <q-btn
+                  color="primary"
+                  :label="t('video.upload.selectFiles')"
+                  class="q-mt-md"
+                />
+              </div>
+            </div>
+
+            <div v-show="selectedVideo">
+              <video
+                ref="videoPreview"
+                class="full-width"
+                style="max-height: 400px"
+                controls
+              />
+
+              <q-form @submit="handleUpload" class="q-mt-lg">
+                <q-input
+                  v-model="videoDetails.title"
+                  label="Title"
+                  outlined
+                  :rules="[val => !!val || 'Title is required']"
+                />
+
+                <q-input
+                  v-model="videoDetails.description"
+                  label="Description"
+                  type="textarea"
+                  outlined
+                  class="q-mt-md"
+                  autogrow
+                />
+
+                <!-- <q-file
+                  v-model="thumbnailFile"
+                  label="Custom Thumbnail"
+                  outlined
+                  accept="image/*"
+                  class="q-mt-md"
+                >
+                  <template v-slot:prepend>
+                    <q-icon name="image" />
+                  </template>
+                </q-file> -->
+
+                <div class="row justify-between q-mt-lg">
+                  <q-btn
+                    flat
+                    color="grey"
+                    label="Cancel"
+                    @click="resetForm"
+                  />
+                  <q-btn
+                    color="primary"
+                    label="Upload"
+                    type="submit"
+                    :loading="uploading"
+                  />
+                </div>
+              </q-form>
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <q-dialog v-model="uploadProgress.show">
+          <q-card style="min-width: 350px">
+            <q-card-section>
+              <div class="text-h6">Uploading Video</div>
+            </q-card-section>
+
+            <q-card-section>
+              <q-linear-progress
+                :value="uploadProgress.value"
+                color="primary"
+                class="q-mt-md"
+              />
+              <div class="text-center q-mt-sm">
+                {{ Math.round(uploadProgress.value * 100) }}%
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-dialog>
+      </div>
+    </div>
+  </q-page>
+</template>
+
+<script setup lang="ts">
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
+import { useI18n } from 'vue-i18n'
+import type { VideoUpload } from 'src/types/video'
+import videoService from 'src/services/video'
+
+const { t } = useI18n()
+const router = useRouter()
+const $q = useQuasar()
+
+interface Test extends HTMLInputElement {
+  pickFiles: () => void
+}
+
+const fileInput = ref<Test | null>(null)
+const videoPreview = ref<HTMLVideoElement | null>(null)
+const videoFile = ref<File | null>(null)
+const thumbnailFile = ref<File | null>(null)
+const selectedVideo = ref<boolean>(false)
+const uploading = ref<boolean>(false)
+
+const uploadProgress = ref({
+  show: false,
+  value: 0
+})
+
+interface VideoDetails {
+  title: string;
+  description: string;
+}
+
+const videoDetails = ref<VideoDetails>({
+  title: '',
+  description: ''
+})
+
+const triggerFileInput = () => {
+  fileInput.value?.pickFiles()
+  
+}
+
+const handleVideoSelect = (file: File) => {
+  if (!file) return
+  
+  selectedVideo.value = true
+  videoFile.value = file
+  console.log("videoPreview.value: ", videoPreview.value)
+
+  if (videoPreview.value) {
+    videoPreview.value.src = URL.createObjectURL(file)
+  }
+}
+
+const resetForm = () => {
+  selectedVideo.value = false
+  videoFile.value = null
+  thumbnailFile.value = null
+  videoDetails.value = {
+    title: '',
+    description: ''
+  }
+  if (videoPreview.value) {
+    videoPreview.value.src = ''
+  }
+}
+
+const handleUpload = async () => {
+  if (!videoFile.value) return
+
+  uploading.value = true
+  uploadProgress.value.show = true
+
+  try {
+    const uploadData: VideoUpload = {
+      title: videoDetails.value.title,
+      description: videoDetails.value.description,
+      videoFile: videoFile.value,
+      thumbnailFile: thumbnailFile.value
+    }
+
+    await videoService.uploadVideo(uploadData)
+
+    $q.notify({
+      type: 'positive',
+      message: t('video.upload.success')
+    })
+
+    await router.push('/')
+  } catch (err) {
+    console.error(err)
+    $q.notify({
+      type: 'negative',
+      message: t('video.upload.error')
+    })
+  } finally {
+    uploading.value = false
+    uploadProgress.value.show = false
+    uploadProgress.value.value = 0
+    resetForm()
+  }
+}
+
+// const handleUpload = async () => {
+//   if (!videoFile.value) return
+
+//   uploading.value = true
+//   uploadProgress.value.show = true
+
+//   try {
+//     const formData = new FormData()
+//     formData.append('video', videoFile.value)
+//     formData.append('title', videoDetails.value.title)
+//     formData.append('description', videoDetails.value.description)
+    
+//     if (thumbnailFile.value) {
+//       formData.append('thumbnail', thumbnailFile.value)
+//     }
+
+//     // Simulating upload progress
+//     const interval = setInterval(() => {
+//       if (uploadProgress.value.value < 0.95) {
+//         uploadProgress.value.value += 0.1
+//       }
+//     }, 500)
+
+//     // Replace with actual API call
+//     await new Promise(resolve => setTimeout(resolve, 3000))
+
+//     clearInterval(interval)
+//     uploadProgress.value.value = 1
+
+//     $q.notify({
+//       type: 'positive',
+//       message: 'Video uploaded successfully'
+//     })
+
+//     await router.push('/')
+//   } catch (err) {
+//     console.error(err)
+//     $q.notify({
+//       type: 'negative',
+//       message: 'Failed to upload video'
+//     })
+//   } finally {
+//     uploading.value = false
+//     uploadProgress.value.show = false
+//     uploadProgress.value.value = 0
+//   }
+// }
+</script>
+
+<style scoped>
+.upload-area {
+  border: 2px dashed #ccc;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.upload-area:hover {
+  border-color: #1976d2;
+  background: #f0f8ff;
+}
+</style>

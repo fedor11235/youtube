@@ -1,0 +1,35 @@
+import { Controller, Post, UseInterceptors, UploadedFile, Body, Get, Param, UseGuards, Req } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiTags, ApiConsumes, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { VideoService } from './video.service';
+import { CreateVideoDto } from './dto/create-video.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+
+@ApiTags('Videos')
+@Controller('videos')
+export class VideoController {
+  constructor(private readonly videoService: VideoService) {}
+
+  @Post('upload')
+  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard)
+  @UseInterceptors(FileInterceptor('video'))
+  @ApiConsumes('multipart/form-data')
+  async uploadVideo(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() createVideoDto: CreateVideoDto,
+    @Req() req
+  ) {
+    return this.videoService.createVideo(file, createVideoDto, req.user.id);
+  }
+
+  @Get()
+  async getAllVideos() {
+    return this.videoService.getAllVideos();
+  }
+
+  @Get(':id')
+  async getVideoById(@Param('id') id: string) {
+    return this.videoService.getVideoById(parseInt(id));
+  }
+}
