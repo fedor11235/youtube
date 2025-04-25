@@ -113,13 +113,13 @@ onMounted(() => {
     {
       id: 1,
       name: 'Tech Channel',
-      avatar: 'https://cdn.quasar.dev/img/avatar1.jpg',
+      avatar: '',
       subscribers: 100000
     },
     {
       id: 2,
       name: 'Music Channel',
-      avatar: 'https://cdn.quasar.dev/img/avatar2.jpg',
+      avatar: '',
       subscribers: 200000
     }
   ]

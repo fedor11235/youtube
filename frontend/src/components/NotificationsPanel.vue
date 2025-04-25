@@ -130,7 +130,7 @@ const notifications = ref<Notification[]>([
     id: 1,
     title: 'New Video Upload',
     message: 'Channel Name uploaded a new video',
-    avatar: 'https://cdn.quasar.dev/img/avatar1.jpg',
+    avatar: '',
     read: false,
     createdAt: new Date(),
     link: '/watch/1',
@@ -140,7 +140,7 @@ const notifications = ref<Notification[]>([
     id: 2,
     title: 'New Subscriber',
     message: 'User started following you',
-    avatar: 'https://cdn.quasar.dev/img/avatar2.jpg',
+    avatar: '',
     read: true,
     createdAt: new Date(Date.now() - 86400000),
     type: 'subscription'

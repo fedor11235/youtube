@@ -194,7 +194,7 @@ const historyVideos = ref<HistoryVideo[]>([
     channel: {
       id: 1,
       name: 'Channel Name',
-      avatar: 'https://cdn.quasar.dev/img/avatar.png',
+      avatar: '',
       subscribers: 1000
     }
   }
