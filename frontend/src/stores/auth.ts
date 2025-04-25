@@ -13,8 +13,9 @@ export const useAuthStore = defineStore('auth', {
 
   getters: {
     isAuthenticated: (state) => !!state.user,
-    userFullName: (state) => state.user ? `${state.user.firstName} ${state.user.lastName}` : ''
+    userFullName: (state) => state.user ? `${state.user.firstName} ${state.user.lastName}` : '',
   },
+  
 
   actions: {
     async login(credentials: LoginCredentials) {
@@ -23,6 +24,9 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await authService.login(credentials)
         this.user = response.user
+
+        this.uploadAvatar()
+        
       } catch (err) {
         this.error = (err as ApiError).response?.data?.message || 'Login failed'
         throw err
@@ -37,6 +41,8 @@ export const useAuthStore = defineStore('auth', {
       try {
         const response = await authService.register(data)
         this.user = response.user
+
+        this.uploadAvatar()
       } catch (err) {
         this.error = (err as ApiError).response?.data?.message || 'Registration failed'
         throw err
@@ -53,21 +59,47 @@ export const useAuthStore = defineStore('auth', {
     async checkAuth() {
       try {
         this.user = await authService.getCurrentUser()
+
+        this.uploadAvatar()
       } catch (err) {
         console.error(err)
         this.user = null
       }
     },
 
+    fileToBase64(file: File): Promise<string> {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader()
+        reader.readAsDataURL(file)
+        reader.onload = () => resolve(reader.result as string)
+        reader.onerror = () => reject(new Error('File reading failed'))
+      })
+    },
+
+
+    uploadAvatar() {
+      if(this.user) {
+        if(this.user.avatar) {
+          this.user.avatar =  'http://localhost:3000/api/files/upload/' + this.user.avatar
+          console.log("this.user.avatar : ", this.user.avatar )
+        } else {
+          this.user.avatar = 'https://cdn.quasar.dev/img/avatar.png'
+        }
+      }
+      console.log("keke")
+    },
+
     async init() {
       if (this.token) {
         await this.checkAuth()
       }
-    }
-  }
+    },
+  },
+  
 })
 
 if (import.meta.env.CLIENT) {
   const authStore = useAuthStore()
   void authStore.init()
 }
+

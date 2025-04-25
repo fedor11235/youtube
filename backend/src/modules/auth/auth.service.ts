@@ -5,7 +5,7 @@ import { DrizzleService } from '../drizzle/drizzle.service';
 import { User, users } from '../../database/schema';
 import { eq } from 'drizzle-orm';
 import { UpdateProfileDto } from './dto/update-profile.dto';
-import path from 'path';
+import * as path from 'path';
 import { promises as fs } from 'fs';
 
 @Injectable()
@@ -33,6 +33,7 @@ export class AuthService {
   async updateAvatar(userId: number, file: Express.Multer.File) {
     // Создаем директорию для аватаров, если её нет
     const uploadDir = path.join(process.cwd(), 'uploads', 'avatars');
+
     await fs.mkdir(uploadDir, { recursive: true });
 
     // Генерируем уникальное имя файла
@@ -43,13 +44,10 @@ export class AuthService {
     // Сохраняем файл
     await fs.writeFile(filePath, file.buffer);
 
-    // Формируем URL для аватара
-    const avatarUrl = `/uploads/avatars/${fileName}`;
-
     // Обновляем запись в базе данных
     const updatedUser = await this.db
       .update(users)
-      .set({ avatar: avatarUrl })
+      .set({ avatar: fileName })
       .where(eq(users.id, userId))
       .returning();
 
@@ -105,6 +103,7 @@ export class AuthService {
         country: newUser.country,
         city: newUser.city,
         createdAt: newUser.createdAt,
+        avatar: newUser.avatar
       },
       token,
     };
@@ -142,6 +141,7 @@ export class AuthService {
         country: user.country,
         city: user.city,
         createdAt: user.createdAt,
+        avatar: user.avatar
       },
       token,
     };
@@ -169,7 +169,8 @@ export class AuthService {
         lastName: true,
         country: true,
         city: true,
-        createdAt: true
+        createdAt: true,
+        avatar: true
       }
     });
 
