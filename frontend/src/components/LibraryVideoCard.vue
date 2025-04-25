@@ -28,7 +28,7 @@
             
             <div class="row items-center q-mt-sm">
               <q-avatar size="24px" class="q-mr-sm">
-                <img :src="video.channel.avatar || 'https://cdn.quasar.dev/img/avatar.png'">
+                <img :src="getAvatar(video.channel.avatar)">
               </q-avatar>
               <span class="text-subtitle2">{{ video.channel.name }}</span>
             </div>
@@ -78,6 +78,7 @@
 
 <script setup lang="ts">
 import { defineEmits } from 'vue'
+import { getAvatar } from '../utils/avatar'
 import type { LibraryVideo } from '../types'
 
 defineProps<{

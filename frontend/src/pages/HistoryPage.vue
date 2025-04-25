@@ -76,7 +76,7 @@
                           
                           <div class="row items-center q-mt-sm">
                             <q-avatar size="24px" class="q-mr-sm">
-                              <img :src="'http://localhost:3000/api/' + video.channel.avatar || 'https://cdn.quasar.dev/img/avatar.png'">
+                              <img :src="getAvatar(video.channel.avatar )">
                             </q-avatar>
                             <span class="text-subtitle2">{{ video.channel.name }}</span>
                           </div>
@@ -163,6 +163,7 @@ import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 // import { format } from 'date-fns'
 import type { Video } from '../types'
+import { getAvatar } from '../utils/avatar'
 
 interface HistoryVideo extends Video {
   watchedAt: Date;

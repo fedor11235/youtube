@@ -18,9 +18,9 @@
           
           <q-card-section>
             <div class="row no-wrap">
-              <!-- <q-avatar size="40px" class="q-mr-sm">
-                <img :src="video.channel.avatar">
-              </q-avatar> -->
+              <q-avatar size="40px" class="q-mr-sm">
+                <img :src="getAvatar(video.channel.avatar)">
+              </q-avatar>
               
               <div>
                 <div class="text-weight-bold ellipsis-2-lines">{{ video.title }}</div>
@@ -49,6 +49,7 @@
 import { ref, onMounted } from 'vue'
 // import { useVideo } from 'src/composable/useVideo'
 import videoService from 'src/services/video'
+import { getAvatar } from '../utils/avatar'
 import type { Video } from '../types'
 
 const videos = ref<Video[]>([])

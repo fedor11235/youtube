@@ -6,7 +6,7 @@
     <div class="row q-col-gutter-md q-mb-lg">
       <div v-for="channel in subscribedChannels" :key="channel.id" class="col-auto">
         <q-avatar size="64px" class="cursor-pointer" @click="selectChannel(channel.id)">
-          <img :src="channel.avatar || 'https://cdn.quasar.dev/img/avatar.png'">
+          <img :src="getAvatar(channel.avatar)">
           <q-tooltip>{{ channel.name }}</q-tooltip>
         </q-avatar>
       </div>
@@ -35,7 +35,7 @@
             <q-card-section>
               <div class="row no-wrap">
                 <q-avatar size="40px" class="q-mr-sm">
-                  <img :src="video.channel.avatar || 'https://cdn.quasar.dev/img/avatar.png'">
+                  <img :src="getAvatar(video.channel.avatar)">
                 </q-avatar>
 
                 <div>
@@ -94,6 +94,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { Video } from '../types'
+import { getAvatar } from '../utils/avatar'
 
 interface Channel {
   id: number;

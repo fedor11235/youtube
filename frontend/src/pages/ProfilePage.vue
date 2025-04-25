@@ -5,7 +5,7 @@
       <div class="col-12">
         <div class="row items-center q-mb-lg">
           <q-avatar size="150px" class="q-mr-lg">
-            <img :src="profile?.avatar || 'https://cdn.quasar.dev/img/avatar.png'">
+            <img :src="getAvatar(profile?.avatar)">
             <q-file
               v-model="newAvatar"
               class="absolute-full cursor-pointer"
@@ -146,6 +146,7 @@ import { ref, onMounted } from 'vue'
 import type { Profile } from '../types/profile'
 import profileService from '../services/profile'
 import { useQuasar } from 'quasar'
+import { getAvatar } from '../utils/avatar'
 
 const $q = useQuasar()
 

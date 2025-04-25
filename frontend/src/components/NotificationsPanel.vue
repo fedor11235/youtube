@@ -43,7 +43,7 @@
               >
                 <q-item-section avatar>
                   <q-avatar>
-                    <img :src="notification.avatar || 'https://cdn.quasar.dev/img/avatar.png'">
+                    <img :src="getAvatar(notification.avatar)">
                   </q-avatar>
                 </q-item-section>
 
@@ -94,6 +94,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { getAvatar } from '../utils/avatar'
 // import { date } from 'quasar'
 import { useI18n } from 'vue-i18n'
 

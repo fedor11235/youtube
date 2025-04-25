@@ -29,7 +29,7 @@
 
           <div class="row items-center q-mb-md">
             <q-avatar size="48px" class="q-mr-md">
-              <img :src="video?.channel.avatar || 'https://cdn.quasar.dev/img/avatar.png'">
+              <img :src="getAvatar(video?.channel.avatar)">
             </q-avatar>
             
             <div class="col">
@@ -65,7 +65,7 @@
             <div v-for="comment in comments" :key="comment.id" class="q-mb-md">
               <div class="row items-start">
                 <q-avatar size="40px" class="q-mr-md">
-                  <img :src="comment.user.avatar || 'https://cdn.quasar.dev/img/avatar.png'">
+                  <img :src="getAvatar(comment.user.avatar )">
                 </q-avatar>
                 
                 <div class="col">
@@ -119,6 +119,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 // import { date } from 'quasar'
 import type { Video, Comment } from '../types'
+import { getAvatar } from '../utils/avatar'
 
 const route = useRoute()
 const video = ref<Video | null>(null)

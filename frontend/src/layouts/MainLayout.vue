@@ -59,27 +59,11 @@
           <NotificationsPanel v-model="showNotifications" />
         </q-btn>
         
-        <!-- <q-btn-dropdown flat>
-          <template v-slot:label>
-            <q-avatar size="32px">
-              <img src="https://cdn.quasar.dev/img/avatar.png">
-            </q-avatar>
-          </template>
-          
-          <q-list>
-            <q-item clickable v-close-popup to="/profile">
-              <q-item-section>Profile</q-item-section>
-            </q-item>
-            <q-item clickable v-close-popup @click="logout">
-              <q-item-section>Logout</q-item-section>
-            </q-item>
-          </q-list>
-        </q-btn-dropdown> -->
         <template v-if="authStore.isAuthenticated">
           <q-btn-dropdown flat>
             <template v-slot:label>
               <q-avatar size="26px">
-                <img :src="authStore.user?.avatar || 'https://cdn.quasar.dev/img/avatar.png'">
+                <img :src="getAvatar(authStore?.user?.avatar)">
               </q-avatar>
               <span class="q-ml-sm">{{ authStore.userFullName }}</span>
             </template>
@@ -164,6 +148,7 @@
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
 import { ref, computed } from 'vue'
+import { getAvatar } from '../utils/avatar'
 import NotificationsPanel from '../components/NotificationsPanel.vue'
 import { useI18n } from 'vue-i18n'
 
