@@ -1,0 +1,32 @@
+import { defineStore } from 'pinia'
+import { api } from 'src/boot/axios'
+
+interface User {
+  id: number
+  email: string
+  firstName: string
+  lastName: string
+  country: string
+  city: string
+  avatar: string | null
+  createdAt: string
+}
+
+export const useUserStore = defineStore('user', {
+  state: () => ({
+    users: [] as User[],
+    currentUser: null as User | null,
+  }),
+
+  actions: {
+    async fetchUserById(userId: string | number) {
+      try {
+        const response = await api.get(`/users/${userId}`)
+        return response.data
+      } catch (error) {
+        console.error('Ошибка получения пользователя:', error)
+        throw error
+      }
+    }
+  }
+})

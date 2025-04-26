@@ -4,6 +4,7 @@ import { DrizzleModule } from './modules/drizzle/drizzle.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { VideoModule } from './modules/video/video.module';
 import { FileModule } from './modules/file/file.module';
+import { UserModule } from './modules/user/user.module';
 
 @Module({
   imports: [
@@ -13,7 +14,8 @@ import { FileModule } from './modules/file/file.module';
     DrizzleModule,
     AuthModule,
     VideoModule,
-    FileModule
+    FileModule,
+    UserModule
   ],
 })
 export class AppModule {}

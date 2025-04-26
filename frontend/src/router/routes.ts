@@ -24,6 +24,17 @@ const routes: RouteRecordRaw[] = [
         component: () => import('pages/ProfilePage.vue'),
         meta: { requiresAuth: true }
       },
+      {
+        path: '/user/:id',
+        component: () => import('layouts/MainLayout.vue'),
+        children: [
+          { 
+            path: '', 
+            component: () => import('pages/UserPage.vue'),
+            props: true
+          }
+        ]
+      },
       { 
         path: 'watch/:id', 
         component: () => import('pages/WatchPage.vue') 

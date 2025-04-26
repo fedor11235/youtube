@@ -34,7 +34,7 @@ export class VideoService {
           firstName: users.firstName,
           lastName: users.lastName,
           email: users.email,
-          // avatar: users.avatar
+          avatar: users.avatar
         }
       })
       .leftJoin(users, eq(videos.userId, users.id));

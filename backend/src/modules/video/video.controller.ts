@@ -1,6 +1,6 @@
 import { Controller, Post, UseInterceptors, UploadedFile, Body, Get, Param, UseGuards, Req } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiConsumes, ApiBody, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
 import { VideoService } from './video.service';
 import { CreateVideoDto } from './dto/create-video.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
