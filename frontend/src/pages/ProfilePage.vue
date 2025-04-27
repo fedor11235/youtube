@@ -3,9 +3,15 @@
     <div class="row q-col-gutter-lg">
       <!-- Profile Header -->
       <div class="col-12">
-        <div class="row items-center q-mb-lg">
-          <q-avatar size="150px" class="q-mr-lg">
-            <img :src="getAvatar(profile?.avatar)">
+      <div class="row items-center">
+        <div class="avatar-upload-container">
+          <q-avatar size="180px">
+            <img :src="getAvatar(profile?.avatar)" />
+          </q-avatar>
+          
+          <div class="avatar-upload-overlay">
+            <q-icon name="add_a_photo" size="32px" />
+            <div class="upload-text">Изменить фото</div>
             <q-file
               v-model="newAvatar"
               class="absolute-full cursor-pointer"
@@ -13,7 +19,8 @@
               accept=".jpg,.png,.jpeg"
               @update:model-value="updateAvatar"
             />
-          </q-avatar>
+          </div>
+        </div>
           
           <div>
             <div class="text-h4">{{ profile?.firstName }} {{ profile?.lastName }}</div>
@@ -123,6 +130,13 @@
                     outlined
                   />
                 </div>
+                <div class="col-12 col-md-6">
+                  <q-input
+                    v-model="profileForm.url"
+                    label="Url"
+                    outlined
+                  />
+                </div>
               </div>
 
               <div class="row justify-end q-mt-md">
@@ -160,6 +174,7 @@ interface ProfileForm {
   email: string;
   country: string;
   city: string;
+  url: string;
 }
 
 const profileForm = ref<ProfileForm>({
@@ -167,7 +182,8 @@ const profileForm = ref<ProfileForm>({
   lastName: '',
   email: '',
   country: '',
-  city: ''
+  city: '',
+  url: ''
 })
 
 
@@ -221,7 +237,8 @@ onMounted(async () => {
         lastName: profile.value.lastName,
         email: profile.value.email,
         country: profile.value.country,
-        city: profile.value.city
+        city: profile.value.city,
+        url: profile.value.url
       }
     }
   } catch (err) {
@@ -235,12 +252,45 @@ onMounted(async () => {
 
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .video-card {
   transition: transform 0.2s;
 }
 
 .video-card:hover {
   transform: translateY(-2px);
+}
+
+.avatar-upload-container {
+  position: relative;
+  cursor: pointer;
+  
+  .avatar-upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    
+    .upload-text {
+      margin-top: 8px;
+      font-size: 14px;
+    }
+  }
+  
+  &:hover {
+    .avatar-upload-overlay {
+      opacity: 1;
+    }
+  }
 }
 </style>

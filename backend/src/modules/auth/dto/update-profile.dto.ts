@@ -25,4 +25,10 @@ export class UpdateProfileDto {
   @IsString()
   @Length(1, 100)
   city?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @Length(1, 100)
+  url?: string;
 }

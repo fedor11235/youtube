@@ -10,6 +10,6 @@ export class UserController {
   @Get(':id')
   @ApiOperation({ summary: 'Get user by id' })
   async getUserById(@Param('id') id: string) {
-    return this.usersService.findById(parseInt(id))
+    return this.usersService.findById(id)
   }
 }

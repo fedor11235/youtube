@@ -11,5 +11,6 @@ export interface Profile {
   subscribers: number;
   totalViews: number;
   joinDate: Date;
+  url: string;
   videos: Video[];
 }

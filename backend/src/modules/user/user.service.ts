@@ -7,10 +7,10 @@ import { eq } from 'drizzle-orm';
 export class UsereSrvice {
   constructor(private readonly db: DrizzleService) {}
 
-  async findById(id: number) {
+  async findById(id: string) {
     const result = await this.db
       .select(users)
-      .where(eq(users.id, id));
+      .where(eq(users.url, id));
 
     if (!result.length) {
       throw new NotFoundException(`Пользователь с ID ${id} не найден`);
