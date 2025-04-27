@@ -11,8 +11,8 @@ import * as path from 'path';
 
 @Controller('files')
 export class FilesController {
-  @Get('upload/:filename')
-  async getFile(@Param('filename') filename: string, @Res() res: Response) {
+  @Get('avatar/:filename')
+  async getAvatar(@Param('filename') filename: string, @Res() res: Response) {
     const filePath = path.join(process.cwd(), 'uploads', 'avatars', filename);
 
     if (!fs.existsSync(filePath)) {
@@ -22,16 +22,15 @@ export class FilesController {
     res.sendFile(filePath);
   }
 
-  // @Post('upload')
-  // async getFile(@Body() body, @Res() res: Response) {
-  //   const { fileName } = body;
 
-  //   const filePath = path.join(process.cwd(), fileName);
-  
-  //   if (!fs.existsSync(filePath)) {
-  //     throw new NotFoundException('Файл не найден');
-  //   }
+  @Get('thumbnails/:filename')
+  async getThumbnails(@Param('filename') filename: string, @Res() res: Response) {
+    const filePath = path.join(process.cwd(), 'uploads', 'thumbnails', filename);
 
-  //   res.sendFile(filePath);
-  // }
+    if (!fs.existsSync(filePath)) {
+      throw new NotFoundException('Файл не найден');
+    }
+
+    res.sendFile(filePath);
+  }
 }

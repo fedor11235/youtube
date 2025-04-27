@@ -2,17 +2,20 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
 import { users, videos } from '../../database/schema';
 import { eq } from 'drizzle-orm';
+import { extractThumbnail } from './video.utils';
 
 @Injectable()
 export class VideoService {
   constructor(private readonly db: DrizzleService) {}
 
   async createVideo(file: Express.Multer.File, createVideoDto: any, userId: number) {
+    const thumbnailUrl = await extractThumbnail(file.path);
 
     const [video] = await this.db.insert(videos).values({
       title: createVideoDto.title,
       description: createVideoDto.description,
       videoUrl: `/uploads/videos/${file.filename}`,
+      thumbnailUrl,
       userId: userId,
     }).returning();
   

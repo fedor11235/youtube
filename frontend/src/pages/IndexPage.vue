@@ -4,7 +4,7 @@
       <div v-for="video in videos" :key="video.id" class="col-12 col-sm-6 col-md-4 col-lg-3">
         <q-card class="video-card" flat bordered>
           <q-img
-            :src="video.thumbnailUrl"
+            :src="getThumbnail(video.thumbnailUrl)"
             @click="$router.push(`/watch/${video.id}`)"
             style="cursor: pointer"
             :ratio="16/9"
@@ -49,7 +49,7 @@
 import { ref, onMounted } from 'vue'
 // import { useVideo } from 'src/composable/useVideo'
 import videoService from 'src/services/video'
-import { getAvatar } from '../utils/avatar'
+import { getAvatar, getThumbnail } from '../utils/avatar'
 import type { Video } from '../types'
 
 const videos = ref<Video[]>([])

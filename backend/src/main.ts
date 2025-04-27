@@ -2,8 +2,14 @@ import { NestFactory } from '@nestjs/core';
 import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
+import { checkFfmpeg } from './modules/video/video.utils';
 
 async function bootstrap() {
+  const hasFfmpeg = await checkFfmpeg();
+  if (!hasFfmpeg) {
+    console.error('FFmpeg is required but not found. Please install FFmpeg first.');
+    process.exit(1);
+  }
   // const app = await NestFactory.create(AppModule);
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'], // Включаем все уровни логов
