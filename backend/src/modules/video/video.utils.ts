@@ -28,7 +28,6 @@ export async function extractThumbnail(videoPath: string): Promise<string> {
         timestamps: ['00:00:01'], // Берем кадр на первой секунде
         filename: thumbnailFileName,
         folder: uploadDir,
-        size: '1280x720' // HD размер
       })
       .on('end', () => {
         resolve(thumbnailFileName);
