@@ -27,6 +27,9 @@ export const useUserStore = defineStore('user', {
         console.error('Ошибка получения пользователя:', error)
         throw error
       }
+    },
+    deleteVideo(id: number) {
+      console.log(id)
     }
   }
 })

@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException, ConflictException, NotFoundException
 import { JwtService } from '@nestjs/jwt';
 import { hash, compare } from 'bcrypt';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { User, users } from '../../database/schema';
+import { User, users, videos } from '../../database/schema';
 import { eq } from 'drizzle-orm';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import * as path from 'path';
@@ -160,24 +160,44 @@ export class AuthService {
   }
 
   async getCurrentUser(userId: number) {
-    const user = await this.db.query.users.findFirst({ 
-      where:  eq(users.id, userId),
-      columns: {
-        id: true,
-        email: true,
-        firstName: true,
-        lastName: true,
-        country: true,
-        city: true,
-        createdAt: true,
-        avatar: true
+    const result = await this.db
+    .select(users, {
+      user: {
+        id: users.id,
+        email: users.email,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        country: users.country,
+        city: users.city,
+        createdAt: users.createdAt,
+        avatar: users.avatar
+      },
+      videos: {
+        id: videos.id,
+        title: videos.title,
+        description: videos.description,
+        videoUrl: videos.videoUrl,
+        thumbnailUrl: videos.thumbnailUrl,
+        createdAt: videos.createdAt,
+        views: videos.views
       }
-    });
+    })
+    .leftJoin(videos, eq(videos.userId, users.id))
+    .where(eq(users.id, userId));
 
-    if (!user) {
-      throw new NotFoundException('User not found');
-    }
-
-    return user;
+  if (!result.length) {
+    throw new NotFoundException('Пользователь не найден');
   }
+
+  // Преобразуем результат в нужный формат
+  const userVideos = result
+    .filter(row => row.videos.id !== null)
+    .map(row => row.videos)
+    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+
+  return {
+    ...result[0].user,
+    videos: userVideos
+  };
+}
 }
