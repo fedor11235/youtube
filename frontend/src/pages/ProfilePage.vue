@@ -55,23 +55,6 @@
             </div>
             <p class="user-bio q-mt-sm">{{ 'Нет описания' }}</p>
           </div>
-
-          <!-- <div class="profile-actions">
-            <q-btn
-              v-if="isOwnProfile"
-              color="primary"
-              label="Редактировать профиль"
-              icon="edit"
-              flat
-            />
-            <q-btn
-              v-else
-              :color="isSubscribed ? 'grey' : 'primary'"
-              :label="isSubscribed ? 'Вы подписаны' : 'Подписаться'"
-              :icon="isSubscribed ? 'done' : 'add'"
-              @click="toggleSubscription"
-            />
-          </div> -->
         </div>
 
         <q-tabs
@@ -457,7 +440,6 @@ onMounted(async () => {
 
 .profile-header {
   background: white;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
 }
 
 .cover-photo {

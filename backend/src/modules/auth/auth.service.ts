@@ -170,7 +170,8 @@ export class AuthService {
         country: users.country,
         city: users.city,
         createdAt: users.createdAt,
-        avatar: users.avatar
+        avatar: users.avatar,
+        url: users.url
       },
       videos: {
         id: videos.id,
@@ -199,5 +200,5 @@ export class AuthService {
     ...result[0].user,
     videos: userVideos
   };
-}
+  }
 }

@@ -21,7 +21,7 @@
               <q-avatar
                 size="40px"
                 class="q-mr-sm cursor-pointer"
-                @click="$router.push(`/user/${video.channel.id}`)"
+                @click="$router.push(`/user/${video.channel.url}`)"
               >
                 <img :src="getAvatar(video.channel.avatar)">
               </q-avatar>

@@ -10,6 +10,7 @@ interface User {
   city: string
   avatar: string | null
   createdAt: string
+  url: string
 }
 
 export const useUserStore = defineStore('user', {
