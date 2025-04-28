@@ -18,7 +18,11 @@
           
           <q-card-section>
             <div class="row no-wrap">
-              <q-avatar size="40px" class="q-mr-sm">
+              <q-avatar
+                size="40px"
+                class="q-mr-sm cursor-pointer"
+                @click="$router.push(`/user/${video.channel.id}`)"
+              >
                 <img :src="getAvatar(video.channel.avatar)">
               </q-avatar>
               
