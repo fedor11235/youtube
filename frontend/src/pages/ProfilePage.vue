@@ -1,9 +1,27 @@
 <template>
   <q-page padding>
-    <div class="row q-col-gutter-lg">
-      <!-- Profile Header -->
-      <div class="col-12 ">
-        <div class="row items-center">
+    <div class="profile-header">
+      <div class="cover-photo avatar-upload-container">
+        <img 
+          :src="'https://pixelbox.ru/wp-content/uploads/2021/08/2021-08-07_135500.jpg'" 
+          alt="Cover photo"
+          class="cover-image"
+        />
+        <div class="banner-upload-overlay">
+          <q-icon name="add_a_photo" size="32px" />
+          <div class="upload-text">Изменить фото</div>
+          <q-file
+            v-model="newAvatar"
+            class="absolute-full cursor-pointer"
+            style="opacity: 0"
+            accept=".jpg,.png,.jpeg"
+            @update:model-value="updateAvatar"
+          />
+        </div>
+      </div>
+
+      <div class="profile-info q-px-md">
+        <div class="profile-main">
           <div class="avatar-upload-container q-mr-xl">
             <q-avatar size="180px">
               <img :src="getAvatar(profile?.avatar)" />
@@ -21,34 +39,59 @@
               />
             </div>
           </div>
-            
-          <div>
-            <div class="text-h4">{{ profile?.firstName }} {{ profile?.lastName }}</div>
-            <div class="text-grey q-mt-sm">
-              {{ profile?.subscribers }} subscribers • {{ profile?.totalViews }} total views
+
+          <div class="user-details q-ml-md">
+            <h1 class="text-h4 q-mb-sm">{{ profile?.firstName }} {{ profile?.lastName }}</h1>
+            <div class="user-stats">
+              <span class="stat-item">
+                <span class="stat-value">{{ profile?.totalViews || 0 }}</span>
+                <span class="stat-label">видео</span>
+              </span>
+              <span class="stat-separator">•</span>
+              <span class="stat-item">
+                <span class="stat-value">{{ profile?.subscribers || 0 }}</span>
+                <span class="stat-label">подписчиков</span>
+              </span>
             </div>
-            <div class="text-grey">Joined {{ formatDate(profile?.joinDate) }}</div>
+            <p class="user-bio q-mt-sm">{{ 'Нет описания' }}</p>
           </div>
+
+          <!-- <div class="profile-actions">
+            <q-btn
+              v-if="isOwnProfile"
+              color="primary"
+              label="Редактировать профиль"
+              icon="edit"
+              flat
+            />
+            <q-btn
+              v-else
+              :color="isSubscribed ? 'grey' : 'primary'"
+              :label="isSubscribed ? 'Вы подписаны' : 'Подписаться'"
+              :icon="isSubscribed ? 'done' : 'add'"
+              @click="toggleSubscription"
+            />
+          </div> -->
         </div>
+
+        <q-tabs
+          v-model="tab"
+          class="q-mt-md"
+          dense
+          align="left"
+          active-color="primary"
+          indicator-color="primary"
+        >
+          <q-tab name="videos" icon="video_library" label="Видео" />
+          <q-tab name="about" icon="info" label="О канале" />
+          <q-tab name="settings" icon="settings"  label="Settings" />
+        </q-tabs>
       </div>
+    </div>
+    <div class="row q-col-gutter-lg">
 
       <!-- Profile Tabs -->
       <div class="col-12">
-        <q-tabs
-          v-model="tab"
-          class="text-grey"
-          active-color="primary"
-          indicator-color="primary"
-          align="left"
-          narrow-indicator
-        >
-          <q-tab name="videos" label="Videos" />
-          <q-tab name="about" label="About" />
-          <q-tab name="settings" label="Settings" />
-        </q-tabs>
-
-        <q-separator />
-
         <q-tab-panels v-model="tab" animated>
           <!-- Videos Tab -->
           <q-tab-panel name="videos">
@@ -239,11 +282,11 @@ const profileForm = ref<ProfileForm>({
 })
 
 
-const formatDate = (date: Date | undefined): string => {
-  if (!date) return ''
-  // return date.fromNow()
-  return date.toString()
-}
+// const formatDate = (date: Date | undefined): string => {
+//   if (!date) return ''
+//   // return date.fromNow()
+//   return date.toString()
+// }
 
 const updateProfile = async () => {
   try {
@@ -316,6 +359,27 @@ onMounted(async () => {
 .avatar-upload-container {
   position: relative;
   cursor: pointer;
+
+  .banner-upload-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    
+    .upload-text {
+      margin-top: 8px;
+      font-size: 14px;
+    }
+  }
   
   .avatar-upload-overlay {
     position: absolute;
@@ -344,7 +408,14 @@ onMounted(async () => {
       opacity: 1;
     }
   }
+
+  &:hover {
+    .banner-upload-overlay {
+      opacity: 1;
+    }
+  }
 }
+
 .video-thumbnail-container {
   position: relative;
   
@@ -376,6 +447,103 @@ onMounted(async () => {
     .video-overlay {
       opacity: 1;
     }
+  }
+}
+
+.profile-page {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.profile-header {
+  background: white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+}
+
+.cover-photo {
+  height: 300px;
+  overflow: hidden;
+  position: relative;
+}
+
+.cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.profile-info {
+  position: relative;
+  margin-top: -60px;
+  padding-bottom: 16px;
+}
+
+.profile-main {
+  display: flex;
+  align-items: flex-end;
+  padding: 0 16px;
+}
+
+.profile-avatar {
+  border: 4px solid white;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.user-details {
+  flex-grow: 1;
+  padding-bottom: 8px;
+}
+
+.user-stats {
+  display: flex;
+  align-items: center;
+  color: #666;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stat-value {
+  font-weight: bold;
+}
+
+.stat-separator {
+  margin: 0 12px;
+}
+
+.user-bio {
+  color: #666;
+  max-width: 600px;
+}
+
+.profile-actions {
+  display: flex;
+  align-items: flex-end;
+  padding-bottom: 16px;
+}
+
+@media (max-width: 600px) {
+  .profile-main {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .user-details {
+    margin-top: 16px;
+    margin-left: 0 !important;
+  }
+
+  .profile-actions {
+    margin-top: 16px;
+    padding-bottom: 0;
+  }
+
+  .user-stats {
+    justify-content: center;
   }
 }
 </style>
