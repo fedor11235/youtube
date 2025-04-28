@@ -181,7 +181,7 @@ import type { Profile } from '../types/profile'
 import profileService from '../services/profile'
 import { useQuasar } from 'quasar'
 import { getAvatar, getThumbnail } from '../utils/avatar'
-import { useUserStore } from 'src/stores/user'
+import videoService from 'src/services/video'
 
 interface ProfileForm {
   firstName: string;
@@ -193,7 +193,6 @@ interface ProfileForm {
 }
 
 const $q = useQuasar()
-const userStore = useUserStore()
 
 const tab = ref('videos')
 const profile = ref<Profile | null>(null)
@@ -210,9 +209,11 @@ const confirmDelete = (video: any) => {
 
 const deleteVideo = async () => {
   try {
-    if(videoToDelete.value) {
-      // eslint-disable-next-line @typescript-eslint/await-thenable
-      await userStore.deleteVideo(videoToDelete.value.id)
+    if(videoToDelete.value) {      
+      await videoService.deleteVideo(videoToDelete.value.id)
+      if(profile.value) {
+        profile.value.videos = profile.value?.videos.filter(video => video.id !== videoToDelete.value.id)
+      }
       // userVideos.value = userVideos.value.filter(v => v.id !== videoToDelete.value.id)
       $q.notify({
         type: 'positive',

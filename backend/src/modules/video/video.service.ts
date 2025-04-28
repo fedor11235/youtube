@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
 import { users, videos } from '../../database/schema';
 import { eq } from 'drizzle-orm';
@@ -64,5 +64,24 @@ export class VideoService {
     }
 
     return video[0];
+  }
+
+  async deleteVideo(id: number, userId: number) {
+    const video = await this.db.select(videos)
+      .where(eq(videos.id, id))
+      .limit(1);
+  
+    if (!video.length) {
+      throw new NotFoundException('Видео не найдено');
+    }
+  
+    if (video[0].userId !== userId) {
+      throw new UnauthorizedException('У вас нет прав на удаление этого видео');
+    }
+  
+    await this.db.delete(videos)
+      .where(eq(videos.id, id));
+  
+    return { success: true };
   }
 }

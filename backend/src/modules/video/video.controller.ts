@@ -1,4 +1,4 @@
-import { Controller, Post, UseInterceptors, UploadedFile, Body, Get, Param, UseGuards, Req } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, Body, Get, Param, UseGuards, Req, Delete, ParseIntPipe } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
 import { VideoService } from './video.service';
@@ -31,5 +31,14 @@ export class VideoController {
   @Get(':id')
   async getVideoById(@Param('id') id: string) {
     return this.videoService.getVideoById(parseInt(id));
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard)
+  async deleteVideo(
+    @Param('id', ParseIntPipe) id: number,
+    @Req() req: any
+  ) {
+    return this.videoService.deleteVideo(id, req.user.id);
   }
 }
