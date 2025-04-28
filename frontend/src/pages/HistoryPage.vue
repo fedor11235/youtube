@@ -196,6 +196,12 @@ const historyVideos = ref<HistoryVideo[]>([
       name: 'Channel Name',
       avatar: '',
       subscribers: 1000
+    },
+    user: {
+      id: 1,
+      name: 'Channel Name',
+      avatar: '',
+      subscribers: 1000
     }
   }
 ])

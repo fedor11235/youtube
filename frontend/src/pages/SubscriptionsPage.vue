@@ -138,7 +138,8 @@ const loadChannelVideos = () => {
       duration: 360,
       views: 10,
       createdAt: new Date(),
-      channel: subscribedChannels.value[0] as Channel
+      channel: subscribedChannels.value[0] as Channel,
+      user: subscribedChannels.value[0] as Channel
     }
   ]
 }

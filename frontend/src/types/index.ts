@@ -29,6 +29,8 @@ export interface Video {
   views: number;
   createdAt: Date;
   channel: Channel;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  user: any;
 }
 
 export interface Comment {

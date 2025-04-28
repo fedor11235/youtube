@@ -21,6 +21,7 @@ export class VideoService {
   
     return video;
   }
+
   async getAllVideos() {
     //const test = this.db.select(videos)
     const result = await this.db
@@ -54,10 +55,28 @@ export class VideoService {
   }
 
   async getVideoById(id: number) {
-    const video = await this.db.select(videos)
-      .from(videos)
+    console.log("getVideoById")
+    const video = await this.db.select(videos, {
+        id: videos.id,
+        title: videos.title,
+        description: videos.description,
+        videoUrl: videos.videoUrl,
+        thumbnailUrl: videos.thumbnailUrl,
+        views: videos.views,
+        createdAt: videos.createdAt,
+        user: {
+          id: users.id,
+          firstName: users.firstName,
+          lastName: users.lastName,
+          email: users.email,
+          avatar: users.avatar
+        }
+      })
       .where(eq(videos.id, id))
+      .leftJoin(users, eq(videos.userId, users.id))
       .limit(1);
+
+    console.log("video: ", video)
 
     if (!video.length) {
       throw new NotFoundException('Video not found');

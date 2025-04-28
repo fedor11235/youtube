@@ -11,3 +11,10 @@ export function getThumbnail(fileName: string | undefined) {
   }
   return 'https://cdn.quasar.dev/img/avatar.png'
 }
+
+export function getVideo(fileName: string | undefined) {
+  if(fileName) {
+    return 'http://localhost:3000/api/files/videos/' + fileName
+  }
+  return 'https://cdn.quasar.dev/img/avatar.png'
+}
