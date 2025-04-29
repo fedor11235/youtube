@@ -26,7 +26,7 @@
               </span>
               <span class="stat-separator">•</span>
               <span class="stat-item">
-                <span class="stat-value">{{ user?.subscribers || 0 }}</span>
+                <span class="stat-value">{{ subscribersCount || 0 }}</span>
                 <span class="stat-label">подписчиков</span>
               </span>
             </div>
@@ -91,9 +91,10 @@ import { getAvatar } from '../utils/avatar'
 import { ref, onMounted, computed } from 'vue'
 import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { date } from 'quasar'
+import { date, useQuasar } from 'quasar'
 import { useAuthStore } from '../stores/auth'
 import { useUserStore } from '../stores/user'
+import { subscriptionService } from 'src/services/subscription'
 
 
 interface User {
@@ -112,39 +113,63 @@ interface User {
   url: string
 }
 
+const $q = useQuasar()
 const route = useRoute()
 const authStore = useAuthStore()
 const userStore = useUserStore()
 const tab = ref('videos')
 const user: Ref<User | null> = ref(null)
 const isSubscribed = ref(false);
+const subscribersCount = ref(0);
 
 const isOwnProfile = computed(() => {
   return user.value?.id === authStore.user?.id;
 });
-
-onMounted(async () => {
-  const userId = route.params.id
-  try {
-    if(typeof userId === 'string') {
-      user.value = await userStore.fetchUserById(userId)
-      console.log(userStore.currentUser)
-      console.log(user.value)
-    }
-  } catch (error) {
-    console.error('Ошибка загрузки пользователя:', error)
-  }
-})
 
 const formatDate = (dateString: string) => {
   if (!dateString) return ''
   return date.formatDate(dateString, 'DD.MM.YYYY')
 }
 
-const toggleSubscription = () => {
-  isSubscribed.value = !isSubscribed.value;
-  // Здесь будет логика подписки/отписки
+const toggleSubscription = async () => {
+  try {
+    const userId = route.params.id
+    if(typeof userId === 'string') {
+      if (isSubscribed.value) {
+        await subscriptionService.unsubscribe(userId);
+        subscribersCount.value--;
+      } else {
+        await subscriptionService.subscribe(userId);
+        subscribersCount.value++;
+      }
+    }
+    isSubscribed.value = !isSubscribed.value;
+    
+    $q.notify({
+      type: 'positive',
+      message: isSubscribed.value ? 'Вы подписались на канал' : 'Вы отписались от канала'
+    });
+  } catch {
+    $q.notify({
+      type: 'negative',
+      message: 'Произошла ошибка при изменении подписки'
+    });
+  }
 };
+
+onMounted(async () => {
+  const userId = route.params.id
+  try {
+    if(typeof userId === 'string') {
+      user.value = await userStore.fetchUserById(userId)
+      isSubscribed.value = await subscriptionService.checkSubscription(userId);
+      const subscribers = await subscriptionService.getSubscribers(userId);
+      subscribersCount.value = subscribers.length;
+    }
+  } catch (error) {
+    console.error('Ошибка при загрузке данных пользователя:', error);
+  }
+})
 </script>
 
 <style lang="scss">

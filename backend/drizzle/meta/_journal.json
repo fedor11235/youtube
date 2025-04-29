@@ -29,6 +29,13 @@
       "when": 1745781634726,
       "tag": "0003_tearful_inertia",
       "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1745947738080,
+      "tag": "0004_sturdy_valkyrie",
+      "breakpoints": true
     }
   ]
 }

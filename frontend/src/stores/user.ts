@@ -20,7 +20,7 @@ export const useUserStore = defineStore('user', {
   }),
 
   actions: {
-    async fetchUserById(userId: string | number) {
+    async fetchUserById(userId: string) {
       try {
         const response = await api.get(`/users/${userId}`)
         return response.data
