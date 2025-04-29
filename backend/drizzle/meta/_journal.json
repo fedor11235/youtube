@@ -36,6 +36,13 @@
       "when": 1745947738080,
       "tag": "0004_sturdy_valkyrie",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1745951879077,
+      "tag": "0005_hesitant_saracen",
+      "breakpoints": true
     }
   ]
 }

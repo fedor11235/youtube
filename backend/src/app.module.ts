@@ -5,6 +5,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { VideoModule } from './modules/video/video.module';
 import { FileModule } from './modules/file/file.module';
 import { UserModule } from './modules/user/user.module';
+import { VideoHistoryModule } from './modules/video-history/video-history.module';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
 
 @Module({
@@ -17,7 +18,8 @@ import { SubscriptionModule } from './modules/subscription/subscription.module';
     VideoModule,
     FileModule,
     UserModule,
-    SubscriptionModule
+    SubscriptionModule,
+    VideoHistoryModule
   ],
 })
 export class AppModule {}
