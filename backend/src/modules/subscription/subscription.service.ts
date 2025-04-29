@@ -8,16 +8,12 @@ import { subscriptions, users } from '../../database/schema';
 export class SubscriptionService {
   constructor(private readonly db: DrizzleService) {}
 
-  async subscribe(userURL: string, channelURL: string) {
-    const user = await this.db.query.users.findFirst({
-      where: eq(users.url, userURL),
-    });
-
+  async subscribe(userId: number, channelURL: string) {
     const channel = await this.db.query.users.findFirst({
       where: eq(users.url, channelURL),
     });
 
-    if(!user || !channel) {
+    if(!channel) {
       return
     }
     // Проверяем, существует ли уже подписка
@@ -25,7 +21,7 @@ export class SubscriptionService {
       .select(subscriptions)
       .where(
         and(
-          eq(subscriptions.userId, user.id),
+          eq(subscriptions.userId, userId),
           eq(subscriptions.channelId, channel.id)
         )
       )
@@ -39,23 +35,19 @@ export class SubscriptionService {
     return this.db
       .insert(subscriptions)
       .values({
-        userId: user.id,
+        userId: userId,
         channelId: channel.id,
         createdAt: new Date()
       })
       .execute();
   }
 
-  async unsubscribe(userURL: string, channelURL: string) {
-    const user = await this.db.query.users.findFirst({
-      where: eq(users.url, userURL),
-    });
-
+  async unsubscribe(userId: number, channelURL: string) {
     const channel = await this.db.query.users.findFirst({
       where: eq(users.url, channelURL),
     });
 
-    if(!user || !channel) {
+    if(!channel) {
       return
     }
 
@@ -63,7 +55,7 @@ export class SubscriptionService {
       .delete(subscriptions)
       .where(
         and(
-          eq(subscriptions.userId, user.id),
+          eq(subscriptions.userId, userId),
           eq(subscriptions.channelId, channel.id)
         )
       )
@@ -134,16 +126,13 @@ export class SubscriptionService {
       .execute();
   }
 
-  async checkSubscription(userURL: string, channelURL: string) {
-    const user = await this.db.query.users.findFirst({
-      where: eq(users.url, userURL),
-    });
-
+  async checkSubscription(userId: number, channelURL: string) {
     const channel = await this.db.query.users.findFirst({
       where: eq(users.url, channelURL),
     });
+    console.log(channel)
 
-    if(!user || !channel) {
+    if(!channel) {
       return
     }
 
@@ -151,7 +140,7 @@ export class SubscriptionService {
       .select(subscriptions)
       .where(
         and(
-          eq(subscriptions.userId, user.id),
+          eq(subscriptions.userId, userId),
           eq(subscriptions.channelId, channel.id)
         )
       )
