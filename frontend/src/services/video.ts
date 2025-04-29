@@ -34,6 +34,18 @@ const videoService = {
     }
   },
 
+  async getChannelVideos(channelId: number) {
+    try {
+      const response = await api.get(`/videos/channel/${channelId}`);
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new VideoError(error.message);
+      }
+      throw new VideoError('Не удалось получить видео канала');
+    }
+  },
+
   async uploadVideo(data: VideoUpload): Promise<Video> {
     try {
       const formData = new FormData()

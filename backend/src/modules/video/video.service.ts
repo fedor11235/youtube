@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
 import { users, videos } from '../../database/schema';
-import { eq } from 'drizzle-orm';
+import { desc, eq } from 'drizzle-orm';
 import { extractThumbnail } from './video.utils';
 
 @Injectable()
@@ -102,5 +102,33 @@ export class VideoService {
       .where(eq(videos.id, id));
   
     return { success: true };
+  }
+
+  async getChannelVideos(channelId: number) {
+    const videosChannel = await this.db
+      .select(videos, {
+        id: videos.id,
+        title: videos.title,
+        description: videos.description,
+        videoUrl: videos.videoUrl,
+        thumbnailUrl: videos.thumbnailUrl,
+        views: videos.views,
+        createdAt: videos.createdAt,
+        userId: videos.userId,
+        user: {
+          id: users.id,
+          firstName: users.firstName,
+          lastName: users.lastName,
+          avatar: users.avatar
+        }
+      })
+      .innerJoin(users, eq(users.id, videos.userId))
+      .where(eq(videos.userId, channelId))
+      .orderBy(desc(videos.createdAt));
+  
+    return {
+      videosChannel,
+      total: videosChannel.length
+    };
   }
 }

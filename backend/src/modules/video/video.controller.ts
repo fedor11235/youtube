@@ -41,4 +41,11 @@ export class VideoController {
   ) {
     return this.videoService.deleteVideo(id, req.user.id);
   }
+
+  @Get('channel/:channelId')
+  async getChannelVideos(
+    @Param('channelId', ParseIntPipe) channelId: number
+  ) {
+    return this.videoService.getChannelVideos(channelId);
+  }
 }

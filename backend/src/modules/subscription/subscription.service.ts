@@ -68,22 +68,13 @@ export class SubscriptionService {
     return result;
   }
 
-  async getSubscriptions(userUrl: string) {
-    const user = await this.db.query.users.findFirst({
-      where: eq(users.url, userUrl),
-    });
-
-    if(!user) {
-      return
-    }
-
-    const subscriptionCounts = await this.db
-      .select({
-        channelId: subscriptions.channelId,
-        subscriberCount: sql<number>`count(*)`.as('subscriber_count')
-      })
-      .from(subscriptions)
-      .groupBy(subscriptions.channelId);
+  async getSubscriptions(userId: number) {
+    // const subscriptionCounts = await this.db
+    //   .select(subscriptions, {
+    //     channelId: subscriptions.channelId,
+    //     subscriberCount: sql<number>`count(*)`.as('subscriber_count')
+    //   })
+    //   .groupBy(subscriptions.channelId);
   
     return this.db
       .select(subscriptions, {
@@ -99,7 +90,7 @@ export class SubscriptionService {
         }
       })
       .innerJoin(users, eq(users.id, subscriptions.channelId))
-      .where(eq(subscriptions.userId, user.id))
+      .where(eq(subscriptions.userId, userId))
       .groupBy(users.id)
       .execute();
   }
@@ -130,7 +121,6 @@ export class SubscriptionService {
     const channel = await this.db.query.users.findFirst({
       where: eq(users.url, channelURL),
     });
-    console.log(channel)
 
     if(!channel) {
       return

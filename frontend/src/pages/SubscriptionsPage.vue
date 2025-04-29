@@ -20,7 +20,7 @@
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
           <q-card class="video-card" flat bordered>
             <q-img
-              :src="video.thumbnailUrl"
+              :src="getThumbnail(video.thumbnailUrl)"
               @click="$router.push(`/watch/${video.id}`)"
               style="cursor: pointer"
               :ratio="16/9"
@@ -35,14 +35,14 @@
             <q-card-section>
               <div class="row no-wrap">
                 <q-avatar size="40px" class="q-mr-sm">
-                  <img :src="getAvatar(video.channel.avatar)">
+                  <img :src="getAvatar(video.user.avatar)">
                 </q-avatar>
 
                 <div>
                   <div class="text-weight-bold ellipsis-2-lines">{{ video.title }}</div>
-                  <div class="text-grey">{{ video.channel.name }}</div>
+                  <div class="text-grey">{{ video.user.firstName }}</div>
                   <div class="text-grey text-caption">
-                    {{ video.views }} views • {{ formatDate(video.createdAt) }}
+                    {{ video.views || 0 }} views • {{ formatDate(video.createdAt) }}
                   </div>
                 </div>
 
@@ -94,7 +94,9 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import type { Video } from '../types'
-import { getAvatar } from '../utils/avatar'
+import videoService from 'src/services/video';
+import { getAvatar, getThumbnail } from '../utils/avatar'
+import { subscriptionService } from 'src/services/subscription';
 
 interface Channel {
   id: number;
@@ -107,47 +109,22 @@ const subscribedChannels = ref<Channel[]>([])
 const channelVideos = ref<Video[]>([])
 const selectedChannelId = ref<number | null>(null)
 
-onMounted(() => {
-  // Sample data - replace with API calls
-  subscribedChannels.value = [
-    {
-      id: 1,
-      name: 'Tech Channel',
-      avatar: '',
-      subscribers: 100000
-    },
-    {
-      id: 2,
-      name: 'Music Channel',
-      avatar: '',
-      subscribers: 200000
-    }
-  ]
+const loadChannelVideos = async (channelId: number) => {
+  try {
+    // Получаем видео канала
+    const response = await videoService.getChannelVideos(channelId);
+    channelVideos.value = response.videosChannel;
+    console.log("response.videosChannel: ", response.videosChannel)
+  } catch (error) {
+    console.error('Ошибка при загрузке видео:', error);
+    channelVideos.value = [];
+  }
+};
 
-  loadChannelVideos()
-})
-
-const loadChannelVideos = () => {
-  // Sample data - replace with API call
-  channelVideos.value = [
-    {
-      id: 1,
-      title: 'Latest Video from Subscribed Channel',
-      description: 'Video description',
-      thumbnailUrl: 'https://picsum.photos/1920/1080',
-      duration: 360,
-      views: 10,
-      createdAt: new Date(),
-      channel: subscribedChannels.value[0] as Channel,
-      user: subscribedChannels.value[0] as Channel
-    }
-  ]
-}
-
-const selectChannel = (channelId: number) => {
-  selectedChannelId.value = channelId
-  loadChannelVideos()
-}
+const selectChannel = async (channelId: number) => {
+  selectedChannelId.value = channelId;
+  await loadChannelVideos(channelId);
+};
 
 const formatDate = (date: Date): string => {
   // return date.fromNow()
@@ -174,6 +151,26 @@ const addToPlaylist = (videoId: number) => {
   console.log(videoId)
   // Implement playlist functionality
 }
+
+onMounted(async () => {
+  try {
+    // Получаем список подписок
+    const subscriptions = await subscriptionService.getSubscriptions();
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    subscribedChannels.value = subscriptions.map((sub: any) => ({
+      id: sub.channel.id,
+      name: sub.channel.username,
+      avatar: sub.channel.avatar,
+      subscribers: sub.channel.subscribersCount
+    }));
+
+    if(subscribedChannels.value[0]) {
+      await loadChannelVideos(subscribedChannels.value[0].id); 
+    }
+  } catch (error) {
+    console.error('Ошибка при загрузке подписок:', error);
+  }
+});
 </script>
 
 <style scoped>

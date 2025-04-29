@@ -10,7 +10,7 @@ export const users = pgTable('users', {
   city: varchar('city', { length: 100 }),
   avatar: varchar('avatar', { length: 255 }),
   createdAt: timestamp('created_at').defaultNow(),
-  url: varchar('url', { length: 255 }).default("keke")
+  url: varchar('url', { length: 255 }).notNull().unique(),
 });
 
 export const videos = pgTable('videos', {

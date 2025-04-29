@@ -11,6 +11,7 @@ export interface Channel {
   name: string;
   avatar: string;
   subscribers: number;
+  firstName?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   url?: any;
 }
