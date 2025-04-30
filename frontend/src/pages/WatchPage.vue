@@ -43,13 +43,10 @@
                   </div>
                 </div>
                 
-                <div class="col-auto" v-if="authStore.user?.id !== video.user.id">
-                  <q-btn
-                    :icon="isSubscribed ? 'done' : 'add'"
-                    :color="isSubscribed ? 'grey' : 'primary'"
-                    :label="isSubscribed ? 'Вы подписаны' : 'Подписаться'"
-                    @click="toggleSubscription"
-                    :loading="loading"
+                <div class="col-auto">
+                  <SubscribeButton
+                    :channel-url="video.user.url"
+                    v-model:subscribers-count="subscribersCount"
                   />
                 </div>
               </div>
@@ -101,54 +98,13 @@ import { getAvatar, getThumbnail, getVideo } from '../utils/avatar'
 import videoService from 'src/services/video'
 import LikeButton from '../components/LikeButton.vue'
 import CommentSection from 'components/CommentSection.vue';
-import { useAuthStore } from 'src/stores/auth'
-import { useQuasar } from 'quasar'
 import { subscriptionService } from 'src/services/subscription'
+import SubscribeButton from 'components/SubscribeButton.vue';
 
 const route = useRoute()
 const video = ref<Video | null>(null)
 const relatedVideos = ref<Video[]>([])
-const authStore = useAuthStore();
-const $q = useQuasar();
-const isSubscribed = ref(false);
 const subscribersCount = ref(0);
-const loading = ref(false);
-
-const toggleSubscription = async () => {
-  if(!video.value) return
-
-  if (!authStore.isAuthenticated) {
-    $q.notify({
-      type: 'warning',
-      message: 'Войдите, чтобы подписаться на канал'
-    });
-    return;
-  }
-
-  try {
-    loading.value = true;
-    if (isSubscribed.value) {
-      await subscriptionService.unsubscribe(video.value.user.url);
-      subscribersCount.value--;
-    } else {
-      await subscriptionService.subscribe(video.value.user.url);
-      subscribersCount.value++;
-    }
-    isSubscribed.value = !isSubscribed.value;
-    
-    $q.notify({
-      type: 'positive',
-      message: isSubscribed.value ? 'Вы подписались на канал' : 'Вы отписались от канала'
-    });
-  } catch {
-    $q.notify({
-      type: 'negative',
-      message: 'Произошла ошибка при изменении подписки'
-    });
-  } finally {
-    loading.value = false;
-  }
-};
 
 const formatDate = (date: Date | undefined): string => {
   if (!date) return ''
@@ -161,13 +117,7 @@ onMounted(async () => {
   const videoId = parseInt(route.params.id as string)
     try {
       // Проверяем статус подписки
-      video.value = await videoService.getVideo(videoId);
-      console.log("video.value: ", video.value)
-      if (authStore.isAuthenticated) {
-        isSubscribed.value = await subscriptionService.checkSubscription(video.value.user.url);
-      }
-      console.log("isSubscribed.value: ", isSubscribed.value)
-      
+      video.value = await videoService.getVideo(videoId);      
       // Получаем количество подписчиков
       const subscribers = await subscriptionService.getSubscribers(video.value.user.url);
       subscribersCount.value = subscribers.length;

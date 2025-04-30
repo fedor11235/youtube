@@ -42,12 +42,10 @@
               @click="$router.push('/profile')"
               flat
             />
-            <q-btn
-              v-else
-              :color="isSubscribed ? 'grey' : 'primary'"
-              :label="isSubscribed ? 'Вы подписаны' : 'Подписаться'"
-              :icon="isSubscribed ? 'done' : 'add'"
-              @click="toggleSubscription"
+            <SubscribeButton
+              v-else-if="typeof videoUrl === 'string'"
+              :channel-url="videoUrl"
+              v-model:subscribers-count="subscribersCount"
             />
           </div>
         </div>
@@ -91,11 +89,11 @@ import { getAvatar } from '../utils/avatar'
 import { ref, onMounted, computed } from 'vue'
 import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { date, useQuasar } from 'quasar'
+import { date } from 'quasar'
 import { useAuthStore } from '../stores/auth'
 import { useUserStore } from '../stores/user'
 import { subscriptionService } from 'src/services/subscription'
-
+import SubscribeButton from 'components/SubscribeButton.vue';
 
 interface User {
   id: string
@@ -113,7 +111,6 @@ interface User {
   url: string
 }
 
-const $q = useQuasar()
 const route = useRoute()
 const authStore = useAuthStore()
 const userStore = useUserStore()
@@ -121,6 +118,7 @@ const tab = ref('videos')
 const user: Ref<User | null> = ref(null)
 const isSubscribed = ref(false);
 const subscribersCount = ref(0);
+const videoUrl = computed(() => route.params.id)
 
 const isOwnProfile = computed(() => {
   return user.value?.id === authStore.user?.id;
@@ -130,32 +128,6 @@ const formatDate = (dateString: string) => {
   if (!dateString) return ''
   return date.formatDate(dateString, 'DD.MM.YYYY')
 }
-
-const toggleSubscription = async () => {
-  try {
-    const userId = route.params.id
-    if(typeof userId === 'string') {
-      if (isSubscribed.value) {
-        await subscriptionService.unsubscribe(userId);
-        subscribersCount.value--;
-      } else {
-        await subscriptionService.subscribe(userId);
-        subscribersCount.value++;
-      }
-    }
-    isSubscribed.value = !isSubscribed.value;
-    
-    $q.notify({
-      type: 'positive',
-      message: isSubscribed.value ? 'Вы подписались на канал' : 'Вы отписались от канала'
-    });
-  } catch {
-    $q.notify({
-      type: 'negative',
-      message: 'Произошла ошибка при изменении подписки'
-    });
-  }
-};
 
 onMounted(async () => {
   const userId = route.params.id
