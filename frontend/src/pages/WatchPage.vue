@@ -33,9 +33,11 @@
               <div class="row items-center justify-between">
                 <div class="col-auto">
                   <div class="row items-center">
-                    <q-avatar size="40px" class="q-mr-md">
-                      <img :src="getAvatar(video?.user.avatar)" />
-                    </q-avatar>
+                    <UserAvatar
+                      :avatar="video.user.avatar"
+                      size="40px"
+                      class="q-mr-md"
+                    />
                     <div>
                       <div class="text-weight-bold">{{ video.user.username }}</div>
                       <div class="text-caption text-grey">{{ subscribersCount }} подписчиков</div>
@@ -94,12 +96,13 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 // import { date } from 'quasar'
 import type { Video } from '../types'
-import { getAvatar, getThumbnail, getVideo } from '../utils/avatar'
+import { getThumbnail, getVideo } from '../utils/avatar'
 import videoService from 'src/services/video'
 import LikeButton from '../components/LikeButton.vue'
 import CommentSection from 'components/CommentSection.vue';
 import { subscriptionService } from 'src/services/subscription'
 import SubscribeButton from 'components/SubscribeButton.vue';
+import UserAvatar from 'components/UserAvatar.vue';
 
 const route = useRoute()
 const video = ref<Video | null>(null)
