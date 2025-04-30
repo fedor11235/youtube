@@ -1,0 +1,1 @@
+ALTER TABLE "video_likes" ADD COLUMN "updated_at" timestamp DEFAULT now() NOT NULL;

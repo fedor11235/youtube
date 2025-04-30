@@ -50,44 +50,7 @@
         </div>
 
         <!-- Comments section -->
-        <div class="q-mt-lg">
-          <div class="text-h6 q-mb-md">Comments</div>
-          <q-input
-            v-model="newComment"
-            outlined
-            label="Add a comment"
-            :dense="false"
-          >
-            <template v-slot:after>
-              <q-btn color="primary" label="Comment" />
-            </template>
-          </q-input>
-
-          <div class="q-mt-md">
-            <div v-for="comment in comments" :key="comment.id" class="q-mb-md">
-              <div class="row items-start">
-                <q-avatar size="40px" class="q-mr-md">
-                  <img :src="getAvatar(comment.user.avatar)">
-                </q-avatar>
-                
-                <div class="col">
-                  <div class="text-weight-bold">
-                    {{ comment.user.name }}
-                    <span class="text-grey text-caption q-ml-sm">
-                      {{ formatDate(comment.createdAt) }}
-                    </span>
-                  </div>
-                  <div>{{ comment.content }}</div>
-                  <div class="row items-center q-mt-xs">
-                    <q-btn flat dense size="sm" icon="thumb_up" />
-                    <q-btn flat dense size="sm" icon="thumb_down" class="q-ml-sm" />
-                    <q-btn flat dense size="sm" label="Reply" class="q-ml-md" />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+        <CommentSection :video-id="video.id" />
       </div>
 
       <!-- Related videos -->
@@ -120,16 +83,15 @@
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 // import { date } from 'quasar'
-import type { Video, Comment } from '../types'
+import type { Video } from '../types'
 import { getAvatar, getThumbnail, getVideo } from '../utils/avatar'
 import videoService from 'src/services/video'
 import LikeButton from '../components/LikeButton.vue'
+import CommentSection from 'components/CommentSection.vue';
 
 const route = useRoute()
 const video = ref<Video | null>(null)
 const relatedVideos = ref<Video[]>([])
-const comments = ref<Comment[]>([])
-const newComment = ref<string>('')
 
 onMounted(async () => {
   const videoId = parseInt(route.params.id as string)
@@ -165,26 +127,4 @@ const formatDate = (date: Date | undefined): string => {
   // return Date.now()
   return date.toString()
 }
-
-// const addComment = async (): Promise<void> => {
-//   if (!newComment.value.trim()) return
-  
-//   try {
-//     // Here will be API call to add comment
-//     const comment: Comment = {
-//       id: Math.random(),
-//       content: newComment.value,
-//       createdAt: new Date(),
-//       user: {
-//         id: 1,
-//         name: 'Current User',
-//         avatar: 'https://cdn.quasar.dev/img/avatar.png'
-//       }
-//     }
-//     comments.value.unshift(comment)
-//     newComment.value = ''
-//   } catch (error) {
-//     console.error('Error adding comment:', error)
-//   }
-// }
 </script>

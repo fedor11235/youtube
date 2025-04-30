@@ -29,7 +29,8 @@ export const comments = pgTable('comments', {
   content: text('content').notNull(),
   userId: integer('user_id').references(() => users.id),
   videoId: integer('video_id').references(() => videos.id),
-  createdAt: timestamp('created_at').defaultNow()
+  createdAt: timestamp('created_at').defaultNow(),
+  updatedAt: timestamp('updated_at').notNull().defaultNow(),
 });
 
 export const likes = pgTable('likes', {
@@ -64,9 +65,12 @@ export const videoLikes = pgTable('video_likes', {
   id: serial('id').primaryKey(),
   userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   videoId: integer('video_id').notNull().references(() => videos.id, { onDelete: 'cascade' }),
-  createdAt: timestamp('created_at').notNull().defaultNow(),
+  createdAt: timestamp('created_at').notNull().defaultNow()
 });
 
+
+export type Comment = typeof comments.$inferSelect;
+export type NewComment = typeof comments.$inferInsert;
 export type VideoLike = typeof videoLikes.$inferSelect;
 export type NewVideoLike = typeof videoLikes.$inferInsert;
 export type VideoHistory = typeof videoHistory.$inferSelect;
