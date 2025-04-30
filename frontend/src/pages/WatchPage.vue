@@ -1,6 +1,6 @@
 <template>
   <q-page padding>
-    <div class="row q-col-gutter-lg">
+    <div v-if="video" class="row q-col-gutter-lg">
       <div class="col-12 col-lg-8">
         <video
           controls
@@ -19,10 +19,11 @@
             </div>
             
             <div>
-              <q-btn flat round icon="thumb_up" />
-              <q-btn flat round icon="thumb_down" />
+              <LikeButton :video-id="video.id" />
+              <!-- <q-btn flat round icon="thumb_up" /> -->
+              <!-- <q-btn flat round icon="thumb_down" /> -->
               <q-btn flat round icon="share" />
-              <q-btn flat round icon="playlist_add" />
+              <!-- <q-btn flat round icon="playlist_add" /> -->
             </div>
           </div>
 
@@ -122,6 +123,7 @@ import { useRoute } from 'vue-router'
 import type { Video, Comment } from '../types'
 import { getAvatar, getThumbnail, getVideo } from '../utils/avatar'
 import videoService from 'src/services/video'
+import LikeButton from '../components/LikeButton.vue'
 
 const route = useRoute()
 const video = ref<Video | null>(null)

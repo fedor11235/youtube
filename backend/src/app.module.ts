@@ -6,6 +6,7 @@ import { VideoModule } from './modules/video/video.module';
 import { FileModule } from './modules/file/file.module';
 import { UserModule } from './modules/user/user.module';
 import { VideoHistoryModule } from './modules/video-history/video-history.module';
+import { VideoLikesModule } from './modules/video-likes/video-likes.module';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
 
 @Module({
@@ -19,7 +20,8 @@ import { SubscriptionModule } from './modules/subscription/subscription.module';
     FileModule,
     UserModule,
     SubscriptionModule,
-    VideoHistoryModule
+    VideoHistoryModule,
+    VideoLikesModule
   ],
 })
 export class AppModule {}

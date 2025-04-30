@@ -60,6 +60,15 @@ export const videoHistory = pgTable('video_history', {
   watchedAt: timestamp('watched_at').notNull().defaultNow(),
 });
 
+export const videoLikes = pgTable('video_likes', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  videoId: integer('video_id').notNull().references(() => videos.id, { onDelete: 'cascade' }),
+  createdAt: timestamp('created_at').notNull().defaultNow(),
+});
+
+export type VideoLike = typeof videoLikes.$inferSelect;
+export type NewVideoLike = typeof videoLikes.$inferInsert;
 export type VideoHistory = typeof videoHistory.$inferSelect;
 export type NewVideoHistory = typeof videoHistory.$inferInsert;
 export type Subscription = typeof subscriptions.$inferSelect;
