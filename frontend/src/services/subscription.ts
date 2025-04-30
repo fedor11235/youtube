@@ -23,6 +23,7 @@ export const subscriptionService = {
 
   async checkSubscription(channelId: string) {
     const response = await api.get(`/subscriptions/check/${channelId}`);
+    console.log("response: ", response)
     return response.data.isSubscribed;
   }
 };

@@ -68,14 +68,7 @@ export class SubscriptionService {
     return result;
   }
 
-  async getSubscriptions(userId: number) {
-    // const subscriptionCounts = await this.db
-    //   .select(subscriptions, {
-    //     channelId: subscriptions.channelId,
-    //     subscriberCount: sql<number>`count(*)`.as('subscriber_count')
-    //   })
-    //   .groupBy(subscriptions.channelId);
-  
+  async getSubscriptions(userId: number) {  
     return this.db
       .select(subscriptions, {
         channel: {

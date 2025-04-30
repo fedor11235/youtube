@@ -29,18 +29,31 @@
 
           <q-separator class="q-my-md" />
 
-          <div class="row items-center q-mb-md">
-            <q-avatar size="48px" class="q-mr-md">
-              <img :src="getAvatar(video?.user.avatar)">
-            </q-avatar>
-            
-            <div class="col">
-              <div class="text-weight-bold">{{ video?.user.firstName }} - {{ video?.user.lastName }}</div>
-              <div class="text-grey">{{ video?.user.subscribers || 0 }} subscribers</div>
+          <div class="video-info q-mt-md">
+              <div class="row items-center justify-between">
+                <div class="col-auto">
+                  <div class="row items-center">
+                    <q-avatar size="40px" class="q-mr-md">
+                      <img :src="getAvatar(video?.user.avatar)" />
+                    </q-avatar>
+                    <div>
+                      <div class="text-weight-bold">{{ video.user.username }}</div>
+                      <div class="text-caption text-grey">{{ subscribersCount }} подписчиков</div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="col-auto" v-if="authStore.user?.id !== video.user.id">
+                  <q-btn
+                    :icon="isSubscribed ? 'done' : 'add'"
+                    :color="isSubscribed ? 'grey' : 'primary'"
+                    :label="isSubscribed ? 'Вы подписаны' : 'Подписаться'"
+                    @click="toggleSubscription"
+                    :loading="loading"
+                  />
+                </div>
+              </div>
             </div>
-            
-            <q-btn color="red" label="Subscribe" />
-          </div>
 
           <q-expansion-item
             expand-separator
@@ -88,38 +101,54 @@ import { getAvatar, getThumbnail, getVideo } from '../utils/avatar'
 import videoService from 'src/services/video'
 import LikeButton from '../components/LikeButton.vue'
 import CommentSection from 'components/CommentSection.vue';
+import { useAuthStore } from 'src/stores/auth'
+import { useQuasar } from 'quasar'
+import { subscriptionService } from 'src/services/subscription'
 
 const route = useRoute()
 const video = ref<Video | null>(null)
 const relatedVideos = ref<Video[]>([])
+const authStore = useAuthStore();
+const $q = useQuasar();
+const isSubscribed = ref(false);
+const subscribersCount = ref(0);
+const loading = ref(false);
 
-onMounted(async () => {
-  const videoId = parseInt(route.params.id as string)
-  try {
-    // Here will be API call to fetch video data
-    // Sample data for now
-    video.value = await videoService.getVideo(videoId);
-    console.log("video.value : ", video.value )
-    // video.value = {
-    //   id: videoId,
-    //   title: 'Sample Video Title',
-    //   description: 'Sample video description',
-    //   thumbnailUrl: 'https://picsum.photos/1920/1080',
-    //   videoUrl: '1745783912036-428186528.mp4',
-    //   duration: 360, // Added duration in seconds
-    //   views: 1.2,
-    //   createdAt: new Date(),
-    //   channel: {
-    //     id: 1,
-    //     name: 'Channel Name',
-    //     avatar: 'https://cdn.quasar.dev/img/avatar.png',
-    //     subscribers: 1000
-    //   }
-    // }
-  } catch (err) {
-    console.error('Error fetching video:', err)
+const toggleSubscription = async () => {
+  if(!video.value) return
+
+  if (!authStore.isAuthenticated) {
+    $q.notify({
+      type: 'warning',
+      message: 'Войдите, чтобы подписаться на канал'
+    });
+    return;
   }
-})
+
+  try {
+    loading.value = true;
+    if (isSubscribed.value) {
+      await subscriptionService.unsubscribe(video.value.user.url);
+      subscribersCount.value--;
+    } else {
+      await subscriptionService.subscribe(video.value.user.url);
+      subscribersCount.value++;
+    }
+    isSubscribed.value = !isSubscribed.value;
+    
+    $q.notify({
+      type: 'positive',
+      message: isSubscribed.value ? 'Вы подписались на канал' : 'Вы отписались от канала'
+    });
+  } catch {
+    $q.notify({
+      type: 'negative',
+      message: 'Произошла ошибка при изменении подписки'
+    });
+  } finally {
+    loading.value = false;
+  }
+};
 
 const formatDate = (date: Date | undefined): string => {
   if (!date) return ''
@@ -127,4 +156,23 @@ const formatDate = (date: Date | undefined): string => {
   // return Date.now()
   return date.toString()
 }
+
+onMounted(async () => {
+  const videoId = parseInt(route.params.id as string)
+    try {
+      // Проверяем статус подписки
+      video.value = await videoService.getVideo(videoId);
+      console.log("video.value: ", video.value)
+      if (authStore.isAuthenticated) {
+        isSubscribed.value = await subscriptionService.checkSubscription(video.value.user.url);
+      }
+      console.log("isSubscribed.value: ", isSubscribed.value)
+      
+      // Получаем количество подписчиков
+      const subscribers = await subscriptionService.getSubscribers(video.value.user.url);
+      subscribersCount.value = subscribers.length;
+    } catch (error) {
+      console.error('Ошибка при загрузке данных о подписке:', error);
+    }
+});
 </script>
