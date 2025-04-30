@@ -4,11 +4,10 @@
 
     <div v-if="authStore.isAuthenticated" class="comment-form q-mt-md">
       <q-input
+        ref="commentInput"
         v-model="newComment"
         type="textarea"
         label="Добавить комментарий"
-        :rules="[val => !!val || 'Комментарий не может быть пустым']"
-        @keyup.enter.ctrl="submitComment"
         class="custom-textarea"
         :input-style="{ minHeight: '80px', maxHeight: '80px', lineHeight: '1.5' }"
         :bg-color="$q.dark.isActive ? 'dark' : 'grey-2'"
@@ -16,6 +15,7 @@
         dense
         counter
         maxlength="1000"
+        @keyup.enter.ctrl="submitComment"
       >
         <template v-slot:append>
           <q-btn
@@ -32,9 +32,7 @@
         </template>
       </q-input>
     </div>
-    <div v-else class="text-center q-pa-md">
-      <p>Войдите, чтобы оставить комментарий</p>
-    </div>
+
 
     <div class="comments-list q-mt-lg">
       <q-list>
@@ -50,6 +48,9 @@
               {{ comment.user.username }}
               <span class="text-grey-6 text-caption q-ml-sm">
                 {{ formatDate(comment.createdAt) }}
+                <template v-if="comment.updatedAt !== comment.createdAt">
+                  • изменено {{ formatDate(comment.updatedAt) }}
+                </template>
               </span>
             </q-item-label>
 
@@ -57,31 +58,46 @@
               {{ comment.content }}
             </q-item-label>
 
-            <div v-else class="edit-form">
+            <div v-else class="edit-form q-mt-sm">
               <q-input
                 v-model="editingComment.content"
                 type="textarea"
+                :input-style="{ minHeight: '60px', maxHeight: '60px', lineHeight: '1.5' }"
+                class="custom-textarea"
+                outlined
                 dense
                 autofocus
+                counter
+                maxlength="1000"
+                :rules="[val => !!val || 'Комментарий не может быть пустым']"
                 @keyup.enter.ctrl="updateComment"
-              />
-              <div class="row justify-end q-mt-sm">
+              >
+                <template v-slot:hint>
+                  Нажмите Ctrl + Enter для сохранения
+                </template>
+              </q-input>
+              <div class="row justify-end q-mt-sm q-gutter-sm">
                 <q-btn
                   flat
-                  color="grey"
                   label="Отмена"
+                  color="grey"
+                  v-close-popup
                   @click="cancelEdit"
                 />
                 <q-btn
                   flat
-                  color="primary"
                   label="Сохранить"
+                  color="primary"
+                  :disable="!editingComment.content.trim()"
                   @click="updateComment"
                 />
               </div>
             </div>
 
-            <div v-if="userStore.currentUser?.id === comment.user.id" class="comment-actions q-mt-sm">
+            <div 
+              v-if="authStore.user?.id === comment.user.id && editingComment?.id !== comment.id" 
+              class="comment-actions q-mt-sm"
+            >
               <q-btn
                 flat
                 dense
@@ -124,7 +140,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
-import { useUserStore } from 'src/stores/user';
+// import { useUserStore } from 'src/stores/user';
 import { useAuthStore } from 'src/stores/auth';
 import { commentService, type Comment } from 'src/services/comment';
 import { getAvatar } from '../utils/avatar'
@@ -134,13 +150,15 @@ const props = defineProps<{
 }>();
 
 const $q = useQuasar();
-const userStore = useUserStore();
+// const userStore = useUserStore();
 const authStore = useAuthStore();
 const comments = ref<Comment[]>([]);
 const newComment = ref('');
 const editingComment = ref<{ id: number; content: string } | null>(null);
 const deleteDialog = ref(false);
 const commentToDelete = ref<Comment | null>(null);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const commentInput = ref<any>(null);
 
 const formatDate = (date: string) => {
   return new Date(date).toLocaleDateString('ru-RU');
@@ -157,8 +175,15 @@ const loadComments = async () => {
   }
 };
 
+
 const submitComment = async () => {
-  if (!newComment.value.trim()) return;
+  if (!newComment.value.trim()) {
+    $q.notify({
+      type: 'warning',
+      message: 'Комментарий не может быть пустым'
+    });
+    return;
+  }
 
   try {
     await commentService.createComment(props.videoId, newComment.value);
@@ -254,10 +279,11 @@ onMounted(async () => {
 }
 
 .comment-actions {
-  opacity: 0.7;
+  opacity: 0;
+  transition: opacity 0.2s ease;
 }
 
-.comment-actions:hover {
+.comment-item:hover .comment-actions {
   opacity: 1;
 }
 
