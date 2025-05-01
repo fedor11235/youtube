@@ -51,15 +51,23 @@
           </q-item-section>
 
           <q-item-section>
-            <q-item-label class="text-weight-bold">
-              {{ comment.user.username }}
-              <span class="text-grey-6 text-caption q-ml-sm">
-                {{ formatDate(comment.createdAt) }}
-                <template v-if="comment.updatedAt !== comment.createdAt">
-                  • изменено {{ formatDate(comment.updatedAt) }}
-                </template>
-              </span>
-            </q-item-label>
+            <div class="row justify-between items-center">
+               <q-item-label class="text-weight-bold">
+                 {{ comment.user.username }}
+                 <span class="text-grey-6 text-caption q-ml-sm">
+                   {{ formatDate(comment.createdAt) }}
+                   <template v-if="comment.updatedAt !== comment.createdAt">
+                     • изменено {{ formatDate(comment.updatedAt) }}
+                   </template>
+                 </span>
+               </q-item-label>
+
+               <LikeComment
+                 :comment-id="comment.id"
+                 :initial-likes-count="5"
+               />
+             </div>
+            
 
             <q-item-label v-if="editingComment?.id !== comment.id">
               {{ comment.content }}
@@ -151,6 +159,7 @@ import { useQuasar } from 'quasar';
 import { useAuthStore } from 'src/stores/auth';
 import { commentService, type Comment } from 'src/services/comment';
 import UserAvatar from 'components/UserAvatar.vue';
+import LikeComment from './LikeComment.vue'
 
 const props = defineProps<{
   videoId: number;
