@@ -133,6 +133,11 @@ const videoService = {
       }
       throw new VideoError('Failed to fetch comments')
     }
+  },
+
+  async getLikedVideos() {
+    const response = await api.get('/videos/liked');
+    return response.data;
   }
 }
 

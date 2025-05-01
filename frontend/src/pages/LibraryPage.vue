@@ -112,6 +112,7 @@ import LibraryVideoCard from '../components/LibraryVideoCard.vue'
 import type { Video } from '../types'
 import { favoritesService } from 'src/services/favorites';
 import { useQuasar } from 'quasar';
+import videoService from 'src/services/video';
 
 interface LibraryVideo extends Video {
   watchedAt?: Date;
@@ -124,6 +125,7 @@ const historyVideos = ref<LibraryVideo[]>([])
 const likedVideos = ref<LibraryVideo[]>([])
 const favoriteVideos = ref<LibraryVideo[]>([])
 const loadingFavorites = ref(true);
+const loadingLiked = ref(true);
 
 const historyCount = computed(() => historyVideos.value.length)
 const likedCount = computed(() => likedVideos.value.length)
@@ -155,7 +157,22 @@ const loadFavorites = async () => {
   }
 };
 
+const loadLikedVideos = async () => {
+  try {
+    loadingLiked.value = true;
+    likedVideos.value = await videoService.getLikedVideos();
+  } catch {
+    $q.notify({
+      type: 'negative',
+      message: 'Ошибка при загрузке понравившихся видео'
+    });
+  } finally {
+    loadingLiked.value = false;
+  }
+};
+
 onMounted(async () => {
   await loadFavorites();
+  await loadLikedVideos();
 });
 </script>

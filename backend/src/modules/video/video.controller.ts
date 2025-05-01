@@ -28,6 +28,19 @@ export class VideoController {
     return this.videoService.getAllVideos();
   }
 
+  @Get('channel/:channelId')
+  async getChannelVideos(
+    @Param('channelId', ParseIntPipe) channelId: number
+  ) {
+    return this.videoService.getChannelVideos(channelId);
+  }
+
+  @Get('liked')
+  @UseGuards(JwtAuthGuard)
+  async getLikedVideos(@Req() req: any) {
+    return this.videoService.getLikedVideos(parseInt(req.user.id));
+  }
+
   @Get(':id')
   async getVideoById(@Param('id') id: string) {
     return this.videoService.getVideoById(parseInt(id));
@@ -42,10 +55,4 @@ export class VideoController {
     return this.videoService.deleteVideo(id, req.user.id);
   }
 
-  @Get('channel/:channelId')
-  async getChannelVideos(
-    @Param('channelId', ParseIntPipe) channelId: number
-  ) {
-    return this.videoService.getChannelVideos(channelId);
-  }
 }
