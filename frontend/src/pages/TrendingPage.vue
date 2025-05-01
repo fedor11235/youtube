@@ -3,7 +3,7 @@
     <div class="text-h4 q-mb-lg">Trending</div>
 
     <div class="row q-col-gutter-md">
-      <div class="col-12">
+      <!-- <div class="col-12">
         <q-tabs
           v-model="tab"
           class="text-grey"
@@ -19,7 +19,7 @@
         </q-tabs>
 
         <q-separator />
-      </div>
+      </div> -->
 
       <template v-for="(video, index) in trendingVideos" :key="video.id">
         <div class="col-12">
@@ -102,7 +102,7 @@ interface TrendingVideo {
   };
 }
 
-const tab = ref('now')
+// const tab = ref('now')
 const trendingVideos = ref<TrendingVideo[]>([])
 
 onMounted(() => {
