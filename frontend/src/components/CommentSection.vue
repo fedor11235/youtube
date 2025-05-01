@@ -33,107 +33,15 @@
       </q-input>
     </div>
 
-
     <div class="comments-list q-mt-lg">
       <q-list>
-        <q-item v-for="comment in comments" :key="comment.id" class="comment-item q-mb-md" v-ripple>
-          <q-item-section avatar>
-            <!-- <q-avatar>
-              <img :src="getAvatar(comment.user.avatar)" />
-            </q-avatar> -->
-            <UserAvatar
-                :avatar="comment.user.avatar"
-                :url="comment.user.url"
-                :username="comment.user.username"
-                size="40px"
-                class="q-mr-md"
-              />
-          </q-item-section>
-
-          <q-item-section>
-            <div class="row justify-between items-center">
-               <q-item-label class="text-weight-bold">
-                 {{ comment.user.username }}
-                 <span class="text-grey-6 text-caption q-ml-sm">
-                   {{ formatDate(comment.createdAt) }}
-                   <template v-if="comment.updatedAt !== comment.createdAt">
-                     • изменено {{ formatDate(comment.updatedAt) }}
-                   </template>
-                 </span>
-               </q-item-label>
-
-               <LikeComment
-                 :comment-id="comment.id"
-                 :initial-likes-count="5"
-               />
-             </div>
-            
-
-            <q-item-label v-if="editingComment?.id !== comment.id">
-              {{ comment.content }}
-            </q-item-label>
-
-            <div v-else class="edit-form q-mt-sm">
-              <q-input
-                v-model="editingComment.content"
-                type="textarea"
-                :input-style="{ minHeight: '60px', maxHeight: '60px', lineHeight: '1.5' }"
-                class="custom-textarea"
-                outlined
-                dense
-                autofocus
-                counter
-                maxlength="1000"
-                :rules="[val => !!val || 'Комментарий не может быть пустым']"
-                @keyup.enter.ctrl="updateComment"
-              >
-                <template v-slot:hint>
-                  Нажмите Ctrl + Enter для сохранения
-                </template>
-              </q-input>
-              <div class="row justify-end q-mt-sm q-gutter-sm">
-                <q-btn
-                  flat
-                  label="Отмена"
-                  color="grey"
-                  v-close-popup
-                  @click="cancelEdit"
-                />
-                <q-btn
-                  flat
-                  label="Сохранить"
-                  color="primary"
-                  :disable="!editingComment.content.trim()"
-                  @click="updateComment"
-                />
-              </div>
-            </div>
-
-            <div 
-              v-if="authStore.user?.id === comment.user.id && editingComment?.id !== comment.id" 
-              class="comment-actions q-mt-sm"
-            >
-              <q-btn
-                flat
-                dense
-                color="grey"
-                icon="edit"
-                @click="startEdit(comment)"
-              >
-                <q-tooltip>Редактировать</q-tooltip>
-              </q-btn>
-              <q-btn
-                flat
-                dense
-                color="negative"
-                icon="delete"
-                @click="confirmDelete(comment)"
-              >
-                <q-tooltip>Удалить</q-tooltip>
-              </q-btn>
-            </div>
-          </q-item-section>
-        </q-item>
+        <VideoComment
+          v-for="comment in comments"
+          :key="comment.id"
+          :comment="comment"
+          @update="updateComment"
+          @delete="confirmDelete"
+        />
       </q-list>
     </div>
 
@@ -155,18 +63,15 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue';
 import { useQuasar } from 'quasar';
-// import { useUserStore } from 'src/stores/user';
 import { useAuthStore } from 'src/stores/auth';
 import { commentService, type Comment } from 'src/services/comment';
-import UserAvatar from 'components/UserAvatar.vue';
-import LikeComment from './LikeComment.vue'
+import VideoComment from './VideoComment.vue'
 
 const props = defineProps<{
   videoId: number;
 }>();
 
 const $q = useQuasar();
-// const userStore = useUserStore();
 const authStore = useAuthStore();
 const comments = ref<Comment[]>([]);
 const newComment = ref('');
@@ -175,10 +80,6 @@ const deleteDialog = ref(false);
 const commentToDelete = ref<Comment | null>(null);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const commentInput = ref<any>(null);
-
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString('ru-RU');
-};
 
 const loadComments = async () => {
   try {
@@ -190,7 +91,6 @@ const loadComments = async () => {
     });
   }
 };
-
 
 const submitComment = async () => {
   if (!newComment.value.trim()) {
@@ -215,17 +115,6 @@ const submitComment = async () => {
       message: 'Ошибка при добавлении комментария'
     });
   }
-};
-
-const startEdit = (comment: Comment) => {
-  editingComment.value = {
-    id: comment.id,
-    content: comment.content
-  };
-};
-
-const cancelEdit = () => {
-  editingComment.value = null;
 };
 
 const updateComment = async () => {
