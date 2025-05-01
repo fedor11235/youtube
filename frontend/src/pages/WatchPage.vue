@@ -20,6 +20,11 @@
             
             <div class="row items-center q-gutter-x-md">
               <LikeButton :video-id="video.id" />
+
+              <FavoriteButton
+                :video-id="video.id"
+              />
+
               <ShareVideo
                 :video-id="video.id"
                 :title="video.title"
@@ -114,6 +119,7 @@ import { subscriptionService } from 'src/services/subscription'
 import SubscribeButton from 'components/SubscribeButton.vue';
 import UserAvatar from 'components/UserAvatar.vue';
 import ShareVideo from 'components/ShareVideo.vue'
+import FavoriteButton from 'components/FavoriteButton.vue';
 
 const route = useRoute()
 const video = ref<Video | null>(null)
