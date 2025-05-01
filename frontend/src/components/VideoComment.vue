@@ -24,7 +24,7 @@
 
         <LikeComment
           :comment-id="comment.id"
-          :initial-likes-count="6"
+          :initial-likes-count="comment.likesCount"
         />
       </div>
 

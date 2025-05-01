@@ -9,6 +9,7 @@ import { VideoHistoryModule } from './modules/video-history/video-history.module
 import { VideoLikesModule } from './modules/video-likes/video-likes.module';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
 import { CommentModule } from './modules/comment/comment.module';
+import { CommentLikesModule } from './modules/comment-likes/comment-likes.module';
 
 @Module({
   imports: [
@@ -23,7 +24,8 @@ import { CommentModule } from './modules/comment/comment.module';
     SubscriptionModule,
     VideoHistoryModule,
     VideoLikesModule,
-    CommentModule
+    CommentModule,
+    CommentLikesModule
   ],
 })
 export class AppModule {}

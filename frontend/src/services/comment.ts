@@ -5,6 +5,7 @@ export interface Comment {
   content: string;
   createdAt: string;
   updatedAt: string;
+  likesCount: number;
   user: {
     id: number;
     username: string;
