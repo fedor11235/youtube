@@ -31,6 +31,19 @@ export const useUserStore = defineStore('user', {
     },
     deleteVideo(id: number) {
       console.log(id)
+    },
+    async searchUsers(query: string): Promise<User[]> {
+      try {
+        const response = await api.get<User[]>('/users/search', {
+          params: {
+            query: query.trim()
+          }
+        })
+        return response.data
+      } catch (error) {
+        console.error('Ошибка при поиске пользователей:', error)
+        throw error
+      }
     }
   }
 })

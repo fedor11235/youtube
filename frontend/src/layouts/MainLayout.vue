@@ -111,6 +111,27 @@
           <q-item-section>{{ t('navigation.trending') }}</q-item-section>
         </q-item>
 
+        <q-item clickable v-ripple to="/search">
+          <q-item-section avatar>
+            <q-icon name="manage_search" />
+          </q-item-section>
+          <q-item-section>Поиск аккаунтов</q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple to="/feedback">
+          <q-item-section avatar>
+            <q-icon name="feedback" />
+          </q-item-section>
+          <q-item-section>{{ 'feedback' }}</q-item-section>
+        </q-item>
+
+        <q-item clickable v-ripple to="/plans">
+          <q-item-section avatar>
+            <q-icon name="workspace_premium" />
+          </q-item-section>
+          <q-item-section>Планы подписки</q-item-section>
+        </q-item>
+
         <template v-if="authStore.isAuthenticated">
           <q-separator />
 

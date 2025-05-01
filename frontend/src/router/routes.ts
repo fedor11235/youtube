@@ -35,6 +35,18 @@ const routes: RouteRecordRaw[] = [
           }
         ]
       },
+      {
+        path: 'search',
+        component: () => import('pages/SearchPage.vue')
+      },
+      {
+        path: 'feedback',
+        component: () => import('pages/FeedbackPage.vue')
+      },
+      {
+        path: 'plans',
+        component: () => import('pages/PlansPage.vue')
+      },
       { 
         path: 'watch/:id', 
         component: () => import('pages/WatchPage.vue') 
