@@ -18,11 +18,15 @@
               {{ video?.views }} views • {{ formatDate(video?.createdAt) }}
             </div>
             
-            <div>
+            <div class="row items-center q-gutter-x-md">
               <LikeButton :video-id="video.id" />
+              <ShareVideo
+                :video-id="video.id"
+                :title="video.title"
+              />
               <!-- <q-btn flat round icon="thumb_up" /> -->
               <!-- <q-btn flat round icon="thumb_down" /> -->
-              <q-btn flat round icon="share" />
+              <!-- <q-btn flat round icon="share" /> -->
               <!-- <q-btn flat round icon="playlist_add" /> -->
             </div>
           </div>
@@ -106,6 +110,7 @@ import CommentSection from 'components/CommentSection.vue';
 import { subscriptionService } from 'src/services/subscription'
 import SubscribeButton from 'components/SubscribeButton.vue';
 import UserAvatar from 'components/UserAvatar.vue';
+import ShareVideo from 'components/ShareVideo.vue'
 
 const route = useRoute()
 const video = ref<Video | null>(null)
