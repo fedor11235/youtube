@@ -22,59 +22,67 @@
       </q-input>
 
       <div class="search-results q-mt-lg">
+        <div class="search-results q-mt-lg">
         <div v-if="loading" class="text-center">
           <q-spinner-dots color="primary" size="40px" />
         </div>
 
-        <div v-else-if="searchResults.length > 0" class="row q-col-gutter-md">
-          <div v-for="user in searchResults" :key="user.id" class="col-12 col-sm-6 col-md-4">
-            <q-card class="user-card" v-ripple>
-              <q-item clickable :to="`/channel/${user.url}`">
-                <q-item-section avatar>
-                  <UserAvatar
-                    :avatar="user.avatar"
-                    :username="user.firstName"
-                    :url="user.url"
-                    size="56px"
-                  />
-                </q-item-section>
+        <div v-else-if="searchResults.length > 0">
+          <q-card v-for="user in searchResults" :key="user.id" class="user-card q-mb-md">
+            <!-- Баннер пользователя -->
+            <div class="user-banner">
+              <img 
+                :src="user.banner || 'https://picsum.photos/1200/300'" 
+                class="banner-image"
+                alt="User banner"
+              >
+            </div>
 
-                <q-item-section>
-                  <q-item-label class="text-weight-bold">
-                    {{ user.firstName }} {{ user.lastName }}
-                  </q-item-label>
-                  <q-item-label caption>
-                    {{ user.email }}
-                  </q-item-label>
-                  <div class="row items-center q-gutter-x-sm q-mt-sm">
-                    <q-chip
-                      dense
-                      size="sm"
-                      icon="people"
-                    >
-                      {{ user.subscribersCount }} подписчиков
-                    </q-chip>
-                    <q-chip
-                      dense
-                      size="sm"
-                      icon="video_library"
-                    >
-                      {{ user.videosCount }} видео
-                    </q-chip>
+            <q-card-section class="user-info-section">
+              <div class="row items-center q-col-gutter-md">
+                <!-- Аватар и основная информация -->
+                <div class="col-12 col-sm-8">
+                  <div class="row items-center">
+                    <div class="col-auto avatar-container">
+                      <UserAvatar
+                        :avatar="user.avatar"
+                        :username="user.firstName"
+                        :user-id="user.id"
+                        :url="user.url"
+                        size="80px"
+                        clickable
+                      />
+                    </div>
+                    <div class="col q-ml-md q-mt-lg">
+                      <div class="text-h6">{{ user.firstName }} {{ user.lastName }}</div>
+                      <div class="text-subtitle2 text-grey-7">{{ user.email }}</div>
+                      <div class="row items-center q-gutter-x-md q-mt-sm">
+                        <div class="text-caption">
+                          <q-icon name="people" size="16px" class="q-mr-xs" />
+                          {{ user.subscribersCount }} подписчиков
+                        </div>
+                        <div class="text-caption">
+                          <q-icon name="video_library" size="16px" class="q-mr-xs" />
+                          {{ user.videosCount }} видео
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </q-item-section>
-              </q-item>
+                </div>
 
-              <q-card-actions align="right">
-                <SubscribeButton
-                  v-if="authStore.user?.id !== user.id"
-                  :channel-url="user.url"
-                  :subscribers-count="user.subscribersCount"
-                />
-              </q-card-actions>
-            </q-card>
-          </div>
+                <!-- Кнопка подписки -->
+                <div class="col-12 col-sm-4 text-right">
+                  <SubscribeButton
+                    v-if="authStore.user?.id !== user.id"
+                    :channel-url="user.url"
+                    :subscribers-count="user.subscribersCount"
+                  />
+                </div>
+              </div>
+            </q-card-section>
+          </q-card>
         </div>
+
 
         <div v-else-if="searchQuery && !loading" class="text-center q-pa-xl">
           <q-icon name="search_off" size="64px" color="grey-5" />
@@ -91,6 +99,7 @@
             Введите имя пользователя или email для поиска
           </div>
         </div>
+      </div>
       </div>
     </div>
   </q-page>
@@ -156,5 +165,35 @@ const clearSearch = () => {
 .user-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.user-banner {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  overflow: hidden;
+  border-radius: 12px 12px 0 0;
+}
+
+.banner-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.user-info-section {
+  position: relative;
+  margin-top: -40px;
+}
+
+.avatar-container {
+  background: white;
+  border-radius: 50%;
+  padding: 4px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+.user-card {
+  overflow: hidden;
 }
 </style>
