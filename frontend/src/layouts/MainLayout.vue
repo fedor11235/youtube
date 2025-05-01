@@ -125,12 +125,19 @@
           <q-item-section>{{ 'feedback' }}</q-item-section>
         </q-item>
 
-        <q-item clickable v-ripple to="/plans">
+        <q-item clickable v-ripple to="/roadmap">
+          <q-item-section avatar>
+            <q-icon name="timeline" />
+          </q-item-section>
+          <q-item-section>План развития</q-item-section>
+        </q-item>
+
+        <!-- <q-item clickable v-ripple to="/plans">
           <q-item-section avatar>
             <q-icon name="workspace_premium" />
           </q-item-section>
           <q-item-section>Планы подписки</q-item-section>
-        </q-item>
+        </q-item> -->
 
         <template v-if="authStore.isAuthenticated">
           <q-separator />
