@@ -107,19 +107,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import LibraryVideoCard from '../components/LibraryVideoCard.vue'
 import type { Video } from '../types'
+import { favoritesService } from 'src/services/favorites';
+import { useQuasar } from 'quasar';
 
 interface LibraryVideo extends Video {
   watchedAt?: Date;
   addedAt?: Date;
 }
 
+const $q = useQuasar();
 const tab = ref('history')
 const historyVideos = ref<LibraryVideo[]>([])
 const likedVideos = ref<LibraryVideo[]>([])
 const favoriteVideos = ref<LibraryVideo[]>([])
+const loadingFavorites = ref(true);
 
 const historyCount = computed(() => historyVideos.value.length)
 const likedCount = computed(() => likedVideos.value.length)
@@ -136,4 +140,22 @@ const removeFromLiked = (videoId: number) => {
 const removeFromFavorites = (videoId: number) => {
   favoriteVideos.value = favoriteVideos.value.filter(v => v.id !== videoId)
 }
+
+const loadFavorites = async () => {
+  try {
+    loadingFavorites.value = true;
+    favoriteVideos.value = await favoritesService.getFavorites();
+  } catch {
+    $q.notify({
+      type: 'negative',
+      message: 'Ошибка при загрузке избранных видео'
+    });
+  } finally {
+    loadingFavorites.value = false;
+  }
+};
+
+onMounted(async () => {
+  await loadFavorites();
+});
 </script>

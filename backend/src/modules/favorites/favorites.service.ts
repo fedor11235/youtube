@@ -52,7 +52,7 @@ export class FavoritesService {
 
   async getFavoriteVideos(userId: number) {
     return this.db
-      .select({
+      .select(favorites, {
         id: videos.id,
         title: videos.title,
         description: videos.description,
@@ -65,7 +65,6 @@ export class FavoritesService {
           avatar: users.avatar
         }
       })
-      .from(favorites)
       .innerJoin(videos, eq(favorites.videoId, videos.id))
       .innerJoin(users, eq(videos.userId, users.id))
       .where(eq(favorites.userId, userId))

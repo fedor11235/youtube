@@ -15,6 +15,12 @@ export class FavoritesController {
     return this.favoritesService.addToFavorites(req.user.id, videoId);
   }
 
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async getFavorites(@Request() req) {
+    return this.favoritesService.getFavoriteVideos(parseInt(req.user.id));
+  }
+
   @Delete(':videoId')
   @UseGuards(JwtAuthGuard)
   async removeFromFavorites(
@@ -22,12 +28,6 @@ export class FavoritesController {
     @Request() req
   ) {
     return this.favoritesService.removeFromFavorites(req.user.id, videoId);
-  }
-
-  @Get()
-  @UseGuards(JwtAuthGuard)
-  async getFavorites(@Request() req) {
-    return this.favoritesService.getFavoriteVideos(req.user.id);
   }
 
   @Get(':videoId/check')
