@@ -69,7 +69,10 @@
         </div>
 
         <!-- Comments section -->
-        <CommentSection :video-id="video.id" />
+        <CommentSection
+          :video-id="video.id"
+          :video-author-id="video.user.id"
+        />
       </div>
 
       <!-- Related videos -->

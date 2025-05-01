@@ -23,20 +23,21 @@ import { commentLikesService } from 'src/services/comment-likes';
 
 const props = defineProps<{
   commentId: number
-  initialLikesCount: number
+  isAuthorLike?: boolean;
 }>()
 
 const $q = useQuasar()
 const authStore = useAuthStore()
 const isLiked = ref(false)
-const likesCount = ref(props.initialLikesCount)
+const likesCount = ref(0)
 const loading = ref(false)
 
-const checkIfLiked = async () => {
+const loadLikeStatus = async () => {
   if (!authStore.isAuthenticated) return;
   
   try {
     isLiked.value = await commentLikesService.hasUserLiked(props.commentId);
+    likesCount.value = await commentLikesService.getLikesCount(props.commentId);
   } catch (error) {
     console.error('Ошибка при проверке лайка:', error);
   }
@@ -72,7 +73,7 @@ const toggleLike = async () => {
 };
 
 onMounted(async () => {
-  await checkIfLiked();
+  await loadLikeStatus();
 });
 </script>
 

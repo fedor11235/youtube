@@ -6,6 +6,7 @@ export interface Comment {
   createdAt: string;
   updatedAt: string;
   likesCount: number;
+  authorLiked: boolean;
   user: {
     id: number;
     username: string;

@@ -22,10 +22,29 @@
           </span>
         </q-item-label>
 
+        
+
+        <div class="row justify-between items-center">
+        <div class="row items-center">
+          <q-item-label class="text-weight-bold">
+            {{ comment.user.username }}
+            <q-badge
+              v-if="isAuthor"
+              color="primary"
+              class="q-ml-sm author-badge"
+              align="middle"
+            >
+              Автор
+            </q-badge>
+          </q-item-label>
+        </div>
+
         <LikeComment
           :comment-id="comment.id"
           :initial-likes-count="comment.likesCount"
+          :is-author-like="isAuthorLike"
         />
+      </div>
       </div>
 
       <q-item-label v-if="!isEditing">
@@ -104,6 +123,7 @@ import LikeComment from './LikeComment.vue';
 
 const props = defineProps<{
   comment: Comment;
+  videoAuthorId: number;
 }>();
 
 const emit = defineEmits<{
@@ -114,6 +134,15 @@ const emit = defineEmits<{
 const authStore = useAuthStore();
 const isEditing = ref(false);
 const editContent = ref(props.comment.content);
+
+
+const isAuthor = computed(() => {
+  return props.comment.user.id === props.videoAuthorId;
+});
+
+const isAuthorLike = computed(() => {
+  return props.comment.authorLiked;
+});
 
 const isOwner = computed(() => {
   return authStore.user?.id === props.comment.user.id;
@@ -175,5 +204,23 @@ const saveEdit = () => {
 
 .custom-textarea :deep(.q-field__bottom) {
   padding: 4px 12px;
+}
+
+.like-comment {
+  display: inline-flex;
+  align-items: center;
+}
+
+.likes-info {
+  display: flex;
+  align-items: center;
+}
+
+.like-button {
+  transition: transform 0.2s ease;
+}
+
+.like-button:hover {
+  transform: scale(1.1);
 }
 </style>

@@ -39,6 +39,7 @@
           v-for="comment in comments"
           :key="comment.id"
           :comment="comment"
+          :video-author-id="videoAuthorId"
           @update="updateComment"
           @delete="confirmDelete"
         />
@@ -69,6 +70,7 @@ import VideoComment from './VideoComment.vue'
 
 const props = defineProps<{
   videoId: number;
+  videoAuthorId: number;
 }>();
 
 const $q = useQuasar();
