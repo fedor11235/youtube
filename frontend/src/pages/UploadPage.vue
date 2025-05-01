@@ -157,7 +157,6 @@ const handleVideoSelect = (file: File) => {
   
   selectedVideo.value = true
   videoFile.value = file
-  console.log("videoPreview.value: ", videoPreview.value)
 
   if (videoPreview.value) {
     videoPreview.value.src = URL.createObjectURL(file)

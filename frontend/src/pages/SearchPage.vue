@@ -1,14 +1,13 @@
 <template>
   <q-page class="search-page q-pa-md">
     <div class="search-container">
-      <h1 class="text-h4 text-center q-mb-lg">Поиск пользователей</h1>
-      
+      <h1 class="text-h4 text-center q-mb-lg">Поиск пользователей {{ searchQuery }}</h1>
       <q-input
         v-model="searchQuery"
         outlined
         class="search-input"
         placeholder="Введите имя пользователя или email"
-        @update:model-value="() => handleSearch"
+        @update:model-value="(event: any) => handleSearch(event)"
       >
         <template v-slot:prepend>
           <q-icon name="search" />

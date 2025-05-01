@@ -114,7 +114,6 @@ const loadChannelVideos = async (channelId: number) => {
     // Получаем видео канала
     const response = await videoService.getChannelVideos(channelId);
     channelVideos.value = response.videosChannel;
-    console.log("response.videosChannel: ", response.videosChannel)
   } catch (error) {
     console.error('Ошибка при загрузке видео:', error);
     channelVideos.value = [];
