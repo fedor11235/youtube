@@ -35,6 +35,8 @@
                   <div class="row items-center">
                     <UserAvatar
                       :avatar="video.user.avatar"
+                      :url="video.user.url"
+                      :username="video.user.username"
                       size="40px"
                       class="q-mr-md"
                     />
@@ -55,6 +57,7 @@
             </div>
 
           <q-expansion-item
+            class="description"
             expand-separator
             label="Description"
             :caption="video?.description"
@@ -129,3 +132,22 @@ onMounted(async () => {
     }
 });
 </script>
+
+<style lang="scss" scoped>
+.description {
+  background: rgba(0, 0, 0, 0.02);
+  margin-top: 16px;
+}
+
+.q-expansion-item {
+  border-radius: 12px;
+}
+
+.q-expansion-item :deep(.q-expansion-item__container) {
+  border-radius: 12px;
+}
+
+.q-expansion-item :deep(.q-item) {
+  border-radius: 12px;
+}
+</style>

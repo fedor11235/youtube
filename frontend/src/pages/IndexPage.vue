@@ -18,13 +18,13 @@
           
           <q-card-section>
             <div class="row no-wrap">
-              <q-avatar
+              <UserAvatar
+                :avatar="video.channel.avatar"
+                :url="video.channel.url"
+                :username="video.channel.firstName || 'Test'"
                 size="40px"
-                class="q-mr-sm cursor-pointer"
-                @click="$router.push(`/user/${video.channel.url}`)"
-              >
-                <img :src="getAvatar(video.channel.avatar)">
-              </q-avatar>
+                class="q-mr-sm"
+              />
               
               <div>
                 <div class="text-weight-bold ellipsis-2-lines">{{ video.title }}</div>
@@ -53,8 +53,9 @@
 import { ref, onMounted } from 'vue'
 // import { useVideo } from 'src/composable/useVideo'
 import videoService from 'src/services/video'
-import { getAvatar, getThumbnail } from '../utils/avatar'
+import { getThumbnail } from '../utils/avatar'
 import type { Video } from '../types'
+import UserAvatar from 'components/UserAvatar.vue';
 
 const videos = ref<Video[]>([])
 const loading = ref(false)

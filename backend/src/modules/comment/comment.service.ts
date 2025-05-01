@@ -32,7 +32,8 @@ export class CommentService {
         user: {
           id: users.id,
           firstName: users.firstName,
-          avatar: users.avatar
+          avatar: users.avatar,
+          url: users.url
         }
       })
       .innerJoin(users, eq(users.id, comments.userId))

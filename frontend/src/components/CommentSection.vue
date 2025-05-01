@@ -38,9 +38,16 @@
       <q-list>
         <q-item v-for="comment in comments" :key="comment.id" class="comment-item q-mb-md" v-ripple>
           <q-item-section avatar>
-            <q-avatar>
+            <!-- <q-avatar>
               <img :src="getAvatar(comment.user.avatar)" />
-            </q-avatar>
+            </q-avatar> -->
+            <UserAvatar
+                :avatar="comment.user.avatar"
+                :url="comment.user.url"
+                :username="comment.user.username"
+                size="40px"
+                class="q-mr-md"
+              />
           </q-item-section>
 
           <q-item-section>
@@ -143,7 +150,7 @@ import { useQuasar } from 'quasar';
 // import { useUserStore } from 'src/stores/user';
 import { useAuthStore } from 'src/stores/auth';
 import { commentService, type Comment } from 'src/services/comment';
-import { getAvatar } from '../utils/avatar'
+import UserAvatar from 'components/UserAvatar.vue';
 
 const props = defineProps<{
   videoId: number;
