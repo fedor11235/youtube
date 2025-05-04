@@ -13,7 +13,8 @@ export interface Video {
   thumbnailUrl: string;
   views: number;
   likes: number;
-  createdAt: Date;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  createdAt: any;
   userId: number;
   channel: Channel;
   duration: number;

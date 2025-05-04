@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { videoViews } from '../../database/schema';
+import { videoHistory, videoViews } from '../../database/schema';
 import { and, eq, sql } from 'drizzle-orm';
 
 @Injectable()
@@ -21,6 +21,14 @@ export class VideoViewsService {
           )
         )
         .execute();
+
+        this.db.insert(videoHistory)
+          .values({
+            userId,
+            videoId,
+            watchedAt: new Date()
+          })
+          .execute();
 
       if (recentView.length === 0) {
         await this.db
