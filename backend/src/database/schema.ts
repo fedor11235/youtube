@@ -79,6 +79,13 @@ export const commentLikes = pgTable('comment_likes', {
   };
 });
 
+export const videoViews = pgTable('video_views', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').references(() => users.id),
+  videoId: integer('video_id').references(() => videos.id),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
 export type VideoLike = typeof videoLikes.$inferSelect;

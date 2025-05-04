@@ -8,6 +8,8 @@
           class="full-width"
           style="max-height: 70vh"
           :src="getVideo(video?.videoUrl)"
+          @play="handlePlay"
+          @timeupdate="handleTimeUpdate"
         ></video>
 
         <div class="q-mt-md">
@@ -125,6 +127,8 @@ const route = useRoute()
 const video = ref<Video | null>(null)
 const relatedVideos = ref<Video[]>([])
 const subscribersCount = ref(0);
+const videoRef = ref<HTMLVideoElement | null>(null);
+const viewAdded = ref(false);
 
 const formatDate = (date: Date | undefined): string => {
   if (!date) return ''
@@ -132,6 +136,33 @@ const formatDate = (date: Date | undefined): string => {
   // return Date.now()
   return date.toString()
 }
+
+
+const handlePlay = async () => {
+  if (!viewAdded.value) {
+    await addView();
+  }
+};
+
+const handleTimeUpdate = async () => {
+  const video = videoRef.value;
+  if (!video || viewAdded.value) return;
+
+  // Добавляем просмотр после 5 секунд воспроизведения
+  if (video.currentTime >= 5) {
+    await addView();
+  }
+};
+
+const addView = async () => {
+  const videoId = parseInt(route.params.id as string)
+  try {
+    await videoService.addView(videoId);
+    viewAdded.value = true;
+  } catch (error) {
+    console.error('Ошибка при добавлении просмотра:', error);
+  }
+};
 
 onMounted(async () => {
   const videoId = parseInt(route.params.id as string)

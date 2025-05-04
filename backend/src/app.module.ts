@@ -11,6 +11,7 @@ import { SubscriptionModule } from './modules/subscription/subscription.module';
 import { CommentModule } from './modules/comment/comment.module';
 import { CommentLikesModule } from './modules/comment-likes/comment-likes.module';
 import { FavoritesModule } from './modules/favorites/favorites.module';
+import { VideoViewsModule } from './modules/video-views/video-views.module';
 
 @Module({
   imports: [
@@ -27,7 +28,8 @@ import { FavoritesModule } from './modules/favorites/favorites.module';
     VideoLikesModule,
     CommentModule,
     CommentLikesModule,
-    FavoritesModule
+    FavoritesModule,
+    VideoViewsModule
   ],
 })
 export class AppModule {}

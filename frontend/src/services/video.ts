@@ -138,6 +138,16 @@ const videoService = {
   async getLikedVideos() {
     const response = await api.get('/videos/liked');
     return response.data;
+  },
+
+  async addView(videoId: number) {
+    const response = await api.post(`/video-views/${videoId}`);
+    return response.data;
+  },
+
+  async getViewsCount(videoId: number) {
+    const response = await api.get(`/video-views/${videoId}/count`);
+    return response.data.count;
   }
 }
 

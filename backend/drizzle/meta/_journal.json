@@ -71,6 +71,13 @@
       "when": 1746131490659,
       "tag": "0009_boring_madelyne_pryor",
       "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1746345327263,
+      "tag": "0010_dear_mastermind",
+      "breakpoints": true
     }
   ]
 }
