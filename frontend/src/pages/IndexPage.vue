@@ -56,6 +56,7 @@ import videoService from 'src/services/video'
 import { getThumbnail } from '../utils/avatar'
 import type { Video } from '../types'
 import UserAvatar from 'components/UserAvatar.vue';
+import { formatDate } from '../utils/date'
 
 const videos = ref<Video[]>([])
 const loading = ref(false)
@@ -73,10 +74,6 @@ const loadVideos = async () => {
   } finally {
     loading.value = false
   }
-}
-
-const formatDate = (date: Date): string => {
-  return new Date(date).toLocaleDateString('ru-RU')
 }
 
 const formatDuration = (seconds: number): string => {

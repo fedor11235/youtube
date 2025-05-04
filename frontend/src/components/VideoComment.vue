@@ -120,6 +120,7 @@ import { useAuthStore } from 'src/stores/auth';
 import type { Comment } from 'src/services/comment';
 import UserAvatar from './UserAvatar.vue';
 import LikeComment from './LikeComment.vue';
+import { formatDate } from '../utils/date'
 
 const props = defineProps<{
   comment: Comment;
@@ -147,10 +148,6 @@ const isAuthorLike = computed(() => {
 const isOwner = computed(() => {
   return authStore.user?.id === props.comment.user.id;
 });
-
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString('ru-RU');
-};
 
 const startEdit = () => {
   editContent.value = props.comment.content;

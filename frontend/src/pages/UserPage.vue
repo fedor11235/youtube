@@ -89,7 +89,7 @@ import { getAvatar } from '../utils/avatar'
 import { ref, onMounted, computed } from 'vue'
 import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { date } from 'quasar'
+import { formatDate } from '../utils/date'
 import { useAuthStore } from '../stores/auth'
 import { useUserStore } from '../stores/user'
 import { subscriptionService } from 'src/services/subscription'
@@ -123,11 +123,6 @@ const videoUrl = computed(() => route.params.id)
 const isOwnProfile = computed(() => {
   return user.value?.id === authStore.user?.id;
 });
-
-const formatDate = (dateString: string) => {
-  if (!dateString) return ''
-  return date.formatDate(dateString, 'DD.MM.YYYY')
-}
 
 onMounted(async () => {
   const userId = route.params.id

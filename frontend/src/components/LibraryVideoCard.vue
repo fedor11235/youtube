@@ -79,6 +79,7 @@
 <script setup lang="ts">
 import { defineEmits } from 'vue'
 import { getAvatar, getThumbnail } from '../utils/avatar'
+import { formatDate } from '../utils/date'
 import type { LibraryVideo } from '../types'
 
 defineProps<{
@@ -88,11 +89,6 @@ defineProps<{
 defineEmits<{
   (e: 'remove'): void
 }>()
-
-const formatDate = (date: Date): string => {
-  // return date.fromNow()
-  return date.toString()
-}
 
 const formatDuration = (seconds: number): string => {
   const hours = Math.floor(seconds / 3600)

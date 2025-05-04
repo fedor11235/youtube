@@ -90,8 +90,8 @@ import { useQuasar } from 'quasar';
 import videoService from 'src/services/video';
 
 interface LibraryVideo extends Video {
-  watchedAt?: Date;
-  addedAt?: Date;
+  watchedAt?: string;
+  addedAt?: string;
 }
 
 const $q = useQuasar();

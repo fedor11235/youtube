@@ -33,7 +33,7 @@ export interface Video {
   videoUrl?: string;
   duration: number;
   views: number;
-  createdAt: Date;
+  createdAt: string;
   channel: Channel;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   user: any;
@@ -49,6 +49,6 @@ export interface Comment {
 }
 
 export interface LibraryVideo extends Video {
-  watchedAt?: Date;
-  addedAt?: Date;
+  watchedAt?: string;
+  addedAt?: string;
 }

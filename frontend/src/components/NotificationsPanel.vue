@@ -97,6 +97,7 @@ import { useRouter } from 'vue-router'
 import { getAvatar } from '../utils/avatar'
 // import { date } from 'quasar'
 import { useI18n } from 'vue-i18n'
+import { formatDate } from '../utils/date'
 
 const { t } = useI18n()
 
@@ -106,7 +107,7 @@ interface Notification {
   message: string;
   avatar: string;
   read: boolean;
-  createdAt: Date;
+  createdAt: string;
   link?: string;
   type: 'video' | 'subscription' | 'comment' | 'system';
 }
@@ -132,7 +133,7 @@ const notifications = ref<Notification[]>([
     message: 'Channel Name uploaded a new video',
     avatar: '',
     read: false,
-    createdAt: new Date(),
+    createdAt: String(new Date()),
     link: '/watch/1',
     type: 'video'
   },
@@ -142,15 +143,10 @@ const notifications = ref<Notification[]>([
     message: 'User started following you',
     avatar: '',
     read: true,
-    createdAt: new Date(Date.now() - 86400000),
+    createdAt: String(new Date(Date.now() - 86400000)),
     type: 'subscription'
   }
 ])
-
-const formatDate = (date: Date): string => {
-  // return date.fromNow()
-  return date.toString()
-}
 
 const handleNotificationClick = async (notification: Notification) => {
   if (!notification.read) {

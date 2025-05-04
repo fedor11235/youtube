@@ -29,18 +29,12 @@
 
 <script setup lang="ts">
 import { getThumbnail } from '../utils/avatar'
+import { formatDate } from '../utils/date'
 
 defineProps<{
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   relatedVideos: any;
 }>();
-
-const formatDate = (date: Date | undefined): string => {
-  if (!date) return ''
-  // return date.fromNow()
-  // return Date.now()
-  return date.toString()
-}
 </script>
 
 <style lang="scss" scoped>

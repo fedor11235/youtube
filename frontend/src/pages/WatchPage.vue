@@ -11,7 +11,7 @@
           
           <div class="row items-center justify-between q-mt-sm">
             <div class="text-grey">
-              {{ video?.views }} views • {{ formatDate(video?.createdAt) }}
+              {{ video?.views }} views • {{ formatDate(video.createdAt) }}
             </div>
             
             <div class="row items-center q-gutter-x-md">
@@ -93,18 +93,12 @@ import ShareVideo from 'components/ShareVideo.vue'
 import FavoriteButton from 'components/FavoriteButton.vue';
 import VideoPlayer from 'components/VideoPlayer.vue';
 import RelatedVideos from 'components/RelatedVideos.vue';
+import { formatDate } from '../utils/date'
 
 const route = useRoute()
 const video = ref<Video | null>(null)
 const relatedVideos = ref<Video[]>([])
 const subscribersCount = ref(0);
-
-const formatDate = (date: Date | undefined): string => {
-  if (!date) return ''
-  // return date.fromNow()
-  // return Date.now()
-  return date.toString()
-}
 
 onMounted(async () => {
   const videoId = parseInt(route.params.id as string)

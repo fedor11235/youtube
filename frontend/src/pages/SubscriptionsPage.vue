@@ -97,6 +97,7 @@ import type { Video } from '../types'
 import videoService from 'src/services/video';
 import { getAvatar, getThumbnail } from '../utils/avatar'
 import { subscriptionService } from 'src/services/subscription';
+import { formatDate } from '../utils/date'
 
 interface Channel {
   id: number;
@@ -124,11 +125,6 @@ const selectChannel = async (channelId: number) => {
   selectedChannelId.value = channelId;
   await loadChannelVideos(channelId);
 };
-
-const formatDate = (date: Date): string => {
-  // return date.fromNow()
-  return date.toString()
-}
 
 const formatDuration = (seconds: number): string => {
   const hours = Math.floor(seconds / 3600)

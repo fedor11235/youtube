@@ -46,17 +46,13 @@
 import { useRouter } from 'vue-router';
 import { getThumbnail, getAvatar } from '../utils/avatar'
 import type { Video } from 'src/types/video';
+import { formatDate } from '../utils/date'
 
 defineProps<{
   video: Video;
 }>();
 
 const router = useRouter();
-
-const formatDate = (date: string) => {
-  return new Date(date).toLocaleDateString('ru-RU');
-};
-
 
 const formatDuration = (seconds: number): string => {
   const hours = Math.floor(seconds / 3600)

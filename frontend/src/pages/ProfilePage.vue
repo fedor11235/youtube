@@ -264,13 +264,6 @@ const profileForm = ref<ProfileForm>({
   url: ''
 })
 
-
-// const formatDate = (date: Date | undefined): string => {
-//   if (!date) return ''
-//   // return date.fromNow()
-//   return date.toString()
-// }
-
 const updateProfile = async () => {
   try {
     const updatedProfile = await profileService.updateProfile(profileForm.value)
