@@ -85,6 +85,13 @@
       "when": 1746395146201,
       "tag": "0011_easy_forgotten_one",
       "breakpoints": true
+    },
+    {
+      "idx": 12,
+      "version": "7",
+      "when": 1746397132361,
+      "tag": "0012_smart_captain_cross",
+      "breakpoints": true
     }
   ]
 }

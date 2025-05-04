@@ -37,3 +37,10 @@ export async function extractThumbnail(videoPath: string): Promise<string> {
       });
   });
 }
+
+export async function extractDuration(videoPath: string): Promise<number> {
+  const { stdout } = await execAsync(
+    `ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${videoPath}"`
+  );
+  return Math.floor(parseFloat(stdout))
+}

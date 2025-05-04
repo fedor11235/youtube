@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { DrizzleService } from '../drizzle/drizzle.service';
 import { users, videoLikes, videos, videoViews } from '../../database/schema';
 import { and, desc, eq, gte, ne, sql } from 'drizzle-orm';
-import { extractThumbnail } from './video.utils';
+import { extractDuration, extractThumbnail } from './video.utils';
 import { subDays } from 'date-fns';
 
 @Injectable()
@@ -11,6 +11,7 @@ export class VideoService {
 
   async createVideo(file: Express.Multer.File, createVideoDto: any, userId: number) {
     const thumbnailUrl = await extractThumbnail(file.path);
+    const duration = await extractDuration(file.path);
 
     const [video] = await this.db.insert(videos).values({
       title: createVideoDto.title,
@@ -18,6 +19,7 @@ export class VideoService {
       videoUrl: file.filename,
       thumbnailUrl,
       userId: userId,
+      duration
     }).returning();
   
     return video;
@@ -34,6 +36,7 @@ export class VideoService {
         thumbnailUrl: videos.thumbnailUrl,
         views: videos.views,
         createdAt: videos.createdAt,
+        duration: videos.duration,
         user: {
           id: users.id,
           firstName: users.firstName,
@@ -66,6 +69,7 @@ export class VideoService {
         thumbnailUrl: videos.thumbnailUrl,
         views: videos.views,
         createdAt: videos.createdAt,
+        duration: videos.duration,
         user: {
           id: users.id,
           firstName: users.firstName,
@@ -116,6 +120,7 @@ export class VideoService {
         views: videos.views,
         createdAt: videos.createdAt,
         userId: videos.userId,
+        duration: videos.duration,
         user: {
           id: users.id,
           firstName: users.firstName,
@@ -142,6 +147,7 @@ export class VideoService {
         thumbnailUrl: videos.thumbnailUrl,
         createdAt: videos.createdAt,
         viewsCount: videos.views,
+        duration: videos.duration,
         user: {
           id: users.id,
           username: users.firstName,
@@ -166,6 +172,7 @@ export class VideoService {
         thumbnailUrl: videos.thumbnailUrl,
         createdAt: videos.createdAt,
         views: sql`COUNT(${videoViews.id})`,
+        duration: videos.duration,
         user: {
           id: users.id,
           firstName: users.firstName,
@@ -194,6 +201,7 @@ export class VideoService {
         thumbnailUrl: videos.thumbnailUrl,
         views: videos.views,
         createdAt: videos.createdAt,
+        duration: videos.duration,
         user: {
           id: users.id,
           firstName: users.firstName,

@@ -5,21 +5,8 @@
         <q-btn flat dense round icon="menu" @click="toggleLeftDrawer" />
         
         <q-toolbar-title class="row items-center">
-          <q-img src="/logo.png" width="120px" />
+          <q-img src="../assets/logo.png" width="120px" />
         </q-toolbar-title>
-
-        <q-input
-          outlined
-          dense
-          v-model="search"
-          :placeholder="t('common.search')"
-          class="q-mx-md"
-          style="width: 400px"
-        >
-          <template v-slot:append>
-            <q-icon name="search" />
-          </template>
-        </q-input>
 
         <q-space />
 
@@ -193,7 +180,6 @@ const hasUnreadNotifications = computed(() => unreadCount.value > 0)
 const unreadCount = ref(1) // Replace with actual unread count from your state management
 
 const leftDrawerOpen = ref<boolean>(false)
-const search = ref<string>('')
 
 const toggleLeftDrawer = (): void => {
   leftDrawerOpen.value = !leftDrawerOpen.value
