@@ -201,4 +201,32 @@ export class AuthService {
     videos: userVideos
   };
   }
+
+  async updateBanner(userId: number,  file: Express.Multer.File) {
+    // Создаем директорию для аватаров, если её нет
+    const uploadDir = path.join(process.cwd(), 'uploads', 'banners');
+
+    await fs.mkdir(uploadDir, { recursive: true });
+
+    // Генерируем уникальное имя файла
+    const fileExt = path.extname(file.originalname);
+    const fileName = `banner-${userId}-${Date.now()}${fileExt}`;
+    const filePath = path.join(uploadDir, fileName);
+
+    // Сохраняем файл
+    await fs.writeFile(filePath, file.buffer);
+
+    // Обновляем запись в базе данных
+    const updatedUser = await this.db
+      .update(users)
+      .set({ banner: fileName })
+      .where(eq(users.id, userId))
+      .returning();
+
+    if (!updatedUser.length) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    return updatedUser[0];
+  }
 }

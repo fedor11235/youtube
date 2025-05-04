@@ -9,6 +9,7 @@ export const users = pgTable('users', {
   country: varchar('country', { length: 100 }),
   city: varchar('city', { length: 100 }),
   avatar: varchar('avatar', { length: 255 }),
+  banner: varchar('banner', { length: 255 }),
   createdAt: timestamp('created_at').defaultNow(),
   url: varchar('url', { length: 255 }).notNull().unique(),
 });

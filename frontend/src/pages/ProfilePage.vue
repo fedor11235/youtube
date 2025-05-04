@@ -3,7 +3,7 @@
     <div class="profile-header">
       <div class="cover-photo avatar-upload-container">
         <img 
-          :src="'https://pixelbox.ru/wp-content/uploads/2021/08/2021-08-07_135500.jpg'" 
+          :src="getBanner(profile?.banner)"
           alt="Cover photo"
           class="cover-image"
         />
@@ -11,11 +11,11 @@
           <q-icon name="add_a_photo" size="32px" />
           <div class="upload-text">Изменить фото</div>
           <q-file
-            v-model="newAvatar"
+            v-model="newBanner"
             class="absolute-full cursor-pointer"
             style="opacity: 0"
             accept=".jpg,.png,.jpeg"
-            @update:model-value="updateAvatar"
+            @update:model-value="updateBanner"
           />
         </div>
       </div>
@@ -206,7 +206,7 @@ import { ref, onMounted } from 'vue'
 import type { Profile } from '../types/profile'
 import profileService from '../services/profile'
 import { useQuasar } from 'quasar'
-import { getAvatar, getThumbnail } from '../utils/avatar'
+import { getAvatar, getBanner, getThumbnail } from '../utils/avatar'
 import videoService from 'src/services/video'
 
 interface ProfileForm {
@@ -233,6 +233,17 @@ const confirmDelete = (video: any) => {
   deleteDialog.value = true
 }
 
+const profileForm = ref<ProfileForm>({
+  firstName: '',
+  lastName: '',
+  email: '',
+  country: '',
+  city: '',
+  url: ''
+})
+
+const newBanner = ref<File | null>(null)
+
 const deleteVideo = async () => {
   try {
     if(videoToDelete.value) {      
@@ -255,14 +266,24 @@ const deleteVideo = async () => {
   }
 }
 
-const profileForm = ref<ProfileForm>({
-  firstName: '',
-  lastName: '',
-  email: '',
-  country: '',
-  city: '',
-  url: ''
-})
+const updateBanner = async () => {
+  if (!newBanner.value) return
+  try {
+    const updatedProfile = await profileService.updateBanner(newBanner.value)
+    profile.value = updatedProfile
+    $q.notify({
+      type: 'positive',
+      message: 'Баннер успешно обновлен'
+    })
+  } catch (err) {
+    console.error('Error updating banner:', err)
+    $q.notify({
+      type: 'negative',
+      message: 'Не удалось обновить баннер'
+    })
+  }
+}
+// .
 
 const updateProfile = async () => {
   try {

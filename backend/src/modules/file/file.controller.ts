@@ -34,6 +34,17 @@ export class FilesController {
     res.sendFile(filePath);
   }
 
+  @Get('banners/:filename')
+  async getBanner(@Param('filename') filename: string, @Res() res: Response) {
+    const filePath = path.join(process.cwd(), 'uploads', 'banners', filename);
+
+    if (!fs.existsSync(filePath)) {
+      throw new NotFoundException('Файл не найден');
+    }
+
+    res.sendFile(filePath);
+  }
+
   @Get('videos/:filename')
   async getVideo(@Param('filename') filename: string, @Res() res: Response) {
     const filePath = path.join(process.cwd(), 'uploads', 'videos', filename);

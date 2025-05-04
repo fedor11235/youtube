@@ -12,5 +12,6 @@ export interface Profile {
   totalViews: number;
   joinDate: Date;
   url: string;
+  banner: string;
   videos: Video[];
 }

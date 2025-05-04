@@ -5,6 +5,13 @@ export function getAvatar(fileName: string | undefined) {
   return 'https://cdn.quasar.dev/img/avatar.png'
 }
 
+export function getBanner(fileName: string | undefined) {
+  if(fileName) {
+    return 'http://localhost:3000/api/files/banners/' + fileName
+  }
+  return ''
+}
+
 export function getThumbnail(fileName: string | undefined) {
   if(fileName) {
     return 'http://localhost:3000/api/files/thumbnails/' + fileName

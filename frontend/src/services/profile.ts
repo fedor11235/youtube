@@ -49,6 +49,25 @@ const profileService = {
       }
       throw new ProfileError('Failed to update avatar')
     }
+  },
+
+  async updateBanner(file: File) {
+    try {
+      console.log("!@#")
+      const formData = new FormData()
+      formData.append('banner', file)
+      const response = await api.post('/auth/banner', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      return response.data
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new ProfileError(error.message)
+      }
+      throw new ProfileError('Failed to update banner')
+    }
   }
 }
 
