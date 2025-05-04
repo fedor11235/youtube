@@ -33,32 +33,31 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import VideoCard from '../components/VideoCard.vue'
+import videoService from 'src/services/video';
 
 // const tab = ref('now')
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const trendingVideos = ref<any[]>([])
+const loading = ref(false)
+const error = ref('')
 
-onMounted(() => {
-  // Replace with actual API call
-  trendingVideos.value = [
-    {
-      id: 1,
-      title: 'Most Popular Video of the Day',
-      description: 'This is a trending video that everyone is watching right now.',
-      thumbnailUrl: '',
-      duration: 845, // in seconds
-      views: 2,
-      createdAt: new Date(),
-      user: {
-        id: 1,
-        firstName: 'Popular Channel',
-        lastName: 'Popular Channel',
-        avatar: ''
-      }
-    },
-    // Add more sample videos
-  ]
-})
+const loadTrendingVideos = async () => {
+  loading.value = true;
+  error.value = '';
+
+  try {
+    trendingVideos.value = await videoService.getTrendingVideos();
+  } catch (err) {
+    console.error('Ошибка при загрузке трендовых видео:', err);
+    error.value = 'Не удалось загрузить трендовые видео';
+  } finally {
+    loading.value = false;
+  }
+};
+
+onMounted(async () => {
+  await loadTrendingVideos();
+});
 </script>
 
 <style scoped>

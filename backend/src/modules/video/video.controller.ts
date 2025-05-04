@@ -28,6 +28,11 @@ export class VideoController {
     return this.videoService.getAllVideos();
   }
 
+  @Get('trending')
+  async getTrendingVideos() {
+    return this.videoService.getTrendingVideos();
+  }
+
   @Get('channel/:channelId')
   async getChannelVideos(
     @Param('channelId', ParseIntPipe) channelId: number

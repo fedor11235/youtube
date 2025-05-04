@@ -1,8 +1,9 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { users, videoLikes, videos } from '../../database/schema';
-import { desc, eq } from 'drizzle-orm';
+import { users, videoLikes, videos, videoViews } from '../../database/schema';
+import { and, desc, eq, gte, sql } from 'drizzle-orm';
 import { extractThumbnail } from './video.utils';
+import { subDays } from 'date-fns';
 
 @Injectable()
 export class VideoService {
@@ -153,4 +154,34 @@ export class VideoService {
       .orderBy(desc(videoLikes.createdAt))
       .execute();
   }
+
+  async getTrendingVideos() {
+    const yesterday = subDays(new Date(), 1);
+    
+    return this.db
+      .select(videos, {
+        id: videos.id,
+        title: videos.title,
+        description: videos.description,
+        thumbnailUrl: videos.thumbnailUrl,
+        createdAt: videos.createdAt,
+        views: sql`COUNT(${videoViews.id})`,
+        user: {
+          id: users.id,
+          firstName: users.firstName,
+          lastName: users.lastName,
+          avatar: users.avatar,
+          url: users.url
+        }
+      })
+      .leftJoin(users, eq(videos.userId, users.id))
+      .leftJoin(videoViews, eq(videos.id, videoViews.videoId))
+      .where(
+          gte(videoViews.createdAt, yesterday)
+      )
+      .groupBy(videos.id, users.id)
+      .orderBy(desc(sql`COUNT(${videoViews.id})`))
+      .limit(10);
+  }
 }
+

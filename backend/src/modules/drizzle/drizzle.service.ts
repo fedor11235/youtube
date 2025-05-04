@@ -5,6 +5,7 @@ import * as schema from '../../database/schema';
 
 @Injectable()
 export class DrizzleService implements OnModuleInit, OnModuleDestroy {
+  [x: string]: any;
   private pool: Pool;
   private db: ReturnType<typeof drizzle<typeof schema>>;
 

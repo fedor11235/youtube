@@ -148,6 +148,13 @@ const videoService = {
   async getViewsCount(videoId: number) {
     const response = await api.get(`/video-views/${videoId}/count`);
     return response.data.count;
+  },
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async getTrendingVideos(): Promise<any[]> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data } = await api.get<any[]>('/videos/trending');
+    return data;
   }
 }
 
