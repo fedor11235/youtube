@@ -28,6 +28,11 @@ export class VideoController {
     return this.videoService.getAllVideos();
   }
 
+  @Get('related/:id')
+  async getRelatedVideos(@Param('id') id: string) {
+    return this.videoService.getRelatedVideos(parseInt(id));
+  }
+
   @Get('trending')
   async getTrendingVideos() {
     return this.videoService.getTrendingVideos();

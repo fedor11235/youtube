@@ -34,6 +34,18 @@ const videoService = {
     }
   },
 
+  async getRelatedVideos(id: number): Promise<Video[]> {
+    try {
+      const response = await api.get(`/videos/related/${id}`)
+      return response.data
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new VideoError(error.message)
+      }
+      throw new VideoError('Failed to fetch video')
+    }
+  },
+
   async getChannelVideos(channelId: number) {
     try {
       const response = await api.get(`/videos/channel/${channelId}`);

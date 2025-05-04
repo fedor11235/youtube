@@ -2,15 +2,9 @@
   <q-page padding>
     <div v-if="video" class="row q-col-gutter-lg">
       <div class="col-12 col-lg-8">
-        <video
-          controls
-          :poster="getThumbnail(video?.thumbnailUrl)"
-          class="full-width"
-          style="max-height: 70vh"
-          :src="getVideo(video?.videoUrl)"
-          @play="handlePlay"
-          @timeupdate="handleTimeUpdate"
-        ></video>
+        <VideoPlayer
+          :video="video"
+        />
 
         <div class="q-mt-md">
           <div class="text-h5">{{ video?.title }}</div>
@@ -84,8 +78,13 @@
 
       <!-- Related videos -->
       <div class="col-12 col-lg-4">
-        <div v-for="video in relatedVideos" :key="video.id" class="q-mb-md">
-          <q-item clickable @click="$router.push(`/watch/${video.id}`)">
+        <div
+          v-for="video in relatedVideos"
+          :key="video.id"
+          class="related-videos q-mb-md"
+          @click="$router.push(`/watch/${video.id}`)"
+        >
+          <q-item clickable>
             <q-item-section side>
               <q-img
                 :src="getThumbnail(video?.thumbnailUrl)"
@@ -113,7 +112,7 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 // import { date } from 'quasar'
 import type { Video } from '../types'
-import { getThumbnail, getVideo } from '../utils/avatar'
+import { getThumbnail } from '../utils/avatar'
 import videoService from 'src/services/video'
 import LikeButton from '../components/LikeButton.vue'
 import CommentSection from 'components/CommentSection.vue';
@@ -122,13 +121,12 @@ import SubscribeButton from 'components/SubscribeButton.vue';
 import UserAvatar from 'components/UserAvatar.vue';
 import ShareVideo from 'components/ShareVideo.vue'
 import FavoriteButton from 'components/FavoriteButton.vue';
+import VideoPlayer from 'components/VideoPlayer.vue';
 
 const route = useRoute()
 const video = ref<Video | null>(null)
 const relatedVideos = ref<Video[]>([])
 const subscribersCount = ref(0);
-const videoRef = ref<HTMLVideoElement | null>(null);
-const viewAdded = ref(false);
 
 const formatDate = (date: Date | undefined): string => {
   if (!date) return ''
@@ -137,38 +135,12 @@ const formatDate = (date: Date | undefined): string => {
   return date.toString()
 }
 
-
-const handlePlay = async () => {
-  if (!viewAdded.value) {
-    await addView();
-  }
-};
-
-const handleTimeUpdate = async () => {
-  const video = videoRef.value;
-  if (!video || viewAdded.value) return;
-
-  // Добавляем просмотр после 5 секунд воспроизведения
-  if (video.currentTime >= 5) {
-    await addView();
-  }
-};
-
-const addView = async () => {
-  const videoId = parseInt(route.params.id as string)
-  try {
-    await videoService.addView(videoId);
-    viewAdded.value = true;
-  } catch (error) {
-    console.error('Ошибка при добавлении просмотра:', error);
-  }
-};
-
 onMounted(async () => {
   const videoId = parseInt(route.params.id as string)
     try {
       // Проверяем статус подписки
-      video.value = await videoService.getVideo(videoId);      
+      video.value = await videoService.getVideo(videoId);
+      relatedVideos.value = await videoService.getRelatedVideos(videoId);
       // Получаем количество подписчиков
       const subscribers = await subscriptionService.getSubscribers(video.value.user.url);
       subscribersCount.value = subscribers.length;
@@ -194,5 +166,10 @@ onMounted(async () => {
 
 .q-expansion-item :deep(.q-item) {
   border-radius: 12px;
+}
+
+.related-videos {
+  background: rgba(0, 0, 0, 0.02);
+  margin-left: 4px;
 }
 </style>
