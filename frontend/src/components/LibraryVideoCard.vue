@@ -3,7 +3,7 @@
     <div class="row no-wrap">
       <div class="col-12 col-sm-4">
         <q-img
-          :src="video.thumbnailUrl"
+          :src="getThumbnail(video.thumbnailUrl)"
           :ratio="16/9"
           class="cursor-pointer"
           @click="$router.push(`/watch/${video.id}`)"
@@ -78,7 +78,7 @@
 
 <script setup lang="ts">
 import { defineEmits } from 'vue'
-import { getAvatar } from '../utils/avatar'
+import { getAvatar, getThumbnail } from '../utils/avatar'
 import type { LibraryVideo } from '../types'
 
 defineProps<{

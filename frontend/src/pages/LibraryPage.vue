@@ -95,7 +95,7 @@ interface LibraryVideo extends Video {
 }
 
 const $q = useQuasar();
-const tab = ref('history')
+const tab = ref('liked')
 const likedVideos = ref<LibraryVideo[]>([])
 const favoriteVideos = ref<LibraryVideo[]>([])
 const loadingFavorites = ref(true);

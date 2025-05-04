@@ -25,7 +25,7 @@ export class VideoHistoryService {
         video: {
           id: videos.id,
           title: videos.title,
-          thumbnail: videos.thumbnailUrl,
+          thumbnailUrl: videos.thumbnailUrl,
           views: videos.views,
           createdAt: videos.createdAt,
           user: {
