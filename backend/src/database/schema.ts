@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, timestamp, text, integer, uniqueIndex } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, timestamp, text, integer, uniqueIndex, boolean } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -85,6 +85,18 @@ export const videoViews = pgTable('video_views', {
   videoId: integer('video_id').references(() => videos.id),
   createdAt: timestamp('created_at').defaultNow(),
 });
+
+export const notifications = pgTable('notifications', {
+  id: serial('id').primaryKey(),
+  userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
+  title: varchar('title', { length: 255 }).notNull(),
+  message: text('message').notNull(),
+  type: varchar('type', { length: 50 }).notNull(), // 'video', 'subscription', 'comment', 'system'
+  read: boolean('read').default(false),
+  link: varchar('link', { length: 255 }),
+  createdAt: timestamp('created_at').defaultNow(),
+});
+
 
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;

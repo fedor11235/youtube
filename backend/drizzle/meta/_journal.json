@@ -78,6 +78,13 @@
       "when": 1746345327263,
       "tag": "0010_dear_mastermind",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "7",
+      "when": 1746395146201,
+      "tag": "0011_easy_forgotten_one",
+      "breakpoints": true
     }
   ]
 }

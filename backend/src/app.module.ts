@@ -12,6 +12,7 @@ import { CommentModule } from './modules/comment/comment.module';
 import { CommentLikesModule } from './modules/comment-likes/comment-likes.module';
 import { FavoritesModule } from './modules/favorites/favorites.module';
 import { VideoViewsModule } from './modules/video-views/video-views.module';
+import { NotificationModule } from './modules/notification/notification.module';
 
 @Module({
   imports: [
@@ -29,7 +30,8 @@ import { VideoViewsModule } from './modules/video-views/video-views.module';
     CommentModule,
     CommentLikesModule,
     FavoritesModule,
-    VideoViewsModule
+    VideoViewsModule,
+    NotificationModule
   ],
 })
 export class AppModule {}
