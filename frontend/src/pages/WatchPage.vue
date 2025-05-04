@@ -25,10 +25,6 @@
                 :video-id="video.id"
                 :title="video.title"
               />
-              <!-- <q-btn flat round icon="thumb_up" /> -->
-              <!-- <q-btn flat round icon="thumb_down" /> -->
-              <!-- <q-btn flat round icon="share" /> -->
-              <!-- <q-btn flat round icon="playlist_add" /> -->
             </div>
           </div>
 
@@ -69,40 +65,15 @@
           />
         </div>
 
-        <!-- Comments section -->
         <CommentSection
           :video-id="video.id"
           :video-author-id="video.user.id"
         />
       </div>
 
-      <!-- Related videos -->
-      <div class="col-12 col-lg-4">
-        <div
-          v-for="video in relatedVideos"
-          :key="video.id"
-          class="related-videos q-mb-md"
-          @click="$router.push(`/watch/${video.id}`)"
-        >
-          <q-item clickable>
-            <q-item-section side>
-              <q-img
-                :src="getThumbnail(video?.thumbnailUrl)"
-                :ratio="16/9"
-                style="width: 168px"
-              />
-            </q-item-section>
-            
-            <q-item-section>
-              <q-item-label lines="2">{{ video.title }}</q-item-label>
-              <q-item-label caption>{{ video.channel.name }}</q-item-label>
-              <q-item-label caption>
-                {{ video.views }} views • {{ formatDate(video.createdAt) }}
-              </q-item-label>
-            </q-item-section>
-          </q-item>
-        </div>
-      </div>
+      <RelatedVideos
+        :relatedVideos="relatedVideos"
+      />
     </div>
   </q-page>
 </template>
@@ -112,7 +83,6 @@ import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 // import { date } from 'quasar'
 import type { Video } from '../types'
-import { getThumbnail } from '../utils/avatar'
 import videoService from 'src/services/video'
 import LikeButton from '../components/LikeButton.vue'
 import CommentSection from 'components/CommentSection.vue';
@@ -122,6 +92,7 @@ import UserAvatar from 'components/UserAvatar.vue';
 import ShareVideo from 'components/ShareVideo.vue'
 import FavoriteButton from 'components/FavoriteButton.vue';
 import VideoPlayer from 'components/VideoPlayer.vue';
+import RelatedVideos from 'components/RelatedVideos.vue';
 
 const route = useRoute()
 const video = ref<Video | null>(null)
