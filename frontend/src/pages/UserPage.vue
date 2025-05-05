@@ -3,7 +3,7 @@
     <div class="profile-header">
       <div class="cover-photo">
         <img 
-          :src="'https://pixelbox.ru/wp-content/uploads/2021/08/2021-08-07_135500.jpg'" 
+          :src="getBanner(user?.banner)" 
           alt="Cover photo"
           class="cover-image"
         />
@@ -85,7 +85,7 @@
 </template>
 
 <script setup lang="ts">
-import { getAvatar } from '../utils/avatar'
+import { getAvatar, getBanner } from '../utils/avatar'
 import { ref, onMounted, computed } from 'vue'
 import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
@@ -109,6 +109,7 @@ interface User {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   subscribers: any
   url: string
+  banner: string
 }
 
 const route = useRoute()

@@ -171,6 +171,7 @@ export class AuthService {
         city: users.city,
         createdAt: users.createdAt,
         avatar: users.avatar,
+        banner: users.banner,
         url: users.url
       },
       videos: {
