@@ -1,5 +1,5 @@
 <template>
-  <div class="comment-wrapper q-mb-md">
+  <div class="comment-wrapper q-mb-md" :class="{ 'reply-comment': isReply }">
     <q-item class="comment-item">
       <q-item-section class="comment-item__avatar" style="justify-content: start;" avatar>
         <UserAvatar
@@ -40,15 +40,17 @@
               :is-author-like="isAuthorLike"
               :is-creator-like="comment.isCreatorLike"
             />
-            <q-btn
-              flat
-              dense
-              color="grey"
-              icon="reply"
-              @click="showReplyForm = !showReplyForm"
-            >
-              <q-tooltip>Ответить</q-tooltip>
-            </q-btn>
+            <div v-if="!isReply" class="reply-section q-mt-sm">
+              <q-btn
+                flat
+                dense
+                color="grey"
+                icon="reply"
+                @click="showReplyForm = !showReplyForm"
+              >
+                <q-tooltip>Ответить</q-tooltip>
+              </q-btn>
+            </div>
           </div>
         </div>
 
@@ -93,7 +95,7 @@
         </div>
 
         <!-- Форма ответа на комментарий -->
-        <div v-if="showReplyForm" class="reply-form q-mt-md">
+        <div v-if="showReplyForm && !isReply" class="reply-form q-mt-md">
           <q-input
             v-model="replyContent"
             type="textarea"
@@ -129,19 +131,11 @@
         </div>
 
         <div v-if="comment.replies && comment.replies.length" class="replies-list q-mt-md q-ml-lg">
-          <CommentItem
-            v-for="reply in comment.replies"
-            :key="reply.id"
-            :comment="reply"
-            :is-author="isAuthor"
-            :is-owner="isOwner"
-            class="reply-item"
-            @delete="$emit('delete-comment', reply)"
-          />
           <VideoComment
             v-for="reply in comment.replies"
             :key="reply.id"
             :comment="reply"
+            :is-reply="true"
             :video-author-id="videoAuthorId"
             @update-reply="(id, content) => $emit('update-reply', id, content)"
             @update-comment="(id, content) => $emit('update-comment', id, content)"
@@ -188,7 +182,7 @@ import { formatDate } from '../utils/date'
 const props = defineProps<{
   comment: Comment;
   videoAuthorId: number;
-
+  isReply?: boolean;
   // node: any;
 }>();
 
@@ -306,5 +300,19 @@ const saveEdit = () => {
 
 .like-button:hover {
   transform: scale(1.1);
+}
+
+.comment-wrapper {
+  &.reply-comment {
+    margin-left: 40px;
+    border-left: 2px solid $grey-4;
+    padding-left: 16px;
+  }
+}
+
+.replies-list {
+  .reply-comment {
+    margin-left: 0;
+  }
 }
 </style>
