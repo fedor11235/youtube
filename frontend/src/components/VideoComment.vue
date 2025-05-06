@@ -1,7 +1,7 @@
 <template>
   <div class="comment-wrapper q-mb-md">
     <q-item class="comment-item">
-      <q-item-section avatar>
+      <q-item-section class="comment-item__avatar" style="justify-content: start;" avatar>
         <UserAvatar
           :avatar="comment.user.avatar"
           :url="comment.user.url"
@@ -128,7 +128,6 @@
           </div>
         </div>
 
-        <!-- Список ответов -->
         <div v-if="comment.replies && comment.replies.length" class="replies-list q-mt-md q-ml-lg">
           <CommentItem
             v-for="reply in comment.replies"
@@ -138,6 +137,15 @@
             :is-owner="isOwner"
             class="reply-item"
             @delete="$emit('delete-comment', reply)"
+          />
+          <VideoComment
+            v-for="reply in comment.replies"
+            :key="reply.id"
+            :comment="reply"
+            :video-author-id="videoAuthorId"
+            @update-reply="(id, content) => $emit('update-reply', id, content)"
+            @update-comment="(id, content) => $emit('update-comment', id, content)"
+            @delete-comment="(comment) =>$emit('delete-comment', comment)"
           />
         </div>
 
@@ -180,6 +188,8 @@ import { formatDate } from '../utils/date'
 const props = defineProps<{
   comment: Comment;
   videoAuthorId: number;
+
+  // node: any;
 }>();
 
 const emit = defineEmits<{
@@ -244,11 +254,15 @@ const saveEdit = () => {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .comment-item {
   background: rgba(0, 0, 0, 0.02);
   border-radius: 12px;
   transition: all 0.3s ease;
+  justify-content: start;
+  &_avatar {
+    justify-content: start;
+  }
 }
 
 .comment-item:hover {
