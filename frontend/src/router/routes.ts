@@ -48,6 +48,10 @@ const routes: RouteRecordRaw[] = [
       //   component: () => import('pages/PlansPage.vue')
       // },
       {
+        path: '/order-video',
+        component: () => import('pages/OrderVideoPage.vue')
+      },
+      {
         path: 'roadmap',
         component: () => import('pages/RoadmapPage.vue')
       },

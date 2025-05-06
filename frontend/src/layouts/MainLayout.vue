@@ -119,6 +119,19 @@
           <q-item-section>План развития</q-item-section>
         </q-item>
 
+        <q-item
+          clickable
+          v-ripple
+          to="/order-video"
+        >
+          <q-item-section avatar>
+            <q-icon name="request_quote" />
+          </q-item-section>
+          <q-item-section>
+            Заказать видео
+          </q-item-section>
+        </q-item>
+
         <!-- <q-item clickable v-ripple to="/plans">
           <q-item-section avatar>
             <q-icon name="workspace_premium" />
