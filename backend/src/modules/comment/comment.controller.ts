@@ -21,6 +21,16 @@ export class CommentController {
     return this.commentService.getVideoComments(parseInt(videoId));
   }
 
+  @Post(':commentId/replies')
+  @UseGuards(JwtAuthGuard)
+  async createReply(
+    @Param('commentId') commentId: string,
+    @Body('content') content: string,
+    @Request() req
+  ) {
+    return this.commentService.createReply(req.user.id, parseInt(commentId), content);
+  }
+
   @Put(':id')
   @UseGuards(JwtAuthGuard)
   async updateComment(

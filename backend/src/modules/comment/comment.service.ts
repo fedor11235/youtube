@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { comments, users } from '../../database/schema';
-import { eq, desc } from 'drizzle-orm';
+import { commentLikes, comments, users, videos } from '../../database/schema';
+import { eq, sql } from 'drizzle-orm';
 
 @Injectable()
 export class CommentService {
@@ -23,22 +23,53 @@ export class CommentService {
   }
 
   async getVideoComments(videoId: number) {
-    return this.db
-      .select(comments, {
-        id: comments.id,
-        content: comments.content,
-        createdAt: comments.createdAt,
-        updatedAt: comments.updatedAt,
-        user: {
-          id: users.id,
-          firstName: users.firstName,
-          avatar: users.avatar,
-          url: users.url
-        }
-      })
-      .innerJoin(users, eq(users.id, comments.userId))
-      .where(eq(comments.videoId, videoId))
-      .orderBy(desc(comments.createdAt));
+    const result = await this.db
+    .select(comments, {
+      id: comments.id,
+      content: comments.content,
+      createdAt: comments.createdAt,
+      parentId: comments.parentId,
+      user: {
+        id: users.id,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        avatar: users.avatar
+      },
+      isCreator: sql<boolean>`CASE WHEN ${videos.userId} = ${users.id} THEN true ELSE false END`,
+      likes: sql<number>`COUNT(DISTINCT ${commentLikes.id})`
+    })
+    .leftJoin(users, eq(comments.userId, users.id))
+    .leftJoin(videos, eq(comments.videoId, videos.id))
+    .leftJoin(commentLikes, eq(comments.id, commentLikes.commentId))
+    .where(eq(comments.videoId, videoId))
+    .groupBy(comments.id, users.id, videos.userId)
+    .orderBy(comments.createdAt);
+  // Убедимся, что comments является массивом
+  if (!Array.isArray(result)) {
+    return [];
+  }
+
+  // Создаем Map для хранения комментариев и их ответов
+  const commentMap = new Map();
+  const rootComments: any = [];
+  // Первый проход: создаем все комментарии
+  result.forEach(comment => {
+    commentMap.set(comment.id, { ...comment, replies: [] });
+  });
+
+  // Второй проход: организуем структуру ответов
+  result.forEach((comment: any) => {
+    if (comment.parentId && commentMap.has(comment.parentId)) {
+      // Это ответ - добавляем его к родительскому комментарию
+      const parentComment = commentMap.get(comment.parentId);
+      parentComment.replies.push(commentMap.get(comment.id));
+    } else {
+      // Это корневой комментарий
+      rootComments.push(commentMap.get(comment.id));
+    }
+  });
+
+  return rootComments;
   }
 
   async updateComment(commentId: number, userId: number, content: string) {
@@ -82,5 +113,30 @@ export class CommentService {
       .where(eq(comments.id, commentId));
 
     return { success: true };
+  }
+
+  async createReply(userId: number, commentId: number, content: string) {
+    // Получаем родительский комментарий для проверки
+    console.log("!@#$")
+    const [parentComment] = await this.db
+      .select(comments)
+      .where(eq(comments.id, commentId));
+
+    if (!parentComment) {
+      throw new NotFoundException('Комментарий не найден');
+    }
+
+    // Создаем ответ на комментарий
+    const [reply] = await this.db
+      .insert(comments)
+      .values({
+        content,
+        userId,
+        videoId: parentComment.videoId,
+        parentId: commentId
+      })
+      .returning();
+
+    return reply;
   }
 }

@@ -7,6 +7,10 @@ export interface Comment {
   updatedAt: string;
   likesCount: number;
   authorLiked: boolean;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  isCreatorLike?: any;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  replies?: any;
   user: {
     id: number;
     username: string;
@@ -16,6 +20,15 @@ export interface Comment {
 }
 
 export const commentService = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async createReply(parentId: number, content: string): Promise<any> {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const { data } = await api.post<any>(`/comments/${parentId}/replies`, {
+      content
+    });
+    return data;
+  },
+
   async createComment(videoId: number, content: string) {
     const response = await api.post(`/comments/video/${videoId}`, { content });
     return response.data;

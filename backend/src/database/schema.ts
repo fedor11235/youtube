@@ -29,6 +29,7 @@ export const videos = pgTable('videos', {
 export const comments = pgTable('comments', {
   id: serial('id').primaryKey(),
   content: text('content').notNull(),
+  parentId: integer('parent_id').references(() => comments.id, { onDelete: 'cascade' }),
   userId: integer('user_id').references(() => users.id),
   videoId: integer('video_id').references(() => videos.id),
   createdAt: timestamp('created_at').defaultNow(),

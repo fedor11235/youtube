@@ -40,8 +40,9 @@
           :key="comment.id"
           :comment="comment"
           :video-author-id="videoAuthorId"
-          @update="updateComment"
-          @delete="confirmDelete"
+          @update-reply="updateReply"
+          @update-comment="updateComment"
+          @delete-comment="confirmDelete"
         />
       </q-list>
     </div>
@@ -77,7 +78,6 @@ const $q = useQuasar();
 const authStore = useAuthStore();
 const comments = ref<Comment[]>([]);
 const newComment = ref('');
-const editingComment = ref<{ id: number; content: string } | null>(null);
 const deleteDialog = ref(false);
 const commentToDelete = ref<Comment | null>(null);
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -119,16 +119,30 @@ const submitComment = async () => {
   }
 };
 
-const updateComment = async () => {
-  if (!editingComment.value) return;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const updateReply = async (id: any, content: any) => {
+  try {
+    await commentService.createReply(id, content);
+    await loadComments();
+    $q.notify({
+      type: 'positive',
+      message: 'Комментарий обновлен'
+    });
+  } catch {
+    $q.notify({
+      type: 'negative',
+      message: 'Ошибка при обновлении комментария'
+    });
+  }
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const updateComment = async (id: any, content: any) => {
+  if (!content) return;
 
   try {
-    await commentService.updateComment(
-      editingComment.value.id,
-      editingComment.value.content
-    );
+    await commentService.updateComment(id, content);
     await loadComments();
-    editingComment.value = null;
     $q.notify({
       type: 'positive',
       message: 'Комментарий обновлен'
