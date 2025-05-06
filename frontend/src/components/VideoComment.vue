@@ -219,7 +219,6 @@ const isOwner = computed(() => {
 
 const submitReply = () => {
   if (!replyContent.value.trim()) return;
-  console.log("!@#$")
   
   try {
     emit('update-reply', props.comment.id, replyContent.value);
@@ -259,10 +258,6 @@ const saveEdit = () => {
   background: rgba(0, 0, 0, 0.02);
   border-radius: 12px;
   transition: all 0.3s ease;
-  justify-content: start;
-  &_avatar {
-    justify-content: start;
-  }
 }
 
 .comment-item:hover {

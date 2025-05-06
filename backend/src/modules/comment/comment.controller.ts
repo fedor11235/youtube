@@ -21,6 +21,11 @@ export class CommentController {
     return this.commentService.getVideoComments(parseInt(videoId));
   }
 
+  @Get(':commentId/creator-like')
+  async checkCreatorLike(@Param('commentId') commentId: string) {
+    return this.commentService.checkCreatorLike(parseInt(commentId));
+  }
+
   @Post(':commentId/replies')
   @UseGuards(JwtAuthGuard)
   async createReply(

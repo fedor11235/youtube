@@ -9,9 +9,26 @@
       @click.stop="toggleLike"
       :loading="loading"
     >
-      <q-tooltip>{{ isLiked ? 'Убрать лайк' : 'Нравится' }}</q-tooltip>
+      <q-tooltip>
+        {{ likesCount }} лайков
+        <template v-if="creatorLikesCount">
+          (От автора в том числе)
+        </template>
+      </q-tooltip>
     </q-btn>
-    <span class="q-ml-sm text-caption">{{ likesCount }}</span>
+    <span class="q-ml-sm text-caption">
+      {{ likesCount }}
+    </span>
+    <span class="q-ml-sm text-caption">
+      <q-icon
+        v-if="creatorLikesCount"
+        name="star"
+        size="16px"
+        color="amber"
+      >
+        <q-tooltip>Лайк от автора</q-tooltip>
+      </q-icon>
+    </span>
   </div>
 </template>
 
@@ -30,6 +47,7 @@ const $q = useQuasar()
 const authStore = useAuthStore()
 const isLiked = ref(false)
 const likesCount = ref(0)
+const creatorLikesCount = ref(false)
 const loading = ref(false)
 
 const loadLikeStatus = async () => {
@@ -38,6 +56,8 @@ const loadLikeStatus = async () => {
   try {
     isLiked.value = await commentLikesService.hasUserLiked(props.commentId);
     likesCount.value = await commentLikesService.getLikesCount(props.commentId);
+    creatorLikesCount.value = await commentLikesService.checkCreatorLike(props.commentId);
+    console.log("creatorLikesCount.value: ", creatorLikesCount.value)
   } catch (error) {
     console.error('Ошибка при проверке лайка:', error);
   }

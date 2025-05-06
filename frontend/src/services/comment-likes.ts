@@ -19,5 +19,16 @@ export const commentLikesService = {
   async hasUserLiked(commentId: number) {
     const response = await api.get(`/comment-likes/${commentId}/has-liked`);
     return response.data.hasLiked;
+  },
+
+  async checkCreatorLike(commentId: number): Promise<boolean> {
+    try {
+      const { data } = await api.get<boolean>(`/comments/${commentId}/creator-like`);
+      return data;
+    } catch (error) {
+      console.error('Ошибка при проверке лайка создателя:', error);
+      return false;
+    }
   }
+
 };

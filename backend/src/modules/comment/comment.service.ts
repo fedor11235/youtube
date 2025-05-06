@@ -139,4 +139,18 @@ export class CommentService {
 
     return reply;
   }
+
+  async checkCreatorLike(commentId: number): Promise<boolean> {
+    const [result] = await this.db
+      .select(commentLikes, {
+        exists: sql<boolean>`EXISTS (
+          SELECT 1 
+          FROM ${commentLikes} 
+          WHERE ${commentLikes.commentId} = ${commentId} 
+          AND ${commentLikes.isCreatorLike} = true
+        )`
+      })
+  
+    return result?.exists || false;
+  }
 }

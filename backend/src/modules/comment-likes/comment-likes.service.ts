@@ -1,6 +1,6 @@
 import { Injectable, ConflictException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { commentLikes } from '../../database/schema';
+import { commentLikes, comments } from '../../database/schema';
 import { and, eq, sql } from 'drizzle-orm';
 
 @Injectable()
@@ -8,21 +8,25 @@ export class CommentLikesService {
   constructor(private readonly db: DrizzleService) {}
 
   async likeComment(userId: number, commentId: number) {
-    try {
-      await this.db.insert(commentLikes)
-        .values({
-          userId,
-          commentId,
-          createdAt: new Date()
-        })
-        .execute();
-      return { success: true };
-    } catch (error) {
-      if (error.code === '23505') { // Unique violation
-        throw new ConflictException('Вы уже поставили лайк этому комментарию');
-      }
-      throw error;
-    }
+    const [comment] = await this.db
+      .select(comments, {
+        id: comments.id,
+        userId: comments.userId
+      })
+      .where(eq(comments.id, commentId));
+  
+    // Проверяем, является ли лайкающий пользователь автором комментария
+    const isCreatorLike = comment.userId === userId;
+
+    await this.db.insert(commentLikes)
+      .values({
+        userId,
+        commentId,
+        isCreatorLike,
+        createdAt: new Date()
+      })
+      .execute();
+    return { success: true };
   }
 
   async unlikeComment(userId: number, commentId: number) {

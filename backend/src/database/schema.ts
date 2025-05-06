@@ -76,6 +76,7 @@ export const commentLikes = pgTable('comment_likes', {
   userId: integer('user_id').notNull().references(() => users.id, { onDelete: 'cascade' }),
   commentId: integer('comment_id').notNull().references(() => comments.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
+  isCreatorLike: boolean('is_creator_like').default(false),
 }, (table) => {
   return {
     uniqueUserComment: uniqueIndex('unique_user_comment').on(table.userId, table.commentId),
