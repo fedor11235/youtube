@@ -1,6 +1,6 @@
-import { Controller, Post, UseInterceptors, UploadedFile, Body, Get, Param, UseGuards, Req, Delete, ParseIntPipe } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, Body, Get, Param, UseGuards, Req, Delete, ParseIntPipe, Query } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ApiTags, ApiConsumes, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiTags, ApiConsumes, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { VideoService } from './video.service';
 import { CreateVideoDto } from './dto/create-video.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -26,6 +26,15 @@ export class VideoController {
   @Get()
   async getAllVideos() {
     return this.videoService.getAllVideos();
+  }
+  @Get('search')
+  @ApiOperation({ summary: 'Поиск видео' })
+  async searchVideos(
+    @Query('q') query: string,
+    @Query('tags') tags: string
+  ) {
+    const tagNames = tags ? tags.split(',') : [];
+    return this.videoService.searchVideos(query, tagNames);
   }
 
   @Get('related/:id')

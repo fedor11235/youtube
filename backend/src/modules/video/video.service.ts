@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { users, videoLikes, videos, videoViews } from '../../database/schema';
-import { and, desc, eq, gte, ne, sql } from 'drizzle-orm';
+import { tags, users, videoLikes, videos, videoTags, videoViews } from '../../database/schema';
+import { and, desc, eq, gte, inArray, like, ne, or, sql } from 'drizzle-orm';
 import { extractDuration, extractThumbnail } from './video.utils';
 import { subDays } from 'date-fns';
 
@@ -224,6 +224,59 @@ export class VideoService {
       },
       user: undefined // удаляем исходные данные пользователя
     }));
-}
+  }
+
+  async searchVideos(query: string, tagNames: string[] = []) {
+    let videosQuery = this.db
+      .select(videos, {
+        id: videos.id,
+        title: videos.title,
+        description: videos.description,
+        videoUrl: videos.videoUrl,
+        thumbnailUrl: videos.thumbnailUrl,
+        views: videos.views,
+        createdAt: videos.createdAt,
+        duration: videos.duration,
+        user: {
+          id: users.id,
+          firstName: users.firstName,
+          lastName: users.lastName,
+          avatar: users.avatar,
+          url: users.url
+        }
+      })
+      .leftJoin(users, eq(videos.userId, users.id));
+  
+    if (query) {
+      videosQuery = videosQuery.where(
+        or(
+          like(videos.title, `%${query}%`),
+          like(videos.description, `%${query}%`),
+          like(users.firstName, `%${query}%`),
+          like(users.lastName, `%${query}%`)
+        )
+      );
+    }
+  
+    if (tagNames.length > 0) {
+      videosQuery = videosQuery
+        .innerJoin(videoTags, eq(videos.id, videoTags.videoId))
+        .innerJoin(tags, eq(videoTags.tagId, tags.id))
+        .where(inArray(tags.name, tagNames));
+    }
+  
+    const result = await videosQuery;
+  
+    return result.map(video => ({
+      ...video,
+      channel: {
+        id: video.user.id,
+        name: `${video.user.firstName} ${video.user.lastName}`,
+        avatar: video.user.avatar || null,
+        url: video.user.url
+      },
+      user: undefined
+    }));
+  }
 }
 

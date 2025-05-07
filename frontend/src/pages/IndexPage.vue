@@ -147,29 +147,23 @@ const loadVideos = async () => {
   }
 }
 
-const handleSearch = () => {
-  let filteredVideos = [...allVideos.value]
-
-  // Фильтрация по поисковому запросу
-  if (searchQuery.value.trim()) {
-    const searchTerm = searchQuery.value.toLowerCase()
-    filteredVideos = filteredVideos.filter(video => 
-      video.title.toLowerCase().includes(searchTerm) ||
-      video.description?.toLowerCase().includes(searchTerm) ||
-      video.channel.name.toLowerCase().includes(searchTerm)
-    )
+const handleSearch = async () => {
+  try {
+    loading.value = true;
+    error.value = '';
+    
+    const searchResults = await videoService.searchVideos(
+      searchQuery.value,
+      selectedTags.value
+    );
+    
+    videos.value = searchResults;
+  } catch (err) {
+    console.error('Ошибка при поиске видео:', err);
+    error.value = 'Не удалось выполнить поиск';
+  } finally {
+    loading.value = false;
   }
-
-  // Фильтрация по тегам
-  // if (selectedTags.value.length > 0) {
-  //   filteredVideos = filteredVideos.filter(video => 
-  //     selectedTags.value.every(tag => 
-  //       video.tags?.some(videoTag => videoTag.name === tag)
-  //     )
-  //   )
-  // }
-
-  videos.value = filteredVideos
 }
 
 const clearSearch = () => {

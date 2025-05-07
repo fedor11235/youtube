@@ -182,7 +182,27 @@ const videoService = {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const { data } = await api.get<any[]>('/videos/trending');
     return data;
-  }
+  },
+
+  async searchVideos(query: string, tags: string[] = []): Promise<Video[]> {
+    try {
+      const params = new URLSearchParams();
+      if (query) {
+        params.append('q', query);
+      }
+      if (tags.length > 0) {
+        params.append('tags', tags.join(','));
+      }
+      
+      const response = await api.get(`/videos/search?${params.toString()}`);
+      return response.data;
+    } catch (error) {
+      if (error instanceof Error) {
+        throw new VideoError(error.message);
+      }
+      throw new VideoError('Failed to search videos');
+    }
+  }  
 }
 
 export default videoService
