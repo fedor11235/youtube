@@ -2,10 +2,14 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
 import { commentLikes, comments, users, videos } from '../../database/schema';
 import { eq, sql } from 'drizzle-orm';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class CommentService {
-  constructor(private readonly db: DrizzleService) {}
+  constructor(
+    private readonly db: DrizzleService,
+    private readonly notificationService: NotificationService
+  ) {}
 
   async createComment(userId: number, videoId: number, content: string) {
     const [comment] = await this.db
@@ -18,6 +22,38 @@ export class CommentService {
         updatedAt: new Date()
       })
       .returning();
+
+      const video = await this.db.query.videos.findFirst({
+        where: eq(videos.id, videoId),
+      });
+
+      if(!video?.userId) return
+
+      const result = await this.db
+      .select(users, {
+        id: users.id,
+        email: users.email,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        country: users.country,
+        city: users.city,
+        createdAt: users.createdAt,
+        avatar: users.avatar,
+        banner: users.banner,
+        url: users.url
+      }).where(eq(users.id, userId));
+
+      if(video.userId === result[0].id) return
+
+      await this.notificationService.createNotification({
+        userId: video.userId,
+        title: 'Новый комментарий',
+        message: `Под вашим видео оставили новый комментарий!`,
+        type: 'comment',
+        data: {
+          user: result[0],
+        }
+      });
     
     return comment;
   }
@@ -116,8 +152,6 @@ export class CommentService {
   }
 
   async createReply(userId: number, commentId: number, content: string) {
-    // Получаем родительский комментарий для проверки
-    console.log("!@#$")
     const [parentComment] = await this.db
       .select(comments)
       .where(eq(comments.id, commentId));
@@ -136,6 +170,38 @@ export class CommentService {
         parentId: commentId
       })
       .returning();
+
+      const video = await this.db.query.videos.findFirst({
+        where: eq(videos.id, parentComment.videoId),
+      });
+
+      if(!video?.userId) return
+
+      const result = await this.db
+      .select(users, {
+        id: users.id,
+        email: users.email,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        country: users.country,
+        city: users.city,
+        createdAt: users.createdAt,
+        avatar: users.avatar,
+        banner: users.banner,
+        url: users.url
+      }).where(eq(users.id, userId));
+
+      if(parentComment.userId === result[0].id) return
+
+      await this.notificationService.createNotification({
+        userId: parentComment.userId,
+        title: 'Новый ответ',
+        message: `Вам ответили на комментарий!`,
+        type: 'comment',
+        data: {
+          user: result[0],
+        }
+      });
 
     return reply;
   }
