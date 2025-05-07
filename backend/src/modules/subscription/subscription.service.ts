@@ -35,14 +35,27 @@ export class SubscriptionService {
       throw new ConflictException('Already subscribed');
     }
 
+    const result = await this.db
+    .select(users, {
+      id: users.id,
+      email: users.email,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      country: users.country,
+      city: users.city,
+      createdAt: users.createdAt,
+      avatar: users.avatar,
+      banner: users.banner,
+      url: users.url
+    }).where(eq(users.id, userId));
+
     await this.notificationService.createNotification({
       userId: channel.id,
       title: 'Новый подписчик',
       message: `У вас новый подписчик!`,
-      type: 'system',
+      type: 'subscribe',
       data: {
-        userId: userId,
-        channelId: channel.id
+        user: result[0],
       }
     });
 

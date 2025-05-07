@@ -3,20 +3,9 @@ import { DrizzleService } from '../drizzle/drizzle.service';
 import { notifications } from '../../database/schema';
 import { NotificationGateway} from './notification.gateway';
 import { eq } from 'drizzle-orm';
-// import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { WebSocketGateway } from '@nestjs/websockets';
-// import { Server } from 'socket.io';
 
 @Injectable()
-@WebSocketGateway({
-  cors: {
-    origin: '*',
-  },
-})
 export class NotificationService {
-  // @WebSocketServer()
-  // server: Server;
-
   constructor(
     private readonly db: DrizzleService,
     private readonly notificationGateway: NotificationGateway
@@ -26,7 +15,7 @@ export class NotificationService {
     userId: number;
     title: string;
     message: string;
-    type: 'like' | 'comment' | 'reply' | 'mention' | 'system';
+    type: 'like' | 'comment' | 'reply' | 'subscribe' | 'system';
     data?: any;
   }) {
     const [notification] = await this.db
@@ -37,10 +26,7 @@ export class NotificationService {
         createdAt: new Date()
       })
       .returning();
-    console.log(data.userId)
     this.notificationGateway.sendNotification(data.userId, notification)
-    // this.server.to(`user_${data.userId}`).emit('notification', notification);
-    console.log("!!!!!")
     return notification;
   }
 

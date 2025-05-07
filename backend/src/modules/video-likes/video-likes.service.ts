@@ -1,28 +1,55 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { videoLikes } from '../../database/schema';
+import { users, videoLikes, videos } from '../../database/schema';
 import { eq, and, sql } from 'drizzle-orm';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class VideoLikesService {
-  constructor(private readonly db: DrizzleService) {}
+  constructor(
+    private readonly db: DrizzleService,
+    private readonly notificationService: NotificationService
+  ) {}
 
   async likeVideo(userId: number, videoId: number) {
-    try {
-      await this.db.insert(videoLikes)
-        .values({
-          userId,
-          videoId,
-          createdAt: new Date()
-        })
-        .execute();
-      return { success: true };
-    } catch (error) {
-      if (error.code === '23505') { // Unique violation
-        throw new ConflictException('Вы уже поставили лайк этому видео');
-      }
-      throw error;
-    }
+    const video = await this.db.query.videos.findFirst({
+      where: eq(videos.id, videoId),
+    });
+
+    if(!video?.userId) return
+
+    await this.db.insert(videoLikes)
+      .values({
+        userId,
+        videoId,
+        createdAt: new Date()
+      })
+      .execute();
+
+    const result = await this.db
+      .select(users, {
+        id: users.id,
+        email: users.email,
+        firstName: users.firstName,
+        lastName: users.lastName,
+        country: users.country,
+        city: users.city,
+        createdAt: users.createdAt,
+        avatar: users.avatar,
+        banner: users.banner,
+        url: users.url
+      }).where(eq(users.id, userId));
+
+      await this.notificationService.createNotification({
+        userId: video.userId,
+        title: 'Новый лайк',
+        message: `Ваше видео лайкнул пользователь!`,
+        type: 'like',
+        data: {
+          user: result[0],
+        }
+      });
+    return { success: true };
   }
 
   async unlikeVideo(userId: number, videoId: number) {
