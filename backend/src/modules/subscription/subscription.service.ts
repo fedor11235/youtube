@@ -3,10 +3,14 @@ import { DrizzleService } from '../drizzle/drizzle.service';
 import { eq, and, sql } from 'drizzle-orm';
 // import { subscriptions } from '../drizzle/schema';
 import { subscriptions, users } from '../../database/schema';
+import { NotificationService } from '../notification/notification.service'
 
 @Injectable()
 export class SubscriptionService {
-  constructor(private readonly db: DrizzleService) {}
+  constructor(
+    private readonly db: DrizzleService,
+    private readonly notificationService: NotificationService
+  ) {}
 
   async subscribe(userId: number, channelURL: string) {
     const channel = await this.db.query.users.findFirst({
@@ -30,6 +34,17 @@ export class SubscriptionService {
     if (existingSubscription.length > 0) {
       throw new ConflictException('Already subscribed');
     }
+
+    await this.notificationService.createNotification({
+      userId: channel.id,
+      title: 'Новый подписчик',
+      message: `У вас новый подписчик!`,
+      type: 'system',
+      data: {
+        userId: userId,
+        channelId: channel.id
+      }
+    });
 
     // Создаем новую подписку
     return this.db

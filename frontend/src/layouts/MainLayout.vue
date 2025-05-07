@@ -43,7 +43,15 @@
           >
             {{ unreadCount }}
           </q-badge>
-          <NotificationsPanel v-model="showNotifications" />
+          <NotificationsPanel
+            :notifications="notifications"
+            v-model="showNotifications"
+            @click="handleNotificationClick"
+            @toggle-read="toggleRead"
+            @remove="removeNotification"
+            @mark-all-as-read="markAllAsRead"
+            @clear-all="clearAll"
+          />
         </q-btn>
         
         <template v-if="authStore.isAuthenticated">
@@ -175,9 +183,10 @@
 <script setup lang="ts">
 import { useAuthStore } from '../stores/auth'
 import { useRouter } from 'vue-router'
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { getAvatar } from '../utils/avatar'
 import NotificationsPanel from '../components/NotificationsPanel.vue'
+import notificationService from '../services/notification'
 import { useI18n } from 'vue-i18n'
 
 const authStore = useAuthStore()
@@ -187,10 +196,22 @@ const { locale, t } = useI18n()
 const changeLanguage = (lang: string) => {
   locale.value = lang
 }
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const notifications = ref<any[]>([])
 const showNotifications = ref(false)
 const hasUnreadNotifications = computed(() => unreadCount.value > 0)
-const unreadCount = ref(1) // Replace with actual unread count from your state management
+const unreadCount = ref(0) // Replace with actual unread count from your state management
+
+let unsubscribe: (() => void) | null = null
+
+const loadNotifications = async () => {
+  try {
+    notifications.value = await notificationService.getNotifications()
+    unreadCount.value = notifications.value.filter(notification => !notification.read).length;
+  } catch (error) {
+    console.error('Failed to load notifications:', error)
+  }
+}
 
 const leftDrawerOpen = ref<boolean>(false)
 
@@ -202,4 +223,76 @@ const handleLogout = async () => {
   await authStore.logout()
   await router.push('/login')
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handleNotificationClick = async (notification: any) => {
+  if (!notification.read) {
+    await toggleRead(notification)
+    unreadCount.value--;
+  }
+  
+  if (notification.data?.videoId) {
+    await router.push(`/watch/${notification.data.videoId}`)
+  }
+  
+  showNotifications.value = false
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const toggleRead = async (notification: any) => {
+  try {
+    await notificationService.markAsRead(notification.id)
+    notification.read = !notification.read
+  } catch (error) {
+    console.error('Failed to toggle notification read status:', error)
+  }
+}
+
+const markAllAsRead = async () => {
+  try {
+    await notificationService.markAllAsRead()
+    notifications.value = notifications.value.map(n => ({ ...n, read: true }))
+    unreadCount.value = 0;
+  } catch (error) {
+    console.error('Failed to mark all notifications as read:', error)
+  }
+}
+
+const removeNotification = async (id: number) => {
+  try {
+    await notificationService.deleteNotification(id);
+    notifications.value = notifications.value.filter(n => n.id !== id);
+    unreadCount.value--;
+  } catch (error) {
+    console.error('Ошибка при удалении уведомления:', error);
+  }
+};
+
+const clearAll = async () => {
+  try {
+    await notificationService.deleteAllNotifications();
+    notifications.value = [];
+    unreadCount.value = 0;
+  } catch (error) {
+    console.error('Ошибка при удалении всех уведомлений:', error);
+  }
+};
+
+onMounted(async () => {
+  await loadNotifications()
+  
+  unsubscribe = notificationService.subscribe((notification) => {
+    notifications.value = [notification, ...notifications.value];
+    // Увеличиваем счетчик при получении нового уведомления
+    if (!notification.read) {
+      unreadCount.value++;
+    }
+  });
+})
+
+onUnmounted(() => {
+  if (unsubscribe) {
+    unsubscribe()
+  }
+})
 </script>

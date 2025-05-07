@@ -77,6 +77,7 @@ export class AuthService {
 
     // Hash password
     const hashedPassword = await hash(registerDto.password, 10);
+    const url = new Date()
 
     // Create new user
     const [newUser] = await this.db.insert(users).values({
@@ -86,6 +87,7 @@ export class AuthService {
       lastName: registerDto.lastName,
       country: registerDto.country,
       city: registerDto.city,
+      url,
     }).returning();
 
     // Generate JWT token
