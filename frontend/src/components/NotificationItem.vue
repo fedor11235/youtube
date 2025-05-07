@@ -2,7 +2,7 @@
   <div>
     <q-item
       clickable
-      :class="{ 'bg-grey-2': !notification.read }"
+      :class="{ 'bg-grey-5': !notification.read }"
       @click="$emit('click', notification)"
     >
       <q-item-section avatar>

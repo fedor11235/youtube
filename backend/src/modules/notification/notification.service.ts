@@ -1,9 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
 import { notifications } from '../../database/schema';
+import { NotificationGateway} from './notification.gateway';
 import { eq } from 'drizzle-orm';
-import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { Server } from 'socket.io';
+// import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
+import { WebSocketGateway } from '@nestjs/websockets';
+// import { Server } from 'socket.io';
 
 @Injectable()
 @WebSocketGateway({
@@ -12,10 +14,13 @@ import { Server } from 'socket.io';
   },
 })
 export class NotificationService {
-  @WebSocketServer()
-  server: Server;
+  // @WebSocketServer()
+  // server: Server;
 
-  constructor(private readonly db: DrizzleService) {}
+  constructor(
+    private readonly db: DrizzleService,
+    private readonly notificationGateway: NotificationGateway
+  ) {}
 
   async createNotification(data: {
     userId: number;
@@ -32,8 +37,10 @@ export class NotificationService {
         createdAt: new Date()
       })
       .returning();
-
-    this.server.to(`user_${data.userId}`).emit('notification', notification);
+    console.log(data.userId)
+    this.notificationGateway.sendNotification(data.userId, notification)
+    // this.server.to(`user_${data.userId}`).emit('notification', notification);
+    console.log("!!!!!")
     return notification;
   }
 

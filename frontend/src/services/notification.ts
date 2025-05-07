@@ -1,11 +1,12 @@
+import { io } from 'socket.io-client';
 import { api } from 'src/boot/axios';
 import type { Notification } from 'src/types/notification';
 
 class NotificationService {
-  private ws: WebSocket | null = null;
-  private reconnectAttempts = 0;
-  private maxReconnectAttempts = 5;
-  private listeners: ((notification: Notification) => void)[] = [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private socket: any = null;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  private listeners: any[] = [];
 
   constructor() {
     this.connect();
@@ -15,27 +16,36 @@ class NotificationService {
     const token = localStorage.getItem('token');
     if (!token) return;
 
-    this.ws = new WebSocket(`ws://${window.location.host}/api/notifications?token=${token}`);
+    this.socket = io(`${window.location.protocol}//${window.location.hostname}:3000/notifications`, {
+      query: { token }
+    });
 
-    this.ws.onmessage = (event) => {
-      const notification = JSON.parse(event.data);
+    this.socket.on('connect', () => {
+      console.log('Socket подключен');
+    });
+
+    // Изменяем название события на 'newNotification'
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.socket.on('newNotification', (notification: any) => {
+      console.log('Получено новое уведомление:', notification);
       this.notifyListeners(notification);
-    };
+    });
 
-    this.ws.onclose = () => {
-      if (this.reconnectAttempts < this.maxReconnectAttempts) {
-        setTimeout(() => {
-          this.reconnectAttempts++;
-          this.connect();
-        }, 1000 * Math.pow(2, this.reconnectAttempts));
-      }
-    };
+    this.socket.on('disconnect', () => {
+      console.log('Socket отключен');
+    });
+
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    this.socket.on('connect_error', (error: any) => {
+      console.error('Ошибка подключения Socket:', error);
+    });
   }
 
-  subscribe(callback: (notification: Notification) => void) {
-    this.listeners.push(callback);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  subscribe(listener: any): () => void {
+    this.listeners.push(listener);
     return () => {
-      this.listeners = this.listeners.filter(listener => listener !== callback);
+      this.listeners = this.listeners.filter(l => l !== listener);
     };
   }
 

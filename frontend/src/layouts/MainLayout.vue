@@ -281,7 +281,8 @@ const clearAll = async () => {
 onMounted(async () => {
   await loadNotifications()
   
-  unsubscribe = notificationService.subscribe((notification) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  unsubscribe = notificationService.subscribe((notification: any) => {
     notifications.value = [notification, ...notifications.value];
     // Увеличиваем счетчик при получении нового уведомления
     if (!notification.read) {
