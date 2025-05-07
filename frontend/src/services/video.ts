@@ -202,7 +202,17 @@ const videoService = {
       }
       throw new VideoError('Failed to search videos');
     }
-  }  
+  },
+
+  async addVideoTags(videoId: number, tagNames: string[]): Promise<void> {
+    try {
+      await api.post(`/videos/tags/${videoId}`, { tags: tagNames });
+    } catch (error) {
+      console.error('Ошибка при добавлении тегов:', error);
+      throw error;
+    }
+  }
+
 }
 
 export default videoService

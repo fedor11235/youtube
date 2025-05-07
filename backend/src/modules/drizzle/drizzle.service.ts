@@ -50,6 +50,10 @@ export class DrizzleService implements OnModuleInit, OnModuleDestroy {
     return this.db.select(query).from(table);
   }
 
+  selectDistinct(table: any, query?: any): any {
+    return this.db.selectDistinct(query).from(table);
+  }
+
   update(table: any): any {
     return this.db.update(table);
   }

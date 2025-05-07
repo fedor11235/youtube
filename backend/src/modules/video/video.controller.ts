@@ -74,4 +74,13 @@ export class VideoController {
     return this.videoService.deleteVideo(id, req.user.id);
   }
 
+  @Post('tags/:videoId')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Добавить теги к видео' })
+  async addVideoTags(
+    @Param('videoId', ParseIntPipe) videoId: number,
+    @Body('tags') tags: string[]
+  ) {
+    return this.videoService.addVideoTags(videoId, tags);
+  }
 }

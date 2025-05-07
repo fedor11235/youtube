@@ -228,7 +228,7 @@ export class VideoService {
 
   async searchVideos(query: string, tagNames: string[] = []) {
     let videosQuery = this.db
-      .select(videos, {
+      .selectDistinct(videos, {
         id: videos.id,
         title: videos.title,
         description: videos.description,
@@ -262,7 +262,8 @@ export class VideoService {
       videosQuery = videosQuery
         .innerJoin(videoTags, eq(videos.id, videoTags.videoId))
         .innerJoin(tags, eq(videoTags.tagId, tags.id))
-        .where(inArray(tags.name, tagNames));
+        .where(inArray(tags.name, tagNames))
+        .groupBy(videos.id, users.id, users.firstName, users.lastName, users.avatar, users.url);
     }
   
     const result = await videosQuery;
@@ -277,6 +278,41 @@ export class VideoService {
       },
       user: undefined
     }));
+  }
+
+  async addVideoTags(videoId: number, tagNames: string[]): Promise<void> {
+    // Получаем или создаем теги
+    const tagPromises = tagNames.map(async (name) => {
+      const [existingTag] = await this.db
+        .select(tags)
+        .where(eq(tags.name, name));
+  
+      if (existingTag) {
+        return existingTag;
+      }
+  
+      const [newTag] = await this.db
+        .insert(tags)
+        .values({ name })
+        .returning();
+  
+      return newTag;
+    });
+  
+    const resolvedTags = await Promise.all(tagPromises);
+  
+    // Добавляем связи между видео и тегами
+    await Promise.all(
+      resolvedTags.map((tag) =>
+        this.db
+          .insert(videoTags)
+          .values({
+            videoId,
+            tagId: tag.id
+          })
+          .onConflictDoNothing()
+      )
+    );
   }
 }
 

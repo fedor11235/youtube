@@ -38,6 +38,33 @@
                 controls
               />
 
+              <div class="text-h6 q-mt-lg">Теги</div>
+              <q-select
+                v-model="selectedTags"
+                outlined
+                multiple
+                use-chips
+                use-input
+                input-debounce="0"
+                class="q-mt-sm"
+                label="Выберите теги для видео"
+                :options="availableTags"
+              >
+                <template v-slot:selected-item="scope">
+                  <q-chip
+                    removable
+                    dense
+                    @remove="scope.removeAtIndex(scope.index)"
+                    :tabindex="scope.tabindex"
+                    color="primary"
+                    text-color="white"
+                  >
+                    {{ scope.opt }}
+                  </q-chip>
+                </template>
+              </q-select>
+
+
               <q-form @submit="handleUpload" class="q-mt-lg">
                 <q-input
                   v-model="videoDetails.title"
@@ -110,7 +137,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -131,6 +158,9 @@ const videoFile = ref<File | null>(null)
 const thumbnailFile = ref<File | null>(null)
 const selectedVideo = ref<boolean>(false)
 const uploading = ref<boolean>(false)
+const selectedTags = ref([]);
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const availableTags = ref<any>([]);
 
 const uploadProgress = ref({
   show: false,
@@ -149,7 +179,6 @@ const videoDetails = ref<VideoDetails>({
 
 const triggerFileInput = () => {
   fileInput.value?.pickFiles()
-  
 }
 
 const handleVideoSelect = (file: File) => {
@@ -190,7 +219,11 @@ const handleUpload = async () => {
       thumbnailFile: thumbnailFile.value
     }
 
-    await videoService.uploadVideo(uploadData)
+    const video = await videoService.uploadVideo(uploadData)
+
+    if (selectedTags.value.length > 0) {
+      await videoService.addVideoTags(video.id, selectedTags.value);
+    }
 
     $q.notify({
       type: 'positive',
@@ -259,6 +292,14 @@ const handleUpload = async () => {
 //     uploadProgress.value.value = 0
 //   }
 // }
+onMounted(async () => {
+  try {
+    const tags = await videoService.getTags();
+    availableTags.value = tags.map(tag => tag.name);
+  } catch (error) {
+    console.error('Ошибка при загрузке тегов:', error);
+  }
+});
 </script>
 
 <style scoped>
