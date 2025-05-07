@@ -8,7 +8,22 @@ class VideoError extends Error {
   }
 }
 
+interface Tag {
+  id: number;
+  name: string;
+}
+
 const videoService = {
+
+  async getTags(): Promise<Tag[]> {
+    try {
+      const response = await api.get('/tags');
+      return response.data;
+    } catch (error) {
+      console.error('Ошибка при получении тегов:', error);
+      throw error;
+    }
+  },
   
   async getVideos(): Promise<Video[]> {
     try {

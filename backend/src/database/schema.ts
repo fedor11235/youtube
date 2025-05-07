@@ -113,6 +113,7 @@ export const notifications = pgTable('notifications', {
   createdAt: timestamp('created_at').defaultNow(),
 });
 
+export type Tag = typeof tags.$inferSelect;
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
 export type VideoLike = typeof videoLikes.$inferSelect;

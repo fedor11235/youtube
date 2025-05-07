@@ -8,26 +8,9 @@ const seedTags = async () => {
   try {
     // Создаем базовые теги
     const initialTags = [
-      { name: 'Программирование' },
-      { name: 'Веб-разработка' },
-      { name: 'JavaScript' },
-      { name: 'TypeScript' },
-      { name: 'React' },
-      { name: 'Vue' },
-      { name: 'Node.js' },
-      { name: 'Python' },
-      { name: 'DevOps' },
-      { name: 'Docker' },
-      { name: 'Kubernetes' },
-      { name: 'Git' },
-      { name: 'База данных' },
-      { name: 'PostgreSQL' },
-      { name: 'MongoDB' },
-      { name: 'Тестирование' },
-      { name: 'CI/CD' },
-      { name: 'Архитектура' },
-      { name: 'Алгоритмы' },
-      { name: 'Безопасность' }
+      { name: 'молодые' },
+      { name: 'средние' },
+      { name: 'возрасте' },
     ];
 
     console.log('Начало сидинга тегов...');

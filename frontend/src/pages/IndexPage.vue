@@ -1,26 +1,64 @@
 <template>
     <q-page padding>
     <!-- Добавляем поисковую строку -->
-    <div class="row justify-center q-mb-lg">
-      <div class="col-12 col-sm-8 col-md-6">
-        <q-input
-          v-model="searchQuery"
-          outlined
-          placeholder="Поиск видео"
-          class="full-width"
-          @update:model-value="handleSearch"
-        >
-          <template v-slot:prepend>
-            <q-icon name="search" />
-          </template>
-          <template v-slot:append v-if="searchQuery">
-            <q-icon
-              name="close"
-              class="cursor-pointer"
-              @click="clearSearch"
-            />
-          </template>
-        </q-input>
+    <div class="col-12 col-sm-8 col-md-6 q-mb-lg q-mt-sm">
+      <div class="row q-col-gutter-md">
+          <!-- Поисковая строка -->
+          <div class="col-12 col-sm-6">
+            <q-input
+              v-model="searchQuery"
+              outlined
+              dense
+              placeholder="Поиск видео"
+              class="search-input"
+              bg-color="white"
+              @update:model-value="handleSearch"
+            >
+              <template v-slot:prepend>
+                <q-icon name="search" color="primary" />
+              </template>
+              <template v-slot:append v-if="searchQuery">
+                <q-icon
+                  name="close"
+                  class="cursor-pointer"
+                  color="grey-6"
+                  @click="clearSearch"
+                />
+              </template>
+            </q-input>
+          </div>
+
+          <!-- Выбор тегов -->
+          <div class="col-12 col-sm-6">
+            <q-select
+              v-model="selectedTags"
+              outlined
+              dense
+              multiple
+              use-chips
+              use-input
+              input-debounce="0"
+              class="tag-select"
+              label="Выберите теги"
+              bg-color="white"
+              :options="availableTags"
+              @update:model-value="handleSearch"
+            >
+              <template v-slot:selected-item="scope">
+                <q-chip
+                  removable
+                  dense
+                  @remove="scope.removeAtIndex(scope.index)"
+                  :tabindex="scope.tabindex"
+                  class="tag-chip"
+                  color="primary"
+                  text-color="white"
+                >
+                  {{ scope.opt }}
+                </q-chip>
+              </template>
+            </q-select>
+          </div>
       </div>
     </div>
     <div class="row q-col-gutter-md">
@@ -85,15 +123,22 @@ const videos = ref<Video[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 const searchQuery = ref('')
+const selectedTags = ref([])
 const allVideos = ref<Video[]>([])
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const availableTags = ref<any>([])
 
 const loadVideos = async () => {  
   try {
     loading.value = true
     error.value = null
-    const response = await videoService.getVideos()
-    allVideos.value = response
-    videos.value = response
+    const [videosResponse, tagsResponse] = await Promise.all([
+      videoService.getVideos(),
+      videoService.getTags()
+    ])
+    allVideos.value = videosResponse
+    videos.value = videosResponse
+    availableTags.value = tagsResponse.map(tag => tag.name)
   } catch (err) {
     error.value = 'Не удалось загрузить видео'
     console.error(err)
@@ -102,20 +147,29 @@ const loadVideos = async () => {
   }
 }
 
-const handleSearch = (query: string | null | number) => {
-  query = String(query)
+const handleSearch = () => {
+  let filteredVideos = [...allVideos.value]
 
-  if (!query.trim()) {
-    videos.value = allVideos.value
-    return
+  // Фильтрация по поисковому запросу
+  if (searchQuery.value.trim()) {
+    const searchTerm = searchQuery.value.toLowerCase()
+    filteredVideos = filteredVideos.filter(video => 
+      video.title.toLowerCase().includes(searchTerm) ||
+      video.description?.toLowerCase().includes(searchTerm) ||
+      video.channel.name.toLowerCase().includes(searchTerm)
+    )
   }
-  
-  const searchTerm = query.toLowerCase()
-  videos.value = allVideos.value.filter(video => 
-    video.title.toLowerCase().includes(searchTerm) ||
-    video.description?.toLowerCase().includes(searchTerm) ||
-    video.channel.name.toLowerCase().includes(searchTerm)
-  )
+
+  // Фильтрация по тегам
+  // if (selectedTags.value.length > 0) {
+  //   filteredVideos = filteredVideos.filter(video => 
+  //     selectedTags.value.every(tag => 
+  //       video.tags?.some(videoTag => videoTag.name === tag)
+  //     )
+  //   )
+  // }
+
+  videos.value = filteredVideos
 }
 
 const clearSearch = () => {
@@ -150,6 +204,7 @@ onMounted(async () => {
 
 .ellipsis-2-lines {
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
