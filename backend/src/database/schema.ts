@@ -1,4 +1,4 @@
-import { pgTable, serial, varchar, timestamp, text, integer, uniqueIndex, boolean } from 'drizzle-orm/pg-core';
+import { pgTable, serial, varchar, timestamp, text, integer, uniqueIndex, boolean, jsonb } from 'drizzle-orm/pg-core';
 
 export const users = pgTable('users', {
   id: serial('id').primaryKey(),
@@ -98,9 +98,9 @@ export const notifications = pgTable('notifications', {
   type: varchar('type', { length: 50 }).notNull(), // 'video', 'subscription', 'comment', 'system'
   read: boolean('read').default(false),
   link: varchar('link', { length: 255 }),
+  data: jsonb('data'),
   createdAt: timestamp('created_at').defaultNow(),
 });
-
 
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;
