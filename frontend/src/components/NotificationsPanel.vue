@@ -35,49 +35,15 @@
       <q-card-section class="scroll" style="max-height: 400px">
         <template v-if="notifications.length">
           <q-list>
-            <template v-for="notification in notifications" :key="notification.id">
-              <q-item
-                clickable
-                :class="{ 'bg-grey-2': !notification.read }"
-                @click="handleNotificationClick(notification)"
-              >
-                <q-item-section avatar>
-                  <q-avatar>
-                    <img :src="getAvatar(notification.avatar)">
-                  </q-avatar>
-                </q-item-section>
-
-                <q-item-section>
-                  <q-item-label>{{ notification.title }}</q-item-label>
-                  <q-item-label caption>{{ notification.message }}</q-item-label>
-                  <q-item-label caption>{{ formatDate(notification.createdAt) }}</q-item-label>
-                </q-item-section>
-
-                <q-item-section side>
-                  <q-btn
-                    flat
-                    round
-                    dense
-                    icon="more_vert"
-                    @click.stop
-                  >
-                    <q-menu>
-                      <q-list>
-                        <q-item clickable v-close-popup @click="toggleRead(notification)">
-                          <q-item-section>
-                            {{ notification.read ? t('notifications.markAsUnread') : t('notifications.markAsRead') }}
-                          </q-item-section>
-                        </q-item>
-                        <q-item clickable v-close-popup @click="removeNotification(notification.id)">
-                          <q-item-section>{{ t('notifications.remove') }}</q-item-section>
-                        </q-item>
-                      </q-list>
-                    </q-menu>
-                  </q-btn>
-                </q-item-section>
-              </q-item>
-              <q-separator v-if="!isLastNotification(notification)" />
-            </template>
+            <NotificationItem
+              v-for="(notification, index) in notifications"
+              :key="notification.id"
+              :notification="notification"
+              :is-last="index === notifications.length - 1"
+              @click="handleNotificationClick"
+              @toggle-read="toggleRead"
+              @remove="removeNotification"
+            />
           </q-list>
         </template>
         <template v-else>
@@ -94,23 +60,10 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { getAvatar } from '../utils/avatar'
-// import { date } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import { formatDate } from '../utils/date'
+import NotificationItem from './NotificationItem.vue'
 
 const { t } = useI18n()
-
-interface Notification {
-  id: number;
-  title: string;
-  message: string;
-  avatar: string;
-  read: boolean;
-  createdAt: string;
-  link?: string;
-  type: 'video' | 'subscription' | 'comment' | 'system';
-}
 
 const props = defineProps<{
   modelValue: boolean;
@@ -126,7 +79,8 @@ const show = computed({
   set: (value) => emit('update:modelValue', value)
 })
 
-const notifications = ref<Notification[]>([
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const notifications = ref<any[]>([
   {
     id: 1,
     title: 'New Video Upload',
@@ -148,7 +102,8 @@ const notifications = ref<Notification[]>([
   }
 ])
 
-const handleNotificationClick = async (notification: Notification) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const handleNotificationClick = async (notification: any) => {
   if (!notification.read) {
     toggleRead(notification)
   }
@@ -160,7 +115,8 @@ const handleNotificationClick = async (notification: Notification) => {
   show.value = false
 }
 
-const toggleRead = (notification: Notification) => {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const toggleRead = (notification: any) => {
   notification.read = !notification.read
 }
 
@@ -174,11 +130,6 @@ const clearAll = () => {
 
 const removeNotification = (id: number) => {
   notifications.value = notifications.value.filter(n => n.id !== id)
-}
-
-const isLastNotification = (notification: Notification): boolean => {
-  console.log(notification)
-  return false
 }
 
 const openSettings = async () => {
