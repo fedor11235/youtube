@@ -22,9 +22,9 @@
               <q-item clickable v-close-popup @click="emit('clear-all')">
                 <q-item-section>{{ t('notifications.clearAll') }}</q-item-section>
               </q-item>
-              <q-item clickable v-close-popup @click="openSettings">
+              <!-- <q-item clickable v-close-popup @click="openSettings">
                 <q-item-section>{{ t('notifications.settings') }}</q-item-section>
-              </q-item>
+              </q-item> -->
             </q-list>
           </q-menu>
         </q-btn>
@@ -59,7 +59,7 @@
 
 <script setup lang="ts">
 import { computed } from 'vue'
-import { useRouter } from 'vue-router'
+// import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import NotificationItem from './NotificationItem.vue'
 
@@ -80,13 +80,13 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
 }>();
 
-const router = useRouter()
+// const router = useRouter()
 const show = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value)
 })
 
-const openSettings = async () => {
-  await router.push('/settings/notifications')
-}
+// const openSettings = async () => {
+//   await router.push('/settings/notifications')
+// }
 </script>
