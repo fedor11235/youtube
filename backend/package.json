@@ -38,7 +38,8 @@
     "start:dev": "nest start --watch",
     "start:prod": "node .",
     "generate": "drizzle-kit generate",
-    "migrate": "ts-node src/database/migrate.ts"
+    "migrate": "ts-node src/database/migrate.ts",
+    "seed:tags": "ts-node src/database/seeds/tags.ts"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",

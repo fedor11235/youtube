@@ -26,6 +26,17 @@ export const videos = pgTable('videos', {
   duration: integer('duration')
 });
 
+export const videoTags = pgTable('video_tags', {
+  id: serial('id').primaryKey(),
+  videoId: integer('video_id').references(() => videos.id, { onDelete: 'cascade' }).notNull(),
+  tagId: integer('tag_id').references(() => tags.id, { onDelete: 'cascade' }).notNull(),
+});
+
+export const tags = pgTable('tags', {
+  id: serial('id').primaryKey(),
+  name: text('name').notNull().unique(),
+});
+
 export const comments = pgTable('comments', {
   id: serial('id').primaryKey(),
   content: text('content').notNull(),

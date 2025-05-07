@@ -1,5 +1,28 @@
 <template>
-  <q-page padding>
+    <q-page padding>
+    <!-- Добавляем поисковую строку -->
+    <div class="row justify-center q-mb-lg">
+      <div class="col-12 col-sm-8 col-md-6">
+        <q-input
+          v-model="searchQuery"
+          outlined
+          placeholder="Поиск видео"
+          class="full-width"
+          @update:model-value="handleSearch"
+        >
+          <template v-slot:prepend>
+            <q-icon name="search" />
+          </template>
+          <template v-slot:append v-if="searchQuery">
+            <q-icon
+              name="close"
+              class="cursor-pointer"
+              @click="clearSearch"
+            />
+          </template>
+        </q-input>
+      </div>
+    </div>
     <div class="row q-col-gutter-md">
       <div v-for="video in videos" :key="video.id" class="col-12 col-sm-6 col-md-4 col-lg-3">
         <q-card class="video-card" flat bordered>
@@ -61,19 +84,43 @@ import { formatDate } from '../utils/date'
 const videos = ref<Video[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
+const searchQuery = ref('')
+const allVideos = ref<Video[]>([])
 
-const loadVideos = async () => {
-  loading.value = true
-  error.value = null
-  
+const loadVideos = async () => {  
   try {
-    videos.value = await videoService.getVideos()
+    loading.value = true
+    error.value = null
+    const response = await videoService.getVideos()
+    allVideos.value = response
+    videos.value = response
   } catch (err) {
     error.value = 'Не удалось загрузить видео'
     console.error(err)
   } finally {
     loading.value = false
   }
+}
+
+const handleSearch = (query: string | null | number) => {
+  query = String(query)
+
+  if (!query.trim()) {
+    videos.value = allVideos.value
+    return
+  }
+  
+  const searchTerm = query.toLowerCase()
+  videos.value = allVideos.value.filter(video => 
+    video.title.toLowerCase().includes(searchTerm) ||
+    video.description?.toLowerCase().includes(searchTerm) ||
+    video.channel.name.toLowerCase().includes(searchTerm)
+  )
+}
+
+const clearSearch = () => {
+  searchQuery.value = ''
+  videos.value = allVideos.value
 }
 
 const formatDuration = (seconds: number): string => {
