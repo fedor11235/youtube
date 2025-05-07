@@ -55,6 +55,24 @@ class NotificationService {
   async markAllAsRead(): Promise<void> {
     await api.post('/notifications/read-all');
   }
+
+  async deleteNotification(notificationId: number): Promise<void> {
+    try {
+      await api.delete(`/notifications/${notificationId}`);
+    } catch (error) {
+      console.error('Ошибка при удалении уведомления:', error);
+      throw new Error('Не удалось удалить уведомление');
+    }
+  }
+  
+  async deleteAllNotifications(): Promise<void> {
+    try {
+      await api.delete('/notifications');
+    } catch (error) {
+      console.error('Ошибка при удалении всех уведомлений:', error);
+      throw new Error('Не удалось удалить все уведомления');
+    }
+  }
 }
 
 export default new NotificationService();

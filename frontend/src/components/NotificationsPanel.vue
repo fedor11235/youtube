@@ -58,10 +58,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import NotificationItem from './NotificationItem.vue'
+import notificationService from '../services/notification'
 
 const { t } = useI18n()
 
@@ -80,59 +81,82 @@ const show = computed({
 })
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const notifications = ref<any[]>([
-  {
-    id: 1,
-    title: 'New Video Upload',
-    message: 'Channel Name uploaded a new video',
-    avatar: '',
-    read: false,
-    createdAt: String(new Date()),
-    link: '/watch/1',
-    type: 'video'
-  },
-  {
-    id: 2,
-    title: 'New Subscriber',
-    message: 'User started following you',
-    avatar: '',
-    read: true,
-    createdAt: String(new Date(Date.now() - 86400000)),
-    type: 'subscription'
+const notifications = ref<any[]>([])
+let unsubscribe: (() => void) | null = null
+
+const loadNotifications = async () => {
+  try {
+    notifications.value = await notificationService.getNotifications()
+  } catch (error) {
+    console.error('Failed to load notifications:', error)
   }
-])
+}
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const handleNotificationClick = async (notification: any) => {
   if (!notification.read) {
-    toggleRead(notification)
+    await toggleRead(notification)
   }
   
-  if (notification.link) {
-    await router.push(notification.link)
+  if (notification.data?.videoId) {
+    await router.push(`/watch/${notification.data.videoId}`)
   }
   
   show.value = false
 }
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const toggleRead = (notification: any) => {
-  notification.read = !notification.read
+const toggleRead = async (notification: any) => {
+  try {
+    await notificationService.markAsRead(notification.id)
+    notification.read = !notification.read
+  } catch (error) {
+    console.error('Failed to toggle notification read status:', error)
+  }
 }
 
-const markAllAsRead = () => {
-  notifications.value = notifications.value.map(n => ({ ...n, read: true }))
+const markAllAsRead = async () => {
+  try {
+    await notificationService.markAllAsRead()
+    notifications.value = notifications.value.map(n => ({ ...n, read: true }))
+  } catch (error) {
+    console.error('Failed to mark all notifications as read:', error)
+  }
 }
 
-const clearAll = () => {
-  notifications.value = []
-}
+const removeNotification = async (id: number) => {
+  try {
+    await notificationService.deleteNotification(id);
+    notifications.value = notifications.value.filter(n => n.id !== id);
+  } catch (error) {
+    console.error('Ошибка при удалении уведомления:', error);
+  }
+};
 
-const removeNotification = (id: number) => {
-  notifications.value = notifications.value.filter(n => n.id !== id)
-}
+const clearAll = async () => {
+  try {
+    await notificationService.deleteAllNotifications();
+    notifications.value = [];
+  } catch (error) {
+    console.error('Ошибка при удалении всех уведомлений:', error);
+  }
+};
 
 const openSettings = async () => {
   await router.push('/settings/notifications')
 }
+
+onMounted(async () => {
+  await loadNotifications()
+  
+  unsubscribe = notificationService.subscribe((notification) => {
+    notifications.value = [notification, ...notifications.value]
+  })
+})
+
+onUnmounted(() => {
+  if (unsubscribe) {
+    unsubscribe()
+  }
+})
 </script>
