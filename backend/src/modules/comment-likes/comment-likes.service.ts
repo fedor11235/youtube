@@ -1,11 +1,15 @@
 import { Injectable, ConflictException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { commentLikes, comments } from '../../database/schema';
+import { commentLikes, comments, users, videos } from '../../database/schema';
 import { and, eq, sql } from 'drizzle-orm';
+import { NotificationService } from '../notification/notification.service';
 
 @Injectable()
 export class CommentLikesService {
-  constructor(private readonly db: DrizzleService) {}
+  constructor(
+    private readonly db: DrizzleService,
+    private readonly notificationService: NotificationService
+  ) {}
 
   async likeComment(userId: number, commentId: number) {
     const [comment] = await this.db
@@ -14,7 +18,7 @@ export class CommentLikesService {
         userId: comments.userId
       })
       .where(eq(comments.id, commentId));
-  
+
     // Проверяем, является ли лайкающий пользователь автором комментария
     const isCreatorLike = comment.userId === userId;
 
@@ -26,6 +30,48 @@ export class CommentLikesService {
         createdAt: new Date()
       })
       .execute();
+
+    if(isCreatorLike) return
+
+    const result = await this.db
+    .select(users, {
+      id: users.id,
+      email: users.email,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      country: users.country,
+      city: users.city,
+      createdAt: users.createdAt,
+      avatar: users.avatar,
+      banner: users.banner,
+      url: users.url
+    }).where(eq(users.id, comment.userId));
+
+
+  const resultTwo = await this.db
+    .select(users, {
+      id: users.id,
+      email: users.email,
+      firstName: users.firstName,
+      lastName: users.lastName,
+      country: users.country,
+      city: users.city,
+      createdAt: users.createdAt,
+      avatar: users.avatar,
+      banner: users.banner,
+      url: users.url
+    }).where(eq(users.id, userId));
+
+
+    await this.notificationService.createNotification({
+        userId: result[0].id,
+        title: 'Новый лайк',
+        message: `На ваш комментарий поставили лайк!`,
+        type: 'like',
+        data: {
+          user: resultTwo[0],
+        }
+      });
     return { success: true };
   }
 
