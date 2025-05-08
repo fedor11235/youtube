@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { commentLikes, comments, users, videos } from '../../database/schema';
+import { commentLikes, comments, channels, videos } from '../../database/schema';
 import { eq, sql } from 'drizzle-orm';
 import { NotificationService } from '../notification/notification.service';
 
@@ -30,15 +30,15 @@ export class CommentService {
       if(!video?.userId) return
 
       const result = await this.db
-      .select(users, {
-        id: users.id,
-        email: users.email,
-        username: users.username,
-        createdAt: users.createdAt,
-        avatar: users.avatar,
-        banner: users.banner,
-        url: users.url
-      }).where(eq(users.id, userId));
+      .select(channels, {
+        id: channels.id,
+        email: channels.email,
+        username: channels.username,
+        createdAt: channels.createdAt,
+        avatar: channels.avatar,
+        banner: channels.banner,
+        url: channels.url
+      }).where(eq(channels.id, userId));
 
       if(video.userId === result[0].id) return
 
@@ -63,18 +63,18 @@ export class CommentService {
       createdAt: comments.createdAt,
       parentId: comments.parentId,
       user: {
-        id: users.id,
-        username: users.username,
-        avatar: users.avatar
+        id: channels.id,
+        username: channels.username,
+        avatar: channels.avatar
       },
-      isCreator: sql<boolean>`CASE WHEN ${videos.userId} = ${users.id} THEN true ELSE false END`,
+      isCreator: sql<boolean>`CASE WHEN ${videos.userId} = ${channels.id} THEN true ELSE false END`,
       likes: sql<number>`COUNT(DISTINCT ${commentLikes.id})`
     })
-    .leftJoin(users, eq(comments.userId, users.id))
+    .leftJoin(channels, eq(comments.userId, channels.id))
     .leftJoin(videos, eq(comments.videoId, videos.id))
     .leftJoin(commentLikes, eq(comments.id, commentLikes.commentId))
     .where(eq(comments.videoId, videoId))
-    .groupBy(comments.id, users.id, videos.userId)
+    .groupBy(comments.id, channels.id, videos.userId)
     .orderBy(comments.createdAt);
   // Убедимся, что comments является массивом
   if (!Array.isArray(result)) {
@@ -174,15 +174,15 @@ export class CommentService {
       if(!video?.userId) return
 
       const result = await this.db
-      .select(users, {
-        id: users.id,
-        email: users.email,
-        username: users.username,
-        createdAt: users.createdAt,
-        avatar: users.avatar,
-        banner: users.banner,
-        url: users.url
-      }).where(eq(users.id, userId));
+      .select(channels, {
+        id: channels.id,
+        email: channels.email,
+        username: channels.username,
+        createdAt: channels.createdAt,
+        avatar: channels.avatar,
+        banner: channels.banner,
+        url: channels.url
+      }).where(eq(channels.id, userId));
 
       if(parentComment.userId === result[0].id) return
 

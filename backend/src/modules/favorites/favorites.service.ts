@@ -1,6 +1,6 @@
 import { Injectable, ConflictException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { favorites, users, videos } from '../../database/schema';
+import { favorites, channels, videos } from '../../database/schema';
 import { and, desc, eq } from 'drizzle-orm';
 
 @Injectable()
@@ -60,13 +60,13 @@ export class FavoritesService {
         createdAt: videos.createdAt,
         views: videos.views,
         user: {
-          id: users.id,
-          username: users.username,
-          avatar: users.avatar
+          id: channels.id,
+          username: channels.username,
+          avatar: channels.avatar
         }
       })
       .innerJoin(videos, eq(favorites.videoId, videos.id))
-      .innerJoin(users, eq(videos.userId, users.id))
+      .innerJoin(channels, eq(videos.userId, channels.id))
       .where(eq(favorites.userId, userId))
       .orderBy(desc(favorites.createdAt))
       .execute();

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { users, videoLikes, videos } from '../../database/schema';
+import { channels, videoLikes, videos } from '../../database/schema';
 import { eq, and, sql } from 'drizzle-orm';
 import { NotificationService } from '../notification/notification.service';
 
@@ -27,15 +27,15 @@ export class VideoLikesService {
       .execute();
 
     const result = await this.db
-      .select(users, {
-        id: users.id,
-        email: users.email,
-        username: users.username,
-        createdAt: users.createdAt,
-        avatar: users.avatar,
-        banner: users.banner,
-        url: users.url
-      }).where(eq(users.id, userId));
+      .select(channels, {
+        id: channels.id,
+        email: channels.email,
+        username: channels.username,
+        createdAt: channels.createdAt,
+        avatar: channels.avatar,
+        banner: channels.banner,
+        url: channels.url
+      }).where(eq(channels.id, userId));
 
       await this.notificationService.createNotification({
         userId: video.userId,

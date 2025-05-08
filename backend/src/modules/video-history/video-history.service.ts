@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { videoHistory, videos, users } from '../../database/schema';
+import { videoHistory, videos, channels } from '../../database/schema';
 import { eq, desc } from 'drizzle-orm';
 
 @Injectable()
@@ -29,14 +29,14 @@ export class VideoHistoryService {
           views: videos.views,
           createdAt: videos.createdAt,
           user: {
-            id: users.id,
-            username: users.username,
-            avatar: users.avatar
+            id: channels.id,
+            username: channels.username,
+            avatar: channels.avatar
           }
         }
       })
       .innerJoin(videos, eq(videos.id, videoHistory.videoId))
-      .innerJoin(users, eq(users.id, videos.userId))
+      .innerJoin(channels, eq(channels.id, videos.userId))
       .where(eq(videoHistory.userId, userId))
       .orderBy(desc(videoHistory.watchedAt));
   }

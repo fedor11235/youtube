@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException, ConflictException, NotFoundException
 import { JwtService } from '@nestjs/jwt';
 import { hash, compare } from 'bcrypt';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { users, videos } from '../../database/schema';
+import { channels, videos } from '../../database/schema';
 import { eq } from 'drizzle-orm';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import * as path from 'path';
@@ -18,9 +18,9 @@ export class AuthService {
 
   async updateProfile(userId: number, updateProfileDto: UpdateProfileDto) {
     const updatedUser = await this.db
-      .update(users)
+      .update(channels)
       .set(updateProfileDto)
-      .where(eq(users.id, userId))
+      .where(eq(channels.id, userId))
       .returning();
 
     if (!updatedUser.length) {
@@ -47,9 +47,9 @@ export class AuthService {
 
     // Обновляем запись в базе данных
     const updatedUser = await this.db
-      .update(users)
+      .update(channels)
       .set({ avatar: fileName })
-      .where(eq(users.id, userId))
+      .where(eq(channels.id, userId))
       .returning();
 
     if (!updatedUser.length) {
@@ -65,8 +65,8 @@ export class AuthService {
     username: string;
   }) {
     // Check if user exists
-    const existingUser = await this.db.query.users.findFirst({
-      where: eq(users.email, registerDto.email),
+    const existingUser = await this.db.query.channels.findFirst({
+      where: eq(channels.email, registerDto.email),
     });
 
     if (existingUser) {
@@ -78,7 +78,7 @@ export class AuthService {
     const url = new Date()
 
     // Create new user
-    const [newUser] = await this.db.insert(users).values({
+    const [newUser] = await this.db.insert(channels).values({
       email: registerDto.email,
       password: hashedPassword,
       username: registerDto.username,
@@ -105,8 +105,8 @@ export class AuthService {
 
   async login(loginDto: { email: string; password: string }) {
     // Find user
-    const user = await this.db.query.users.findFirst({
-      where: eq(users.email, loginDto.email),
+    const user = await this.db.query.channels.findFirst({
+      where: eq(channels.email, loginDto.email),
     });
 
     if (!user) {
@@ -140,7 +140,7 @@ export class AuthService {
 
   async logout(userId: number) {
     try {
-      const user = await this.db.query.users.findFirst({ where:  eq(users.id, userId) });
+      const user = await this.db.query.channels.findFirst({ where:  eq(channels.id, userId) });
       if (!user) {
         throw new NotFoundException('User not found');
       }
@@ -152,15 +152,15 @@ export class AuthService {
 
   async getCurrentUser(userId: number) {
     const result = await this.db
-    .select(users, {
+    .select(channels, {
       user: {
-        id: users.id,
-        email: users.email,
-        username: users.username,
-        createdAt: users.createdAt,
-        avatar: users.avatar,
-        banner: users.banner,
-        url: users.url
+        id: channels.id,
+        email: channels.email,
+        username: channels.username,
+        createdAt: channels.createdAt,
+        avatar: channels.avatar,
+        banner: channels.banner,
+        url: channels.url
       },
       videos: {
         id: videos.id,
@@ -172,8 +172,8 @@ export class AuthService {
         views: videos.views
       }
     })
-    .leftJoin(videos, eq(videos.userId, users.id))
-    .where(eq(users.id, userId));
+    .leftJoin(videos, eq(videos.userId, channels.id))
+    .where(eq(channels.id, userId));
 
   if (!result.length) {
     throw new NotFoundException('Пользователь не найден');
@@ -207,9 +207,9 @@ export class AuthService {
 
     // Обновляем запись в базе данных
     const updatedUser = await this.db
-      .update(users)
+      .update(channels)
       .set({ banner: fileName })
-      .where(eq(users.id, userId))
+      .where(eq(channels.id, userId))
       .returning();
 
     if (!updatedUser.length) {

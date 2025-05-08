@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { users } from '../../database/schema';
+import { channels } from '../../database/schema';
 import { eq, ilike, or } from 'drizzle-orm';
 
 @Injectable()
@@ -9,8 +9,8 @@ export class UsereSrvice {
 
   async findById(id: string) {
     const result = await this.db
-      .select(users)
-      .where(eq(users.url, id));
+      .select(channels)
+      .where(eq(channels.url, id));
 
     if (!result.length) {
       throw new NotFoundException(`Пользователь с ID ${id} не найден`);
@@ -25,18 +25,18 @@ export class UsereSrvice {
     const searchQuery = `%${query}%`;
     
     const result = await this.db
-      .select(users, {
-        id: users.id,
-        email: users.email,
-        username: users.username,
-        avatar: users.avatar,
-        url: users.url,
-        createdAt: users.createdAt
+      .select(channels, {
+        id: channels.id,
+        email: channels.email,
+        username: channels.username,
+        avatar: channels.avatar,
+        url: channels.url,
+        createdAt: channels.createdAt
       })
       .where(
         or(
-          ilike(users.username, searchQuery),
-          ilike(users.email, searchQuery)
+          ilike(channels.username, searchQuery),
+          ilike(channels.email, searchQuery)
         )
       )
       .limit(20)

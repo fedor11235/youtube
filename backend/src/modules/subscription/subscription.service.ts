@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, ConflictException } from '@nestjs/common
 import { DrizzleService } from '../drizzle/drizzle.service';
 import { eq, and, sql } from 'drizzle-orm';
 // import { subscriptions } from '../drizzle/schema';
-import { subscriptions, users } from '../../database/schema';
+import { subscriptions, channels } from '../../database/schema';
 import { NotificationService } from '../notification/notification.service'
 
 @Injectable()
@@ -13,8 +13,8 @@ export class SubscriptionService {
   ) {}
 
   async subscribe(userId: number, channelURL: string) {
-    const channel = await this.db.query.users.findFirst({
-      where: eq(users.url, channelURL),
+    const channel = await this.db.query.channels.findFirst({
+      where: eq(channels.url, channelURL),
     });
 
     if(!channel) {
@@ -36,15 +36,15 @@ export class SubscriptionService {
     }
 
     const result = await this.db
-    .select(users, {
-      id: users.id,
-      email: users.email,
-      username: users.username,
-      createdAt: users.createdAt,
-      avatar: users.avatar,
-      banner: users.banner,
-      url: users.url
-    }).where(eq(users.id, userId));
+    .select(channels, {
+      id: channels.id,
+      email: channels.email,
+      username: channels.username,
+      createdAt: channels.createdAt,
+      avatar: channels.avatar,
+      banner: channels.banner,
+      url: channels.url
+    }).where(eq(channels.id, userId));
 
     await this.notificationService.createNotification({
       userId: channel.id,
@@ -68,8 +68,8 @@ export class SubscriptionService {
   }
 
   async unsubscribe(userId: number, channelURL: string) {
-    const channel = await this.db.query.users.findFirst({
-      where: eq(users.url, channelURL),
+    const channel = await this.db.query.channels.findFirst({
+      where: eq(channels.url, channelURL),
     });
 
     if(!channel) {
@@ -97,25 +97,25 @@ export class SubscriptionService {
     return this.db
       .select(subscriptions, {
         channel: {
-          id: users.id,
-          username: users.username,
-          avatar: users.avatar,
+          id: channels.id,
+          username: channels.username,
+          avatar: channels.avatar,
           subscribersCount: sql<number>`(
             SELECT count(*)
             FROM ${subscriptions}
-            WHERE ${subscriptions.channelId} = ${users.id}
+            WHERE ${subscriptions.channelId} = ${channels.id}
           )`.as('subscribers_count')
         }
       })
-      .innerJoin(users, eq(users.id, subscriptions.channelId))
+      .innerJoin(channels, eq(channels.id, subscriptions.channelId))
       .where(eq(subscriptions.userId, userId))
-      .groupBy(users.id)
+      .groupBy(channels.id)
       .execute();
   }
 
   async getSubscribers(channelURL: string) {
-    const channel = await this.db.query.users.findFirst({
-      where: eq(users.url, channelURL),
+    const channel = await this.db.query.channels.findFirst({
+      where: eq(channels.url, channelURL),
     });
 
     if(!channel) {
@@ -125,19 +125,19 @@ export class SubscriptionService {
     return this.db
       .select(subscriptions, {
         subscriber: {
-          id: users.id,
-          username: users.url,
-          avatar: users.avatar
+          id: channels.id,
+          username: channels.url,
+          avatar: channels.avatar
         }
       })
-      .innerJoin(users, eq(users.id, subscriptions.userId))
+      .innerJoin(channels, eq(channels.id, subscriptions.userId))
       .where(eq(subscriptions.channelId, channel.id))
       .execute();
   }
 
   async checkSubscription(userId: number, channelURL: string) {
-    const channel = await this.db.query.users.findFirst({
-      where: eq(users.url, channelURL),
+    const channel = await this.db.query.channels.findFirst({
+      where: eq(channels.url, channelURL),
     });
 
     if(!channel) {

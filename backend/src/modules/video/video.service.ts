@@ -1,11 +1,9 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { tags, users, videoLikes, videos, videoTags, videoViews } from '../../database/schema';
+import { tags, channels, videoLikes, videos, videoTags, videoViews } from '../../database/schema';
 import { desc, eq, gte, inArray, like, ne, or, sql } from 'drizzle-orm';
 import { extractDuration, extractThumbnail, editVideo } from './video.utils';
 import { subDays } from 'date-fns';
-import * as path from 'path';
-import { promises as fs } from 'fs';
 
 @Injectable()
 export class VideoService {
@@ -41,14 +39,14 @@ export class VideoService {
         createdAt: videos.createdAt,
         duration: videos.duration,
         user: {
-          id: users.id,
-          username: users.username,
-          email: users.email,
-          avatar: users.avatar,
-          url: users.url
+          id: channels.id,
+          username: channels.username,
+          email: channels.email,
+          avatar: channels.avatar,
+          url: channels.url
         }
       })
-      .leftJoin(users, eq(videos.userId, users.id));
+      .leftJoin(channels, eq(videos.userId, channels.id));
   
     return result.map(video => ({
       ...video,
@@ -73,15 +71,15 @@ export class VideoService {
         createdAt: videos.createdAt,
         duration: videos.duration,
         user: {
-          id: users.id,
-          username: users.username,
-          email: users.email,
-          avatar: users.avatar,
-          url: users.url
+          id: channels.id,
+          username: channels.username,
+          email: channels.email,
+          avatar: channels.avatar,
+          url: channels.url
         }
       })
       .where(eq(videos.id, id))
-      .leftJoin(users, eq(videos.userId, users.id))
+      .leftJoin(channels, eq(videos.userId, channels.id))
       .limit(1);
 
     if (!video.length) {
@@ -123,12 +121,12 @@ export class VideoService {
         userId: videos.userId,
         duration: videos.duration,
         channel: {
-          id: users.id,
-          username: users.username,
-          avatar: users.avatar
+          id: channels.id,
+          username: channels.username,
+          avatar: channels.avatar
         }
       })
-      .innerJoin(users, eq(users.id, videos.userId))
+      .innerJoin(channels, eq(channels.id, videos.userId))
       .where(eq(videos.userId, channelId))
       .orderBy(desc(videos.createdAt));
   
@@ -149,13 +147,13 @@ export class VideoService {
         viewsCount: videos.views,
         duration: videos.duration,
         user: {
-          id: users.id,
-          username: users.username,
-          avatar: users.avatar
+          id: channels.id,
+          username: channels.username,
+          avatar: channels.avatar
         }
       })
       .innerJoin(videos, eq(videoLikes.videoId, videos.id))
-      .innerJoin(users, eq(videos.userId, users.id))
+      .innerJoin(channels, eq(videos.userId, channels.id))
       .where(eq(videoLikes.userId, userId))
       .orderBy(desc(videoLikes.createdAt))
       .execute();
@@ -174,18 +172,18 @@ export class VideoService {
         views: sql`COUNT(${videoViews.id})`,
         duration: videos.duration,
         user: {
-          id: users.id,
-          username: users.username,
-          avatar: users.avatar,
-          url: users.url
+          id: channels.id,
+          username: channels.username,
+          avatar: channels.avatar,
+          url: channels.url
         }
       })
-      .leftJoin(users, eq(videos.userId, users.id))
+      .leftJoin(channels, eq(videos.userId, channels.id))
       .leftJoin(videoViews, eq(videos.id, videoViews.videoId))
       .where(
           gte(videoViews.createdAt, yesterday)
       )
-      .groupBy(videos.id, users.id)
+      .groupBy(videos.id, channels.id)
       .orderBy(desc(sql`COUNT(${videoViews.id})`))
       .limit(10);
   }
@@ -202,14 +200,14 @@ export class VideoService {
         createdAt: videos.createdAt,
         duration: videos.duration,
         user: {
-          id: users.id,
-          username: users.username,
-          email: users.email,
-          avatar: users.avatar,
-          url: users.url
+          id: channels.id,
+          username: channels.username,
+          email: channels.email,
+          avatar: channels.avatar,
+          url: channels.url
         }
       })
-      .leftJoin(users, eq(videos.userId, users.id))
+      .leftJoin(channels, eq(videos.userId, channels.id))
       .where(ne(videos.id, id)); // Добавляем условие для исключения текущего видео
 
     return result.map(video => ({
@@ -236,20 +234,20 @@ export class VideoService {
         createdAt: videos.createdAt,
         duration: videos.duration,
         user: {
-          id: users.id,
-          username: users.username,
-          avatar: users.avatar,
-          url: users.url
+          id: channels.id,
+          username: channels.username,
+          avatar: channels.avatar,
+          url: channels.url
         }
       })
-      .leftJoin(users, eq(videos.userId, users.id));
+      .leftJoin(channels, eq(videos.userId, channels.id));
   
     if (query) {
       videosQuery = videosQuery.where(
         or(
           like(videos.title, `%${query}%`),
           like(videos.description, `%${query}%`),
-          like(users.username, `%${query}%`)
+          like(channels.username, `%${query}%`)
         )
       );
     }
@@ -259,7 +257,7 @@ export class VideoService {
         .innerJoin(videoTags, eq(videos.id, videoTags.videoId))
         .innerJoin(tags, eq(videoTags.tagId, tags.id))
         .where(inArray(tags.name, tagNames))
-        .groupBy(videos.id, users.id, users.username, users.avatar, users.url);
+        .groupBy(videos.id, channels.id, channels.username, channels.avatar, channels.url);
     }
   
     const result = await videosQuery;

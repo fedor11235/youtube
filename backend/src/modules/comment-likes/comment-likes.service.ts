@@ -1,6 +1,6 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { commentLikes, comments, users, videos } from '../../database/schema';
+import { commentLikes, comments, channels } from '../../database/schema';
 import { and, eq, sql } from 'drizzle-orm';
 import { NotificationService } from '../notification/notification.service';
 
@@ -34,27 +34,27 @@ export class CommentLikesService {
     if(isCreatorLike) return
 
     const result = await this.db
-    .select(users, {
-      id: users.id,
-      email: users.email,
-      username: users.username,
-      createdAt: users.createdAt,
-      avatar: users.avatar,
-      banner: users.banner,
-      url: users.url
-    }).where(eq(users.id, comment.userId));
+    .select(channels, {
+      id: channels.id,
+      email: channels.email,
+      username: channels.username,
+      createdAt: channels.createdAt,
+      avatar: channels.avatar,
+      banner: channels.banner,
+      url: channels.url
+    }).where(eq(channels.id, comment.userId));
 
 
   const resultTwo = await this.db
-    .select(users, {
-      id: users.id,
-      email: users.email,
-      username: users.username,
-      createdAt: users.createdAt,
-      avatar: users.avatar,
-      banner: users.banner,
-      url: users.url
-    }).where(eq(users.id, userId));
+    .select(channels, {
+      id: channels.id,
+      email: channels.email,
+      username: channels.username,
+      createdAt: channels.createdAt,
+      avatar: channels.avatar,
+      banner: channels.banner,
+      url: channels.url
+    }).where(eq(channels.id, userId));
 
 
     await this.notificationService.createNotification({
