@@ -7,7 +7,7 @@ import { eq } from 'drizzle-orm';
 @Injectable()
 export class NotificationService {
   constructor(
-    private readonly db: DrizzleService,
+    private readonly drizzleService: DrizzleService,
     private readonly notificationGateway: NotificationGateway
   ) {}
 
@@ -18,7 +18,7 @@ export class NotificationService {
     type: 'like' | 'comment' | 'reply' | 'subscribe' | 'system';
     data?: any;
   }) {
-    const [notification] = await this.db
+    const [notification] = await this.drizzleService.db
       .insert(notifications)
       .values({
         ...data,
@@ -31,36 +31,35 @@ export class NotificationService {
   }
 
   async getChannelNotifications(channelId: number) {
-    return this.db
-      .select(notifications)
+    return this.drizzleService.db
+      .select()
+      .from(notifications)
       .where(eq(notifications.channelId, channelId))
       .orderBy(notifications.createdAt);
   }
 
   async markAsRead(id: number, channelId: number) {
-    await this.db
+    await this.drizzleService.db
       .update(notifications)
       .set({ read: true })
       .where(eq(notifications.id, id))
-      .where(eq(notifications.channelId, channelId));
   }
 
   async markAllAsRead(channelId: number) {
-    await this.db
+    await this.drizzleService.db
       .update(notifications)
       .set({ read: true })
       .where(eq(notifications.channelId, channelId));
   }
 
   async deleteNotification(id: number, channelId: number) {
-    await this.db
+    await this.drizzleService.db
       .delete(notifications)
       .where(eq(notifications.id, id))
-      .where(eq(notifications.channelId, channelId));
   }
 
   async deleteAllNotifications(channelId: number) {
-    await this.db
+    await this.drizzleService.db
       .delete(notifications)
       .where(eq(notifications.channelId, channelId));
   }

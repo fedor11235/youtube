@@ -5,11 +5,11 @@ import { and, desc, eq } from 'drizzle-orm';
 
 @Injectable()
 export class FavoritesService {
-  constructor(private readonly db: DrizzleService) {}
+  constructor(private readonly drizzleService: DrizzleService) {}
 
   async addToFavorites(channelId: number, videoId: number) {
     try {
-      await this.db.insert(favorites)
+      await this.drizzleService.db.insert(favorites)
         .values({
           channelId,
           videoId,
@@ -26,7 +26,7 @@ export class FavoritesService {
   }
 
   async removeFromFavorites(channelId: number, videoId: number) {
-    await this.db.delete(favorites)
+    await this.drizzleService.db.delete(favorites)
       .where(
         and(
           eq(favorites.channelId, channelId),
@@ -38,8 +38,9 @@ export class FavoritesService {
   }
 
   async isInFavorites(channelId: number, videoId: number) {
-    const result = await this.db
-      .select(favorites)
+    const result = await this.drizzleService.db
+      .select()
+      .from(favorites)
       .where(
         and(
           eq(favorites.channelId, channelId),
@@ -51,8 +52,8 @@ export class FavoritesService {
   }
 
   async getFavoriteVideos(channelId: number) {
-    return this.db
-      .select(favorites, {
+    return this.drizzleService.db
+      .select({
         id: videos.id,
         title: videos.title,
         description: videos.description,
@@ -65,6 +66,7 @@ export class FavoritesService {
           avatar: channels.avatar
         }
       })
+      .from(favorites)
       .innerJoin(videos, eq(favorites.videoId, videos.id))
       .innerJoin(channels, eq(videos.channelId, channels.id))
       .where(eq(favorites.channelId, channelId))

@@ -7,12 +7,12 @@ import { NotificationService } from '../notification/notification.service';
 @Injectable()
 export class CommentService {
   constructor(
-    private readonly db: DrizzleService,
+    private readonly drizzleService: DrizzleService,
     private readonly notificationService: NotificationService
   ) {}
 
   async createComment(channelId: number, videoId: number, content: string) {
-    const [comment] = await this.db
+    const commentsResult = await this.drizzleService.db
       .insert(comments)
       .values({
         channelId,
@@ -23,14 +23,16 @@ export class CommentService {
       })
       .returning();
 
-      const video = await this.db.query.videos.findFirst({
+      const comment = commentsResult[0]
+
+      const video = await this.drizzleService.db.query.videos.findFirst({
         where: eq(videos.id, videoId),
       });
 
       if(!video?.channelId) return
 
-      const result = await this.db
-      .select(channels, {
+      const channelsResult = await this.drizzleService.db
+      .select({
         id: channels.id,
         email: channels.email,
         username: channels.username,
@@ -38,9 +40,11 @@ export class CommentService {
         avatar: channels.avatar,
         banner: channels.banner,
         url: channels.url
-      }).where(eq(channels.id, channelId));
+      })
+      .from(channels)
+      .where(eq(channels.id, channelId));
 
-      if(video.channelId === result[0].id) return
+      if(video.channelId === channelsResult[0].id) return
 
       await this.notificationService.createNotification({
         channelId: video.channelId,
@@ -48,7 +52,7 @@ export class CommentService {
         message: `Под вашим видео оставили новый комментарий!`,
         type: 'comment',
         data: {
-          channel: result[0],
+          channel: channelsResult[0],
         }
       });
     
@@ -56,8 +60,8 @@ export class CommentService {
   }
 
   async getVideoComments(videoId: number) {
-    const result = await this.db
-    .select(comments, {
+    const result = await this.drizzleService.db
+    .select({
       id: comments.id,
       content: comments.content,
       createdAt: comments.createdAt,
@@ -70,6 +74,7 @@ export class CommentService {
       isCreator: sql<boolean>`CASE WHEN ${videos.channelId} = ${channels.id} THEN true ELSE false END`,
       likes: sql<number>`COUNT(DISTINCT ${commentLikes.id})`
     })
+    .from(comments)
     .leftJoin(channels, eq(comments.channelId, channels.id))
     .leftJoin(videos, eq(comments.videoId, videos.id))
     .leftJoin(commentLikes, eq(comments.id, commentLikes.commentId))
@@ -105,8 +110,9 @@ export class CommentService {
   }
 
   async updateComment(commentId: number, channelId: number, content: string) {
-    const [comment] = await this.db
-      .select(comments)
+    const [comment] = await this.drizzleService.db
+      .select()
+      .from(comments)
       .where(eq(comments.id, commentId));
 
     if (!comment) {
@@ -117,7 +123,7 @@ export class CommentService {
       throw new Error('Нет прав на редактирование комментария');
     }
 
-    return this.db
+    return this.drizzleService.db
       .update(comments)
       .set({
         content,
@@ -128,8 +134,9 @@ export class CommentService {
   }
 
   async deleteComment(commentId: number, channelId: number) {
-    const [comment] = await this.db
-      .select(comments)
+    const [comment] = await this.drizzleService.db
+      .select()
+      .from(comments)
       .where(eq(comments.id, commentId));
 
     if (!comment) {
@@ -140,7 +147,7 @@ export class CommentService {
       throw new Error('Нет прав на удаление комментария');
     }
 
-    await this.db
+    await this.drizzleService.db
       .delete(comments)
       .where(eq(comments.id, commentId));
 
@@ -148,8 +155,9 @@ export class CommentService {
   }
 
   async createReply(channelId: number, commentId: number, content: string) {
-    const [parentComment] = await this.db
+    const [parentComment] = await this.drizzleService.db
       .select(comments)
+      .from(comments)
       .where(eq(comments.id, commentId));
 
     if (!parentComment) {
@@ -157,7 +165,7 @@ export class CommentService {
     }
 
     // Создаем ответ на комментарий
-    const [reply] = await this.db
+    const replyResult = await this.drizzleService.db
       .insert(comments)
       .values({
         content,
@@ -167,14 +175,16 @@ export class CommentService {
       })
       .returning();
 
-      const video = await this.db.query.videos.findFirst({
+      const reply = replyResult[0]
+
+      const video = await this.drizzleService.db.query.videos.findFirst({
         where: eq(videos.id, parentComment.videoId),
       });
 
       if(!video?.channelId) return
 
-      const result = await this.db
-      .select(channels, {
+      const channelResult = await this.drizzleService.db
+      .select({
         id: channels.id,
         email: channels.email,
         username: channels.username,
@@ -182,9 +192,11 @@ export class CommentService {
         avatar: channels.avatar,
         banner: channels.banner,
         url: channels.url
-      }).where(eq(channels.id, channelId));
+      })
+      .from(channels)
+      .where(eq(channels.id, channelId));
 
-      if(parentComment.channelId === result[0].id) return
+      if(parentComment.channelId === channelResult[0].id) return
 
       await this.notificationService.createNotification({
         channelId: parentComment.channelId,
@@ -192,7 +204,7 @@ export class CommentService {
         message: `Вам ответили на комментарий!`,
         type: 'comment',
         data: {
-          channel: result[0],
+          channel: channelResult[0],
         }
       });
 
@@ -200,8 +212,8 @@ export class CommentService {
   }
 
   async checkCreatorLike(commentId: number): Promise<boolean> {
-    const [result] = await this.db
-      .select(commentLikes, {
+    const [result] = await this.drizzleService.db
+      .select({
         exists: sql<boolean>`EXISTS (
           SELECT 1 
           FROM ${commentLikes} 
@@ -209,6 +221,7 @@ export class CommentService {
           AND ${commentLikes.isCreatorLike} = true
         )`
       })
+      .from(channels)
   
     return result?.exists || false;
   }

@@ -5,15 +5,16 @@ import { eq } from 'drizzle-orm';
 
 @Injectable()
 export class TagService {
-  constructor(private readonly db: DrizzleService) {}
+  constructor(private readonly drizzleService: DrizzleService) {}
 
   async getTags(): Promise<Tag[]> {
-    return this.db.select(tags);
+    return this.drizzleService.db.select().from(tags);
   }
 
   async getTagById(id: number): Promise<Tag> {
-    const result = await this.db
-      .select(tags)
+    const result = await this.drizzleService.db
+      .select()
+      .from(tags)
       .where(eq(tags.id, id));
 
     if (!result.length) {
@@ -24,11 +25,12 @@ export class TagService {
   }
 
   async getVideoTags(videoId: number): Promise<Tag[]> {
-    const result = await this.db
-      .select(videoTags, {
+    const result = await this.drizzleService.db
+      .select({
         id: tags.id,
         name: tags.name,
       })
+      .from(videoTags)
       .innerJoin(tags, eq(videoTags.tagId, tags.id))
       .where(eq(videoTags.videoId, videoId));
 

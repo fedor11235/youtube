@@ -5,10 +5,10 @@ import { eq, desc } from 'drizzle-orm';
 
 @Injectable()
 export class VideoHistoryService {
-  constructor(private readonly db: DrizzleService) {}
+  constructor(private readonly drizzleService: DrizzleService) {}
 
   async addToHistory(channelId: number, videoId: number) {
-    return this.db.insert(videoHistory)
+    return this.drizzleService.db.insert(videoHistory)
       .values({
         channelId,
         videoId,
@@ -18,31 +18,45 @@ export class VideoHistoryService {
   }
 
   async getHistory(channelId: number) {
-    return this.db
-      .select(videoHistory, {
+    const result = await this.drizzleService.db
+      .select({
         id: videoHistory.id,
         watchedAt: videoHistory.watchedAt,
-        video: {
-          id: videos.id,
-          title: videos.title,
-          thumbnailUrl: videos.thumbnailUrl,
-          views: videos.views,
-          createdAt: videos.createdAt,
-          channel: {
-            id: channels.id,
-            username: channels.username,
-            avatar: channels.avatar
-          }
-        }
+        videoId: videos.id,
+        title: videos.title,
+        thumbnailUrl: videos.thumbnailUrl,
+        views: videos.views,
+        videoCreatedAt: videos.createdAt,
+        channelId: channels.id,
+        username: channels.username,
+        avatar: channels.avatar
       })
+      .from(videoHistory)
       .innerJoin(videos, eq(videos.id, videoHistory.videoId))
       .innerJoin(channels, eq(channels.id, videos.channelId))
       .where(eq(videoHistory.channelId, channelId))
       .orderBy(desc(videoHistory.watchedAt));
+  
+    return result.map((row) => ({
+      id: row.id,
+      watchedAt: row.watchedAt,
+      video: {
+        id: row.videoId,
+        title: row.title,
+        thumbnailUrl: row.thumbnailUrl,
+        views: row.views,
+        createdAt: row.videoCreatedAt,
+        channel: {
+          id: row.channelId,
+          username: row.username,
+          avatar: row.avatar
+        }
+      }
+    }));
   }
 
   async clearHistory(channelId: number) {
-    return this.db
+    return this.drizzleService.db
       .delete(videoHistory)
       .where(eq(videoHistory.channelId, channelId))
       .execute();

@@ -12,11 +12,11 @@ import { promises as fs } from 'fs';
 export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly db: DrizzleService,
+    private readonly drizzleService: DrizzleService,
   ) {}
 
   async updateProfile(channelId: number, updateProfileDto: UpdateProfileDto) {
-    const updatedChannel = await this.db
+    const updatedChannel = await this.drizzleService.db
       .update(channels)
       .set(updateProfileDto)
       .where(eq(channels.id, channelId))
@@ -30,21 +30,17 @@ export class AuthService {
   }
 
   async updateAvatar(channelId: number, file: Express.Multer.File) {
-    // Создаем директорию для аватаров, если её нет
     const uploadDir = path.join(process.cwd(), 'uploads', 'avatars');
 
     await fs.mkdir(uploadDir, { recursive: true });
 
-    // Генерируем уникальное имя файла
     const fileExt = path.extname(file.originalname);
     const fileName = `avatar-${channelId}-${Date.now()}${fileExt}`;
     const filePath = path.join(uploadDir, fileName);
 
-    // Сохраняем файл
     await fs.writeFile(filePath, file.buffer);
 
-    // Обновляем запись в базе данных
-    const updatedChannel = await this.db
+    const updatedChannel = await this.drizzleService.db
       .update(channels)
       .set({ avatar: fileName })
       .where(eq(channels.id, channelId))
@@ -62,7 +58,7 @@ export class AuthService {
     password: string;
     username: string;
   }) {
-    const existingChannel = await this.db.query.channels.findFirst({
+    const existingChannel = await this.drizzleService.db.query.channels.findFirst({
       where: eq(channels.email, registerDto.email),
     });
 
@@ -70,18 +66,16 @@ export class AuthService {
       throw new ConflictException('Channel with this email already exists');
     }
 
-    // Hash password
     const hashedPassword = await hash(registerDto.password, 10);
-    const url = new Date()
+    const url = Date.now().toString();
 
-    const [newChannel] = await this.db.insert(channels).values({
+    const [newChannel] = await this.drizzleService.db.insert(channels).values({
       email: registerDto.email,
       password: hashedPassword,
       username: registerDto.username,
       url,
     }).returning();
 
-    // Generate JWT token
     const token = this.jwtService.sign({ 
       sub: newChannel.id,
       email: newChannel.email 
@@ -100,7 +94,7 @@ export class AuthService {
   }
 
   async login(loginDto: { email: string; password: string }) {
-    const channel = await this.db.query.channels.findFirst({
+    const channel = await this.drizzleService.db.query.channels.findFirst({
       where: eq(channels.email, loginDto.email),
     });
 
@@ -108,14 +102,12 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Verify password
     const isPasswordValid = await compare(loginDto.password, channel.password);
 
     if (!isPasswordValid) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    // Generate JWT token
     const token = this.jwtService.sign({ 
       sub: channel.id,
       email: channel.email 
@@ -135,19 +127,18 @@ export class AuthService {
 
   async logout(channelId: number) {
     try {
-      const channel = await this.db.query.channels.findFirst({ where:  eq(channels.id, channelId) });
+      const channel = await this.drizzleService.db.query.channels.findFirst({ where:  eq(channels.id, channelId) });
       if (!channel) {
         throw new NotFoundException('User not found');
       }
-      // You might want to invalidate tokens or perform other cleanup here
     } catch (error) {
       throw new InternalServerErrorException('Logout failed');
     }
   }
 
   async getCurrentChannel(channelId: number) {
-    const result = await this.db
-    .select(channels, {
+    const result = await this.drizzleService.db
+    .select({
       channel: {
         id: channels.id,
         email: channels.email,
@@ -167,6 +158,7 @@ export class AuthService {
         views: videos.views
       }
     })
+    .from(channels)
     .leftJoin(videos, eq(videos.channelId, channels.id))
     .where(eq(channels.id, channelId));
 
@@ -174,11 +166,10 @@ export class AuthService {
     throw new NotFoundException('Пользователь не найден');
   }
 
-  // Преобразуем результат в нужный формат
   const channelVideos = result
-    .filter(row => row.videos.id !== null)
+    .filter(row => row?.videos?.id !== null)
     .map(row => row.videos)
-    .sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
+    .sort((a, b) => b!.createdAt.getTime() - a!.createdAt.getTime());
 
   return {
     ...result[0].channel,
@@ -187,21 +178,17 @@ export class AuthService {
   }
 
   async updateBanner(channelId: number,  file: Express.Multer.File) {
-    // Создаем директорию для аватаров, если её нет
     const uploadDir = path.join(process.cwd(), 'uploads', 'banners');
 
     await fs.mkdir(uploadDir, { recursive: true });
 
-    // Генерируем уникальное имя файла
     const fileExt = path.extname(file.originalname);
     const fileName = `banner-${channelId}-${Date.now()}${fileExt}`;
     const filePath = path.join(uploadDir, fileName);
 
-    // Сохраняем файл
     await fs.writeFile(filePath, file.buffer);
 
-    // Обновляем запись в базе данных
-    const updatedChannel = await this.db
+    const updatedChannel = await this.drizzleService.db
       .update(channels)
       .set({ banner: fileName })
       .where(eq(channels.id, channelId))

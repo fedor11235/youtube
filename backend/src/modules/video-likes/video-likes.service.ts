@@ -7,18 +7,18 @@ import { NotificationService } from '../notification/notification.service';
 @Injectable()
 export class VideoLikesService {
   constructor(
-    private readonly db: DrizzleService,
+    private readonly drizzleService: DrizzleService,
     private readonly notificationService: NotificationService
   ) {}
 
   async likeVideo(channelId: number, videoId: number) {
-    const video = await this.db.query.videos.findFirst({
+    const video = await this.drizzleService.db.query.videos.findFirst({
       where: eq(videos.id, videoId),
     });
 
     if(!video?.channelId) return
 
-    await this.db.insert(videoLikes)
+    await this.drizzleService.db.insert(videoLikes)
       .values({
         channelId,
         videoId,
@@ -26,8 +26,8 @@ export class VideoLikesService {
       })
       .execute();
 
-    const result = await this.db
-      .select(channels, {
+    const result = await this.drizzleService.db
+      .select({
         id: channels.id,
         email: channels.email,
         username: channels.username,
@@ -35,7 +35,9 @@ export class VideoLikesService {
         avatar: channels.avatar,
         banner: channels.banner,
         url: channels.url
-      }).where(eq(channels.id, channelId));
+      })
+      .from(channels)
+      .where(eq(channels.id, channelId));
 
       await this.notificationService.createNotification({
         channelId: video.channelId,
@@ -50,7 +52,7 @@ export class VideoLikesService {
   }
 
   async unlikeVideo(channelId: number, videoId: number) {
-    await this.db.delete(videoLikes)
+    await this.drizzleService.db.delete(videoLikes)
       .where(
         and(
           eq(videoLikes.channelId, channelId),
@@ -62,16 +64,18 @@ export class VideoLikesService {
   }
 
   async getLikesCount(videoId: number) {
-    const result = await this.db
-      .select(videoLikes, { count: sql<number>`count(*)` })
+    const result = await this.drizzleService.db
+      .select({ count: sql<number>`count(*)` })
+      .from(videoLikes)
       .where(eq(videoLikes.videoId, videoId))
       .execute();
     return result[0].count;
   }
 
   async hasChannelLiked(channelId: number, videoId: number) {
-    const like = await this.db
-      .select(videoLikes)
+    const like = await this.drizzleService.db
+      .select()
+      .from(videoLikes)
       .where(
         and(
           eq(videoLikes.channelId, channelId),

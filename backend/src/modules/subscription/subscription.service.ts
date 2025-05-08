@@ -8,12 +8,12 @@ import { NotificationService } from '../notification/notification.service'
 @Injectable()
 export class SubscriptionService {
   constructor(
-    private readonly db: DrizzleService,
+    private readonly drizzleService: DrizzleService,
     private readonly notificationService: NotificationService
   ) {}
 
   async subscribe(userId: number, channelURL: string) {
-    const channel = await this.db.query.channels.findFirst({
+    const channel = await this.drizzleService.db.query.channels.findFirst({
       where: eq(channels.url, channelURL),
     });
 
@@ -21,8 +21,9 @@ export class SubscriptionService {
       return
     }
     // Проверяем, существует ли уже подписка
-    const existingSubscription = await this.db
-      .select(subscriptions)
+    const existingSubscription = await this.drizzleService.db
+      .select()
+      .from(subscriptions)
       .where(
         and(
           eq(subscriptions.userId, userId),
@@ -35,8 +36,8 @@ export class SubscriptionService {
       throw new ConflictException('Already subscribed');
     }
 
-    const result = await this.db
-    .select(channels, {
+    const result = await this.drizzleService.db
+    .select({
       id: channels.id,
       email: channels.email,
       username: channels.username,
@@ -44,7 +45,9 @@ export class SubscriptionService {
       avatar: channels.avatar,
       banner: channels.banner,
       url: channels.url
-    }).where(eq(channels.id, userId));
+    })
+    .from(channels)
+    .where(eq(channels.id, userId));
 
     await this.notificationService.createNotification({
       channelId: channel.id,
@@ -57,7 +60,7 @@ export class SubscriptionService {
     });
 
     // Создаем новую подписку
-    return this.db
+    return this.drizzleService.db
       .insert(subscriptions)
       .values({
         userId: userId,
@@ -68,7 +71,7 @@ export class SubscriptionService {
   }
 
   async unsubscribe(userId: number, channelURL: string) {
-    const channel = await this.db.query.channels.findFirst({
+    const channel = await this.drizzleService.db.query.channels.findFirst({
       where: eq(channels.url, channelURL),
     });
 
@@ -76,7 +79,7 @@ export class SubscriptionService {
       return
     }
 
-    const result = await this.db
+    const result = await this.drizzleService.db
       .delete(subscriptions)
       .where(
         and(
@@ -94,8 +97,8 @@ export class SubscriptionService {
   }
 
   async getSubscriptions(userId: number) {  
-    return this.db
-      .select(subscriptions, {
+    return this.drizzleService.db
+      .select({
         channel: {
           id: channels.id,
           username: channels.username,
@@ -107,6 +110,7 @@ export class SubscriptionService {
           )`.as('subscribers_count')
         }
       })
+      .from(subscriptions)
       .innerJoin(channels, eq(channels.id, subscriptions.channelId))
       .where(eq(subscriptions.userId, userId))
       .groupBy(channels.id)
@@ -114,7 +118,7 @@ export class SubscriptionService {
   }
 
   async getSubscribers(channelURL: string) {
-    const channel = await this.db.query.channels.findFirst({
+    const channel = await this.drizzleService.db.query.channels.findFirst({
       where: eq(channels.url, channelURL),
     });
 
@@ -122,21 +126,22 @@ export class SubscriptionService {
       return
     }
 
-    return this.db
-      .select(subscriptions, {
+    return this.drizzleService.db
+      .select({
         subscriber: {
           id: channels.id,
           username: channels.url,
           avatar: channels.avatar
         }
       })
+      .from(subscriptions)
       .innerJoin(channels, eq(channels.id, subscriptions.userId))
       .where(eq(subscriptions.channelId, channel.id))
       .execute();
   }
 
   async checkSubscription(userId: number, channelURL: string) {
-    const channel = await this.db.query.channels.findFirst({
+    const channel = await this.drizzleService.db.query.channels.findFirst({
       where: eq(channels.url, channelURL),
     });
 
@@ -144,8 +149,9 @@ export class SubscriptionService {
       return
     }
 
-    const subscription = await this.db
-      .select(subscriptions)
+    const subscription = await this.drizzleService.db
+      .select()
+      .from(subscriptions)
       .where(
         and(
           eq(subscriptions.userId, userId),

@@ -19,7 +19,7 @@ export const videos = pgTable('videos', {
   channelId: integer('channel_id').references(() => channels.id),
   videoUrl: varchar('video_url', { length: 255 }).notNull(),
   thumbnailUrl: varchar('thumbnail_url', { length: 255 }),
-  createdAt: timestamp('created_at').defaultNow(),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
   views: integer('views').default(0),
   duration: integer('duration')
 });
@@ -111,6 +111,7 @@ export const notifications = pgTable('notifications', {
   createdAt: timestamp('created_at').defaultNow(),
 });
 
+export type Video = typeof videos.$inferSelect;
 export type Tag = typeof tags.$inferSelect;
 export type Comment = typeof comments.$inferSelect;
 export type NewComment = typeof comments.$inferInsert;

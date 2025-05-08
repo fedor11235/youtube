@@ -1,20 +1,20 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { tags, channels, videoLikes, videos, videoTags, videoViews } from '../../database/schema';
+import { tags, channels, videoLikes, videos, videoTags, videoViews, Video } from '../../database/schema';
 import { desc, eq, gte, inArray, like, ne, or, sql } from 'drizzle-orm';
 import { extractDuration, extractThumbnail, editVideo } from './video.utils';
 import { subDays } from 'date-fns';
 
 @Injectable()
 export class VideoService {
-  constructor(private readonly db: DrizzleService) {}
+  constructor(private readonly drizzleService: DrizzleService) {}
 
   async createVideo(file: Express.Multer.File, createVideoDto: any, channelId: number) {
     const test = await editVideo(file.path);
     const thumbnailUrl = await extractThumbnail(file.path);
     const duration = await extractDuration(file.path);
 
-    const [video] = await this.db.insert(videos).values({
+    const [video] = await this.drizzleService.db.insert(videos).values({
       title: createVideoDto.title,
       description: createVideoDto.description,
       videoUrl: file.filename,
@@ -27,9 +27,9 @@ export class VideoService {
   }
 
   async getAllVideos() {
-    //const test = this.db.select(videos)
-    const result = await this.db
-      .select(videos, {
+    //const test = this.drizzleService.db.select(videos)
+    const result = await this.drizzleService.db
+      .select({
         id: videos.id,
         title: videos.title,
         description: videos.description,
@@ -46,22 +46,22 @@ export class VideoService {
           url: channels.url
         }
       })
+      .from(videos)
       .leftJoin(channels, eq(videos.channelId, channels.id));
   
-    return result.map(video => ({
+    return result.map((video) => ({
       ...video,
       channel: {
-        id: video.channel.id,
-        username: video.channel.username,
-        avatar: video.channel.avatar || null,
-        url: video.channel.url
+        id: video.channel!.id,
+        username: video.channel!.username,
+        avatar: video.channel!.avatar || null,
+        url: video.channel!.url
       },
-      user: undefined // удаляем исходные данные пользователя
     }));
   }
 
   async getVideoById(id: number) {
-    const video = await this.db.select(videos, {
+    const video = await this.drizzleService.db.select({
         id: videos.id,
         title: videos.title,
         description: videos.description,
@@ -78,6 +78,7 @@ export class VideoService {
           url: channels.url
         }
       })
+      .from(videos)
       .where(eq(videos.id, id))
       .leftJoin(channels, eq(videos.channelId, channels.id))
       .limit(1);
@@ -90,7 +91,8 @@ export class VideoService {
   }
 
   async deleteVideo(id: number, channelId: number) {
-    const video = await this.db.select(videos)
+    const video = await this.drizzleService.db.select()
+      .from(videos)
       .where(eq(videos.id, id))
       .limit(1);
   
@@ -102,15 +104,15 @@ export class VideoService {
       throw new UnauthorizedException('У вас нет прав на удаление этого видео');
     }
   
-    await this.db.delete(videos)
+    await this.drizzleService.db.delete(videos)
       .where(eq(videos.id, id));
   
     return { success: true };
   }
 
   async getChannelVideos(channelId: number) {
-    const videosChannel = await this.db
-      .select(videos, {
+    const videosChannel = await this.drizzleService.db
+      .select({
         id: videos.id,
         title: videos.title,
         description: videos.description,
@@ -126,6 +128,7 @@ export class VideoService {
           avatar: channels.avatar
         }
       })
+      .from(videos)
       .innerJoin(channels, eq(channels.id, videos.channelId))
       .where(eq(videos.channelId, channelId))
       .orderBy(desc(videos.createdAt));
@@ -137,8 +140,8 @@ export class VideoService {
   }
 
   async getLikedVideos(userId: number) {
-    return this.db
-      .select(videoLikes, {
+    return this.drizzleService.db
+      .select({
         id: videos.id,
         title: videos.title,
         description: videos.description,
@@ -152,6 +155,7 @@ export class VideoService {
           avatar: channels.avatar
         }
       })
+      .from(videoLikes)
       .innerJoin(videos, eq(videoLikes.videoId, videos.id))
       .innerJoin(channels, eq(videos.channelId, channels.id))
       .where(eq(videoLikes.channelId, userId))
@@ -162,8 +166,8 @@ export class VideoService {
   async getTrendingVideos() {
     const yesterday = subDays(new Date(), 1);
     
-    return this.db
-      .select(videos, {
+    return this.drizzleService.db
+      .select({
         id: videos.id,
         title: videos.title,
         description: videos.description,
@@ -178,6 +182,7 @@ export class VideoService {
           url: channels.url
         }
       })
+      .from(videos)
       .leftJoin(channels, eq(videos.channelId, channels.id))
       .leftJoin(videoViews, eq(videos.id, videoViews.videoId))
       .where(
@@ -189,8 +194,8 @@ export class VideoService {
   }
 
   async getRelatedVideos(id: number) {
-    const result = await this.db
-      .select(videos, {
+    const result = await this.drizzleService.db
+      .select({
         id: videos.id,
         title: videos.title,
         description: videos.description,
@@ -207,24 +212,25 @@ export class VideoService {
           url: channels.url
         }
       })
+      .from(videos)
       .leftJoin(channels, eq(videos.channelId, channels.id))
       .where(ne(videos.id, id)); // Добавляем условие для исключения текущего видео
 
     return result.map(video => ({
       ...video,
       channel: {
-        id: video.channel.id,
-        username: video.channel.username,
-        avatar: video.channel.avatar || null,
-        url: video.channel.url
+        id: video.channel!.id,
+        username: video.channel!.username,
+        avatar: video.channel!.avatar,
+        url: video.channel!.url
       },
       user: undefined // удаляем исходные данные пользователя
     }));
   }
 
   async searchVideos(query: string, tagNames: string[] = []) {
-    let videosQuery = this.db
-      .selectDistinct(videos, {
+    let videosQuery: any = this.drizzleService.db
+      .selectDistinct({
         id: videos.id,
         title: videos.title,
         description: videos.description,
@@ -240,8 +246,9 @@ export class VideoService {
           url: channels.url
         }
       })
+      .from(videos)
       .leftJoin(channels, eq(videos.channelId, channels.id));
-  
+    
     if (query) {
       videosQuery = videosQuery.where(
         or(
@@ -267,7 +274,7 @@ export class VideoService {
       channel: {
         id: video.channel.id,
         name: video.channel.username,
-        avatar: video.channel.avatar || null,
+        avatar: video.channel.avatar,
         url: video.channel.url
       },
       user: undefined
@@ -277,15 +284,16 @@ export class VideoService {
   async addVideoTags(videoId: number, tagNames: string[]): Promise<void> {
     // Получаем или создаем теги
     const tagPromises = tagNames.map(async (name) => {
-      const [existingTag] = await this.db
-        .select(tags)
+      const [existingTag] = await this.drizzleService.db
+        .select()
+        .from(tags)
         .where(eq(tags.name, name));
   
       if (existingTag) {
         return existingTag;
       }
   
-      const [newTag] = await this.db
+      const [newTag] = await this.drizzleService.db
         .insert(tags)
         .values({ name })
         .returning();
@@ -298,7 +306,7 @@ export class VideoService {
     // Добавляем связи между видео и тегами
     await Promise.all(
       resolvedTags.map((tag) =>
-        this.db
+        this.drizzleService.db
           .insert(videoTags)
           .values({
             videoId,
@@ -310,7 +318,7 @@ export class VideoService {
   }
 
   async updateThumbnail(videoId: any, file: Express.Multer.File) {
-    const updatedVideo = await this.db
+    const updatedVideo = await this.drizzleService.db
       .update(videos)
       .set({ thumbnailUrl: file.filename })
       .where(eq(videos.id, videoId))

@@ -7,22 +7,23 @@ import { NotificationService } from '../notification/notification.service';
 @Injectable()
 export class CommentLikesService {
   constructor(
-    private readonly db: DrizzleService,
+    private readonly drizzleService: DrizzleService,
     private readonly notificationService: NotificationService
   ) {}
 
   async likeComment(channelId: number, commentId: number) {
-    const [comment] = await this.db
-      .select(comments, {
+    const [comment] = await this.drizzleService.db
+      .select({
         id: comments.id,
         channelId: comments.channelId
       })
+      .from(channels)
       .where(eq(comments.id, commentId));
 
     // Проверяем, является ли лайкающий пользователь автором комментария
     const isCreatorLike = comment.channelId === channelId;
 
-    await this.db.insert(commentLikes)
+    await this.drizzleService.db.insert(commentLikes)
       .values({
         channelId,
         commentId,
@@ -33,8 +34,8 @@ export class CommentLikesService {
 
     if(isCreatorLike) return
 
-    const result = await this.db
-    .select(channels, {
+    const result = await this.drizzleService.db
+    .select({
       id: channels.id,
       email: channels.email,
       username: channels.username,
@@ -42,11 +43,13 @@ export class CommentLikesService {
       avatar: channels.avatar,
       banner: channels.banner,
       url: channels.url
-    }).where(eq(channels.id, comment.channelId));
+    })
+    .from(channels)
+    .where(eq(channels.id, comment.channelId));
 
 
-  const resultTwo = await this.db
-    .select(channels, {
+  const resultTwo = await this.drizzleService.db
+    .select({
       id: channels.id,
       email: channels.email,
       username: channels.username,
@@ -54,7 +57,9 @@ export class CommentLikesService {
       avatar: channels.avatar,
       banner: channels.banner,
       url: channels.url
-    }).where(eq(channels.id, channelId));
+    })
+    .from(channels)
+    .where(eq(channels.id, channelId));
 
 
     await this.notificationService.createNotification({
@@ -70,7 +75,7 @@ export class CommentLikesService {
   }
 
   async unlikeComment(channelId: number, commentId: number) {
-    await this.db.delete(commentLikes)
+    await this.drizzleService.db.delete(commentLikes)
       .where(
         and(
           eq(commentLikes.channelId, channelId),
@@ -82,16 +87,18 @@ export class CommentLikesService {
   }
 
   async getLikesCount(commentId: number) {
-    const result = await this.db
-      .select(commentLikes, { count: sql<number>`count(*)` })
+    const result = await this.drizzleService.db
+      .select({ count: sql<number>`count(*)` })
+      .from(commentLikes)
       .where(eq(commentLikes.commentId, commentId))
       .execute();
     return result[0].count;
   }
 
   async hasChannelLiked(channelId: number, commentId: number) {
-    const like = await this.db
-      .select(commentLikes)
+    const like = await this.drizzleService.db
+      .select()
+      .from(commentLikes)
       .where(
         and(
           eq(commentLikes.channelId, channelId),

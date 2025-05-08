@@ -5,18 +5,26 @@ import { eq, ilike, or } from 'drizzle-orm';
 
 @Injectable()
 export class ChannelSrvice {
-  constructor(private readonly db: DrizzleService) {}
+  constructor(private readonly drizzleService: DrizzleService) {}
 
   async findById(id: string) {
-    const result = await this.db
-      .select(channels)
+    const [channel] = await this.drizzleService.db
+      .select({
+          id: channels.id,
+          email: channels.email,
+          username: channels.username,
+          avatar: channels.avatar,
+          banner: channels.banner,
+          isModel: channels.isModel,
+          createdAt: channels.createdAt,
+          url: channels.url
+      })
+      .from(channels)
       .where(eq(channels.url, id));
 
-    if (!result.length) {
+    if (!channel) {
       throw new NotFoundException(`Пользователь с ID ${id} не найден`);
     }
-    const channel = result[0];
-    delete channel.password;
 
     return channel;
   }
@@ -24,8 +32,8 @@ export class ChannelSrvice {
   async searchChannels(query: string) {
     const searchQuery = `%${query}%`;
     
-    const result = await this.db
-      .select(channels, {
+    const result = await this.drizzleService.db
+      .select({
         id: channels.id,
         email: channels.email,
         username: channels.username,
@@ -33,6 +41,7 @@ export class ChannelSrvice {
         url: channels.url,
         createdAt: channels.createdAt
       })
+      .from(channels)
       .where(
         or(
           ilike(channels.username, searchQuery),

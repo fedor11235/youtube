@@ -7,7 +7,7 @@ import * as schema from '../../database/schema';
 export class DrizzleService implements OnModuleInit, OnModuleDestroy {
   [x: string]: any;
   private pool: Pool;
-  private db: ReturnType<typeof drizzle<typeof schema>>;
+  public db: ReturnType<typeof drizzle<typeof schema>>;
 
   constructor() {
     this.pool = new Pool({
@@ -34,31 +34,5 @@ export class DrizzleService implements OnModuleInit, OnModuleDestroy {
 
   async onModuleDestroy() {
     await this.pool.end();
-  }
-
-  // Expose the drizzle query builder
-  get query() {
-    return this.db.query;
-  }
-
-  // Expose methods for database operations
-  insert(table: any): any{
-    return this.db.insert(table);
-  }
-
-  select(table: any, query?: any): any {
-    return this.db.select(query).from(table);
-  }
-
-  selectDistinct(table: any, query?: any): any {
-    return this.db.selectDistinct(query).from(table);
-  }
-
-  update(table: any): any {
-    return this.db.update(table);
-  }
-
-  delete(table: any): any {
-    return this.db.delete(table);
   }
 }
