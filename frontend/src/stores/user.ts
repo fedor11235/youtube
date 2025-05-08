@@ -4,10 +4,7 @@ import { api } from 'src/boot/axios'
 interface User {
   id: number
   email: string
-  firstName: string
-  lastName: string
-  country: string
-  city: string
+  username: string
   avatar: string | null
   createdAt: string
   url: string

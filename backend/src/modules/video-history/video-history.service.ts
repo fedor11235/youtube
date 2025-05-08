@@ -30,7 +30,7 @@ export class VideoHistoryService {
           createdAt: videos.createdAt,
           user: {
             id: users.id,
-            firstName: users.firstName,
+            username: users.username,
             avatar: users.avatar
           }
         }

@@ -6,15 +6,13 @@ export interface LoginCredentials {
 export interface RegisterData {
   email: string;
   password: string;
-  firstName: string;
-  lastName: string;
+  username: string;
 }
 
 export interface User {
   id: number;
   email: string;
-  firstName: string;
-  lastName: string;
+  username: string;
   avatar?: string;
   url?: string
 }

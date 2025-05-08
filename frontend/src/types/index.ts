@@ -1,7 +1,7 @@
 export interface User {
   id: number;
   name: string;
-  firstName?: string;
+  username?: string;
   avatar: string;
   subscribers?: number;
 }
@@ -11,7 +11,7 @@ export interface Channel {
   name: string;
   avatar: string;
   subscribers: number;
-  firstName?: string;
+  username?: string;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   url?: any;
 }
@@ -21,8 +21,7 @@ export interface Channel {
   name: string;
   avatar: string;
   subscribers: number;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  username?: any;
+  username?: string;
 }
 
 export interface Video {

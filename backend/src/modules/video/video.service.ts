@@ -42,8 +42,7 @@ export class VideoService {
         duration: videos.duration,
         user: {
           id: users.id,
-          firstName: users.firstName,
-          lastName: users.lastName,
+          username: users.username,
           email: users.email,
           avatar: users.avatar,
           url: users.url
@@ -55,7 +54,7 @@ export class VideoService {
       ...video,
       channel: {
         id: video.user.id,
-        name: `${video.user.firstName} ${video.user.lastName}`,
+        username: video.user.username,
         avatar: video.user.avatar || null,
         url: video.user.url
       },
@@ -75,8 +74,7 @@ export class VideoService {
         duration: videos.duration,
         user: {
           id: users.id,
-          firstName: users.firstName,
-          lastName: users.lastName,
+          username: users.username,
           email: users.email,
           avatar: users.avatar,
           url: users.url
@@ -126,8 +124,7 @@ export class VideoService {
         duration: videos.duration,
         channel: {
           id: users.id,
-          firstName: users.firstName,
-          lastName: users.lastName,
+          username: users.username,
           avatar: users.avatar
         }
       })
@@ -153,7 +150,7 @@ export class VideoService {
         duration: videos.duration,
         user: {
           id: users.id,
-          username: users.firstName,
+          username: users.username,
           avatar: users.avatar
         }
       })
@@ -178,8 +175,7 @@ export class VideoService {
         duration: videos.duration,
         user: {
           id: users.id,
-          firstName: users.firstName,
-          lastName: users.lastName,
+          username: users.username,
           avatar: users.avatar,
           url: users.url
         }
@@ -207,8 +203,7 @@ export class VideoService {
         duration: videos.duration,
         user: {
           id: users.id,
-          firstName: users.firstName,
-          lastName: users.lastName,
+          username: users.username,
           email: users.email,
           avatar: users.avatar,
           url: users.url
@@ -221,7 +216,7 @@ export class VideoService {
       ...video,
       channel: {
         id: video.user.id,
-        name: `${video.user.firstName} ${video.user.lastName}`,
+        username: video.user.username,
         avatar: video.user.avatar || null,
         url: video.user.url
       },
@@ -242,8 +237,7 @@ export class VideoService {
         duration: videos.duration,
         user: {
           id: users.id,
-          firstName: users.firstName,
-          lastName: users.lastName,
+          username: users.username,
           avatar: users.avatar,
           url: users.url
         }
@@ -255,8 +249,7 @@ export class VideoService {
         or(
           like(videos.title, `%${query}%`),
           like(videos.description, `%${query}%`),
-          like(users.firstName, `%${query}%`),
-          like(users.lastName, `%${query}%`)
+          like(users.username, `%${query}%`)
         )
       );
     }
@@ -266,7 +259,7 @@ export class VideoService {
         .innerJoin(videoTags, eq(videos.id, videoTags.videoId))
         .innerJoin(tags, eq(videoTags.tagId, tags.id))
         .where(inArray(tags.name, tagNames))
-        .groupBy(videos.id, users.id, users.firstName, users.lastName, users.avatar, users.url);
+        .groupBy(videos.id, users.id, users.username, users.avatar, users.url);
     }
   
     const result = await videosQuery;
@@ -275,7 +268,7 @@ export class VideoService {
       ...video,
       channel: {
         id: video.user.id,
-        name: `${video.user.firstName} ${video.user.lastName}`,
+        name: video.user.username,
         avatar: video.user.avatar || null,
         url: video.user.url
       },

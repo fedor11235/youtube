@@ -40,7 +40,7 @@
 
                 <div>
                   <div class="text-weight-bold ellipsis-2-lines">{{ video.title }}</div>
-                  <div class="text-grey">{{ video.user.firstName }}</div>
+                  <div class="text-grey">{{ video.user.username }}</div>
                   <div class="text-grey text-caption">
                     {{ video.views || 0 }} views • {{ formatDate(video.createdAt) }}
                   </div>

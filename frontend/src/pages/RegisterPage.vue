@@ -10,19 +10,19 @@
           <div class="row q-col-gutter-md">
             <div class="col-12 col-sm-6">
               <q-input
-                v-model="form.firstName"
-                :label="t('auth.firstName')"
+                v-model="form.username"
+                :label="t('auth.username')"
                 outlined
-                :rules="[val => !!val || t('auth.firstNameRequired')]"
+                :rules="[val => !!val || t('auth.usernameRequired')]"
               />
             </div>
 
             <div class="col-12 col-sm-6">
               <q-input
-                v-model="form.lastName"
-                :label="t('auth.lastName')"
+                v-model="form.username"
+                :label="t('auth.username')"
                 outlined
-                :rules="[val => !!val || t('auth.lastNameRequired')]"
+                :rules="[val => !!val || t('auth.usernameRequired')]"
               />
             </div>
           </div>
@@ -99,9 +99,8 @@ const $q = useQuasar()
 
 const form = ref<RegisterData>({
   email: '',
+  username: '',
   password: '',
-  firstName: '',
-  lastName: ''
 })
 
 const confirmPassword = ref('')

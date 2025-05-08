@@ -33,10 +33,7 @@ export class CommentService {
       .select(users, {
         id: users.id,
         email: users.email,
-        firstName: users.firstName,
-        lastName: users.lastName,
-        country: users.country,
-        city: users.city,
+        username: users.username,
         createdAt: users.createdAt,
         avatar: users.avatar,
         banner: users.banner,
@@ -67,8 +64,7 @@ export class CommentService {
       parentId: comments.parentId,
       user: {
         id: users.id,
-        firstName: users.firstName,
-        lastName: users.lastName,
+        username: users.username,
         avatar: users.avatar
       },
       isCreator: sql<boolean>`CASE WHEN ${videos.userId} = ${users.id} THEN true ELSE false END`,
@@ -181,10 +177,7 @@ export class CommentService {
       .select(users, {
         id: users.id,
         email: users.email,
-        firstName: users.firstName,
-        lastName: users.lastName,
-        country: users.country,
-        city: users.city,
+        username: users.username,
         createdAt: users.createdAt,
         avatar: users.avatar,
         banner: users.banner,

@@ -41,7 +41,7 @@
           </div>
 
           <div class="user-details q-ml-md">
-            <h1 class="text-h4 q-mb-sm">{{ profile?.firstName }} {{ profile?.lastName }}</h1>
+            <h1 class="text-h4 q-mb-sm">{{ profile?.username }}</h1>
             <div class="user-stats">
               <span class="stat-item">
                 <span class="stat-value">{{ profile?.totalViews || 0 }}</span>
@@ -112,8 +112,8 @@
                 <div class="text-h6">Details</div>
                 <div class="row q-mt-md">
                   <div class="col-12 col-md-6">
-                    <div class="text-grey">Location</div>
-                    <div>{{ profile?.city }}, {{ profile?.country }}</div>
+                    <!-- <div class="text-grey">Location</div>
+                    <div>{{ profile?.city }}, {{ profile?.country }}</div> -->
                   </div>
                 </div>
               </q-card-section>
@@ -126,7 +126,7 @@
               <div class="row q-col-gutter-md">
                 <div class="col-12 col-md-6">
                   <q-input
-                    v-model="profileForm.firstName"
+                    v-model="profileForm.username"
                     label="First Name"
                     outlined
                     :rules="[val => !!val || 'First name is required']"
@@ -134,7 +134,7 @@
                 </div>
                 <div class="col-12 col-md-6">
                   <q-input
-                    v-model="profileForm.lastName"
+                    v-model="profileForm.username"
                     label="Last Name"
                     outlined
                     :rules="[val => !!val || 'Last name is required']"
@@ -147,20 +147,6 @@
                     outlined
                     type="email"
                     :rules="[val => !!val || 'Email is required']"
-                  />
-                </div>
-                <div class="col-12 col-md-6">
-                  <q-input
-                    v-model="profileForm.country"
-                    label="Country"
-                    outlined
-                  />
-                </div>
-                <div class="col-12 col-md-6">
-                  <q-input
-                    v-model="profileForm.city"
-                    label="City"
-                    outlined
                   />
                 </div>
                 <div class="col-12 col-md-6">
@@ -210,11 +196,8 @@ import { getAvatar, getBanner, getThumbnail } from '../utils/avatar'
 import videoService from 'src/services/video'
 
 interface ProfileForm {
-  firstName: string;
-  lastName: string;
+  username: string;
   email: string;
-  country: string;
-  city: string;
   url: string;
 }
 
@@ -234,11 +217,8 @@ const confirmDelete = (video: any) => {
 }
 
 const profileForm = ref<ProfileForm>({
-  firstName: '',
-  lastName: '',
   email: '',
-  country: '',
-  city: '',
+  username: '',
   url: ''
 })
 
@@ -324,11 +304,8 @@ onMounted(async () => {
     profile.value = await profileService.getProfile()
     if (profile.value) {
       profileForm.value = {
-        firstName: profile.value.firstName,
-        lastName: profile.value.lastName,
+        username: profile.value.username,
         email: profile.value.email,
-        country: profile.value.country,
-        city: profile.value.city,
         url: profile.value.url
       }
     }

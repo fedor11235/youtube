@@ -18,7 +18,7 @@
           </div>
 
           <div class="user-details q-ml-md">
-            <h1 class="text-h4 q-mb-sm">{{ user?.firstName }} {{ user?.lastName }}</h1>
+            <h1 class="text-h4 q-mb-sm">{{ user?.username }}</h1>
             <div class="user-stats">
               <span class="stat-item">
                 <span class="stat-value">{{ user?.totalViews || 0 }}</span>
@@ -111,10 +111,7 @@ import videoService from 'src/services/video'
 interface User {
   id: string
   email: string
-  firstName: string
-  lastName: string
-  country: string
-  city: string
+  username: string
   avatar?: string
   createdAt: string
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

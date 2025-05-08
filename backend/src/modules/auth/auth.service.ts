@@ -62,10 +62,7 @@ export class AuthService {
   async register(registerDto: {
     email: string;
     password: string;
-    firstName: string;
-    lastName: string;
-    country?: string;
-    city?: string;
+    username: string;
   }) {
     // Check if user exists
     const existingUser = await this.db.query.users.findFirst({
@@ -84,10 +81,7 @@ export class AuthService {
     const [newUser] = await this.db.insert(users).values({
       email: registerDto.email,
       password: hashedPassword,
-      firstName: registerDto.firstName,
-      lastName: registerDto.lastName,
-      country: registerDto.country,
-      city: registerDto.city,
+      username: registerDto.username,
       url,
     }).returning();
 
@@ -101,10 +95,7 @@ export class AuthService {
       user: {
         id: newUser.id,
         email: newUser.email,
-        firstName: newUser.firstName,
-        lastName: newUser.lastName,
-        country: newUser.country,
-        city: newUser.city,
+        username: newUser.username,
         createdAt: newUser.createdAt,
         avatar: newUser.avatar
       },
@@ -139,10 +130,7 @@ export class AuthService {
       user: {
         id: user.id,
         email: user.email,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        country: user.country,
-        city: user.city,
+        username: user.username,
         createdAt: user.createdAt,
         avatar: user.avatar
       },
@@ -168,10 +156,7 @@ export class AuthService {
       user: {
         id: users.id,
         email: users.email,
-        firstName: users.firstName,
-        lastName: users.lastName,
-        country: users.country,
-        city: users.city,
+        username: users.username,
         createdAt: users.createdAt,
         avatar: users.avatar,
         banner: users.banner,

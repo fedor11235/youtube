@@ -18,7 +18,7 @@
         <UserAvatar
           :avatar="video.channel.avatar"
           :url="video.channel.url"
-          :username="video.channel.firstName || 'Test'"
+          :username="video.channel.username || 'Test'"
           size="40px"
           class="q-mr-sm"
         />

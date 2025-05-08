@@ -7,17 +7,8 @@ export class RegisterDto {
   @ApiProperty({ example: 'password123' })
   password: string;
 
-  @ApiProperty({ example: 'John' })
-  firstName: string;
-
   @ApiProperty({ example: 'Doe' })
-  lastName: string;
-
-  @ApiPropertyOptional({ example: 'United States' })
-  country?: string;
-
-  @ApiPropertyOptional({ example: 'New York' })
-  city?: string;
+  username: string;
 }
 
 export class LoginDto {

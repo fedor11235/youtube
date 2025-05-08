@@ -13,7 +13,7 @@ export const useAuthStore = defineStore('auth', {
 
   getters: {
     isAuthenticated: (state) => !!state.user,
-    userFullName: (state) => state.user ? `${state.user.firstName} ${state.user.lastName}` : '',
+    userFullName: (state) => state.user ? state.user.username: '',
   },
   
 

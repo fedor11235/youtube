@@ -61,7 +61,7 @@ export class FavoritesService {
         views: videos.views,
         user: {
           id: users.id,
-          username: users.firstName,
+          username: users.username,
           avatar: users.avatar
         }
       })

@@ -25,7 +25,7 @@
             <q-avatar size="24px" class="q-mr-sm">
               <img :src="getAvatar(video.user.avatar)">
             </q-avatar>
-            <span class="text-subtitle2">{{ video.user.firstName }}</span>
+            <span class="text-subtitle2">{{ video.user.username }}</span>
           </div>
 
           <div class="text-grey q-mt-sm">

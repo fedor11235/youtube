@@ -28,16 +28,14 @@ export class UsereSrvice {
       .select(users, {
         id: users.id,
         email: users.email,
-        firstName: users.firstName,
-        lastName: users.lastName,
+        username: users.username,
         avatar: users.avatar,
         url: users.url,
         createdAt: users.createdAt
       })
       .where(
         or(
-          ilike(users.firstName, searchQuery),
-          ilike(users.lastName, searchQuery),
+          ilike(users.username, searchQuery),
           ilike(users.email, searchQuery)
         )
       )

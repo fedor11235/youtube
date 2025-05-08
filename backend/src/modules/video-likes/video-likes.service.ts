@@ -30,10 +30,7 @@ export class VideoLikesService {
       .select(users, {
         id: users.id,
         email: users.email,
-        firstName: users.firstName,
-        lastName: users.lastName,
-        country: users.country,
-        city: users.city,
+        username: users.username,
         createdAt: users.createdAt,
         avatar: users.avatar,
         banner: users.banner,

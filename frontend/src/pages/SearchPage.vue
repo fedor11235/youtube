@@ -46,7 +46,7 @@
                     <div class="col-auto avatar-container">
                       <UserAvatar
                         :avatar="user.avatar"
-                        :username="user.firstName"
+                        :username="user.username"
                         :user-id="user.id"
                         :url="user.url"
                         size="80px"
@@ -54,7 +54,7 @@
                       />
                     </div>
                     <div class="col q-ml-md q-mt-lg">
-                      <div class="text-h6">{{ user.firstName }} {{ user.lastName }}</div>
+                      <div class="text-h6">{{ user.username }}</div>
                       <div class="text-subtitle2 text-grey-7">{{ user.email }}</div>
                       <div class="row items-center q-gutter-x-md q-mt-sm">
                         <div class="text-caption">

@@ -20,8 +20,7 @@ export interface Video {
   duration: number;
   user: {
     id: number;
-    firstName: string;
-    lastName: string;
+    username: string;
     avatar?: string;
   };
 }
@@ -41,8 +40,6 @@ export interface VideoComment {
   videoId: number;
   user: {
     id: number;
-    firstName: string;
-    lastName: string;
     avatar?: string;
   };
 }
