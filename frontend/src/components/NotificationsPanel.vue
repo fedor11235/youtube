@@ -79,13 +79,8 @@ const emit = defineEmits<{
   (e: 'update:modelValue', value: boolean): void;
 }>();
 
-// const router = useRouter()
 const show = computed({
   get: () => props.modelValue,
   set: (value) => emit('update:modelValue', value)
 })
-
-// const openSettings = async () => {
-//   await router.push('/settings/notifications')
-// }
 </script>

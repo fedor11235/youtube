@@ -252,10 +252,14 @@ const saveEdit = () => {
   background: rgba(0, 0, 0, 0.02);
   border-radius: 12px;
   transition: all 0.3s ease;
-}
-
-.comment-item:hover {
-  background: rgba(0, 0, 0, 0.04);
+  
+  &:hover {
+    background: rgba(0, 0, 0, 0.04);
+    
+    .comment-actions {
+      opacity: 1;
+    }
+  }
 }
 
 .comment-actions {
@@ -263,43 +267,23 @@ const saveEdit = () => {
   transition: opacity 0.2s ease;
 }
 
-.comment-item:hover .comment-actions {
-  opacity: 1;
-}
-
 .edit-form {
   max-width: 600px;
 }
 
-.custom-textarea :deep(.q-field__control) {
-  border-radius: 8px;
-}
-
-.custom-textarea :deep(.q-field__native) {
-  resize: none !important;
-  padding: 8px;
-}
-
-.custom-textarea :deep(.q-field__bottom) {
-  padding: 4px 12px;
-}
-
-.like-comment {
-  display: inline-flex;
-  align-items: center;
-}
-
-.likes-info {
-  display: flex;
-  align-items: center;
-}
-
-.like-button {
-  transition: transform 0.2s ease;
-}
-
-.like-button:hover {
-  transform: scale(1.1);
+.custom-textarea {
+  :deep(.q-field__control) {
+    border-radius: 8px;
+  }
+  
+  :deep(.q-field__native) {
+    resize: none !important;
+    padding: 8px;
+  }
+  
+  :deep(.q-field__bottom) {
+    padding: 4px 12px;
+  }
 }
 
 .comment-wrapper {

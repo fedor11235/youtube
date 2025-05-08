@@ -81,7 +81,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .favorite-button {
   display: inline-flex;
   align-items: center;
@@ -89,9 +89,9 @@ onMounted(async () => {
 
 .q-btn {
   transition: transform 0.2s ease;
-}
-
-.q-btn:hover {
-  transform: scale(1.1);
+  
+  &:hover {
+    transform: scale(1.1);
+  }
 }
 </style>

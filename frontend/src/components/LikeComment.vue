@@ -97,7 +97,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .like-comment {
   display: inline-flex;
   align-items: center;

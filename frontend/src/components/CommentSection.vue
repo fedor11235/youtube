@@ -183,7 +183,7 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .comment-section {
   max-width: 1200px;
   margin: 0 auto;
@@ -197,83 +197,28 @@ onMounted(async () => {
   background: white;
   border-radius: 8px;
   margin-bottom: 16px;
-}
-
-.comment-actions {
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.comment-item:hover .comment-actions {
-  opacity: 1;
+  
+  &:hover {
+    opacity: 1;
+  }
 }
 
 .edit-form {
   max-width: 600px;
 }
 
-.custom-textarea :deep(.q-field__control) {
-  border-radius: 8px;
-}
-
-.custom-textarea :deep(.q-field__native) {
-  resize: none !important;
-  padding: 8px;
-}
-
-.custom-textarea :deep(.q-field__bottom) {
-  padding: 4px 12px;
-}
-
-.comment-section {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-.comment-item {
-  background: rgba(0, 0, 0, 0.02);
-  border-radius: 12px;
-  margin-bottom: 16px;
-  transition: all 0.3s ease;
-}
-
-.comment-item:hover {
-  background: rgba(0, 0, 0, 0.04);
-}
-
-.comment-content {
-  white-space: pre-wrap;
-  word-break: break-word;
-  line-height: 1.5;
-}
-
-.comment-actions {
-  opacity: 0;
-  transition: opacity 0.2s ease;
-}
-
-.comment-item:hover .comment-actions {
-  opacity: 1;
-}
-
-.edit-form {
-  max-width: 600px;
-}
-
-.custom-textarea :deep(.q-field__control) {
-  border-radius: 8px;
-}
-
-.custom-textarea :deep(.q-field__native) {
-  resize: none !important;
-  padding: 8px;
-}
-
-.custom-textarea :deep(.q-field__bottom) {
-  padding: 4px 12px;
-}
-
-:deep(.q-item__section--avatar) {
-  min-width: 48px;
+.custom-textarea {
+  :deep(.q-field__control) {
+    border-radius: 8px;
+  }
+  
+  :deep(.q-field__native) {
+    resize: none !important;
+    padding: 8px;
+  }
+  
+  :deep(.q-field__bottom) {
+    padding: 4px 12px;
+  }
 }
 </style>

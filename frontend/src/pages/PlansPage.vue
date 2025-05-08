@@ -233,7 +233,7 @@ const confirmPlanSelection = async () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .plans-page {
   min-height: 100vh;
   background: #f5f5f5;
@@ -247,11 +247,11 @@ const confirmPlanSelection = async () => {
 .plan-card {
   height: 100%;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.plan-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .premium-card {

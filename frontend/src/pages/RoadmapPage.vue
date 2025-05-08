@@ -137,7 +137,7 @@
   </q-page>
 </template>
 
-<style scoped>
+<style lang="scss" scoped>
 .roadmap-page {
   min-height: 100vh;
   background: #f5f5f5;
@@ -151,11 +151,11 @@
 .roadmap-card {
   height: 100%;
   transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.roadmap-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  }
 }
 
 .q-card {

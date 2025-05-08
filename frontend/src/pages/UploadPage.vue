@@ -275,15 +275,15 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .upload-area {
   border: 2px dashed #ccc;
   border-radius: 8px;
   transition: all 0.3s;
-}
-
-.upload-area:hover {
-  border-color: #1976d2;
-  background: #f0f8ff;
+  
+  &:hover {
+    border-color: #1976d2;
+    background: #f0f8ff;
+  }
 }
 </style>

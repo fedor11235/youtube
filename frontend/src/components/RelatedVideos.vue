@@ -38,23 +38,6 @@ defineProps<{
 </script>
 
 <style lang="scss" scoped>
-.description {
-  background: rgba(0, 0, 0, 0.02);
-  margin-top: 16px;
-}
-
-.q-expansion-item {
-  border-radius: 12px;
-}
-
-.q-expansion-item :deep(.q-expansion-item__container) {
-  border-radius: 12px;
-}
-
-.q-expansion-item :deep(.q-item) {
-  border-radius: 12px;
-}
-
 .related-videos {
   background: rgba(0, 0, 0, 0.02);
   margin-left: 4px;

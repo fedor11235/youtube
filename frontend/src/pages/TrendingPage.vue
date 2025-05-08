@@ -3,24 +3,6 @@
     <div class="text-h4 q-mb-lg">Trending</div>
 
     <div class="row q-col-gutter-md">
-      <!-- <div class="col-12">
-        <q-tabs
-          v-model="tab"
-          class="text-grey"
-          active-color="primary"
-          indicator-color="primary"
-          align="left"
-          narrow-indicator
-        >
-          <q-tab name="now" label="Now" />
-          <q-tab name="music" label="Music" />
-          <q-tab name="gaming" label="Gaming" />
-          <q-tab name="movies" label="Movies" />
-        </q-tabs>
-
-        <q-separator />
-      </div> -->
-
       <template v-for="video in trendingVideos" :key="video.id">
         <VideoCard
           :video="video"
@@ -35,7 +17,6 @@ import { ref, onMounted } from 'vue'
 import VideoCard from '../components/VideoCard.vue'
 import videoService from 'src/services/video';
 
-// const tab = ref('now')
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const trendingVideos = ref<any[]>([])
 const loading = ref(false)
@@ -59,13 +40,3 @@ onMounted(async () => {
   await loadTrendingVideos();
 });
 </script>
-
-<style scoped>
-.trending-card {
-  transition: transform 0.2s;
-}
-
-.trending-card:hover {
-  transform: translateY(-2px);
-}
-</style>

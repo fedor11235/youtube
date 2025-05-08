@@ -70,7 +70,7 @@ const navigateToVideo = async (videoId: number) => {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .ellipsis-2-lines {
   display: -webkit-box;
   line-clamp: 2;

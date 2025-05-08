@@ -322,10 +322,10 @@ onMounted(async () => {
 <style lang="scss" scoped>
 .video-card {
   transition: transform 0.2s;
-}
-
-.video-card:hover {
-  transform: translateY(-2px);
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .avatar-upload-container {
@@ -354,34 +354,12 @@ onMounted(async () => {
   }
   
   .avatar-upload-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
+    @extend .banner-upload-overlay;
     border-radius: 50%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    
-    .upload-text {
-      margin-top: 8px;
-      font-size: 14px;
-    }
   }
   
   &:hover {
-    .avatar-upload-overlay {
-      opacity: 1;
-    }
-  }
-
-  &:hover {
+    .avatar-upload-overlay,
     .banner-upload-overlay {
       opacity: 1;
     }
@@ -422,11 +400,6 @@ onMounted(async () => {
   }
 }
 
-.profile-page {
-  min-height: 100vh;
-  background-color: #f5f5f5;
-}
-
 .profile-header {
   background: white;
 }
@@ -453,11 +426,6 @@ onMounted(async () => {
   display: flex;
   align-items: flex-end;
   padding: 0 16px;
-}
-
-.profile-avatar {
-  border: 4px solid white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .channel-details {
@@ -490,12 +458,6 @@ onMounted(async () => {
   max-width: 600px;
 }
 
-.profile-actions {
-  display: flex;
-  align-items: flex-end;
-  padding-bottom: 16px;
-}
-
 @media (max-width: 600px) {
   .profile-main {
     flex-direction: column;
@@ -506,11 +468,6 @@ onMounted(async () => {
   .channel-details {
     margin-top: 16px;
     margin-left: 0 !important;
-  }
-
-  .profile-actions {
-    margin-top: 16px;
-    padding-bottom: 0;
   }
 
   .channel-stats {

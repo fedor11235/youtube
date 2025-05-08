@@ -141,7 +141,7 @@ const clearSearch = () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .search-page {
   min-height: 100vh;
   background: #f5f5f5;
@@ -157,32 +157,18 @@ const clearSearch = () => {
   margin: 0 auto;
 }
 
-.channel-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.channel-card:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-
 .channel-banner {
   position: relative;
   width: 100%;
   height: 150px;
   overflow: hidden;
   border-radius: 12px 12px 0 0;
-}
-
-.banner-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.channel-info-section {
-  position: relative;
-  margin-top: -40px;
+  
+  .banner-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .avatar-container {
@@ -190,9 +176,5 @@ const clearSearch = () => {
   border-radius: 50%;
   padding: 4px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-}
-
-.channel-card {
-  overflow: hidden;
 }
 </style>

@@ -141,46 +141,7 @@ onMounted(async () => {
 })
 </script>
 
-<style lang="scss">
-.video-thumbnail-container {
-  position: relative;
-  
-  .video-thumbnail {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-  }
-  
-  .video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    
-    .delete-btn {
-      background: rgba(0, 0, 0, 0.7);
-    }
-  }
-  
-  &:hover {
-    .video-overlay {
-      opacity: 1;
-    }
-  }
-}
-
-.profile-page {
-  min-height: 100vh;
-  background-color: #f5f5f5;
-}
-
+<style lang="scss" scoped>
 .profile-header {
   background: white;
 }
@@ -189,12 +150,12 @@ onMounted(async () => {
   height: 300px;
   overflow: hidden;
   position: relative;
-}
-
-.cover-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  
+  .cover-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 }
 
 .profile-info {
@@ -223,20 +184,20 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   color: #666;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.stat-value {
-  font-weight: bold;
-}
-
-.stat-separator {
-  margin: 0 12px;
+  
+  .stat-item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    
+    .stat-value {
+      font-weight: bold;
+    }
+  }
+  
+  .stat-separator {
+    margin: 0 12px;
+  }
 }
 
 .channel-bio {
@@ -270,4 +231,5 @@ onMounted(async () => {
   .channel-stats {
     justify-content: center;
   }
-}</style>
+}
+</style>

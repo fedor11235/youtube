@@ -134,17 +134,18 @@ onMounted(async () => {
 });
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .video-card {
   transition: transform 0.2s;
-}
-
-.video-card:hover {
-  transform: translateY(-2px);
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .ellipsis-2-lines {
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;

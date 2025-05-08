@@ -32,17 +32,15 @@ const handlerOpenProfile =  async() => {
 };
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .avatar-btn {
-  /* border: 2px solid transparent; */
-  transition: all 0.2s ease;
   height: fit-content;
   width: fit-content;
-}
-
-.avatar-btn:hover {
-  transform: scale(1.1);
-  /* border-color: var(--q-primary); */
-  box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+  transition: all 0.2s ease;
+  
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: 0 0 10px rgba(0, 0, 0, .3);
+  }
 }
 </style>

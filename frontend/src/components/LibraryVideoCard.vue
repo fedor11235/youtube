@@ -51,17 +51,12 @@
 </template>
 
 <script setup lang="ts">
-import { defineEmits } from 'vue'
 import { getAvatar, getThumbnail } from '../utils/avatar'
 import { formatDate } from '../utils/date'
 import type { LibraryVideo } from '../types'
 
 defineProps<{
   video: LibraryVideo
-}>()
-
-defineEmits<{
-  (e: 'remove'): void
 }>()
 
 const formatDuration = (seconds: number): string => {
@@ -76,17 +71,18 @@ const formatDuration = (seconds: number): string => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .library-video-card {
   transition: transform 0.2s;
-}
-
-.library-video-card:hover {
-  transform: translateY(-2px);
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
 }
 
 .ellipsis-2-lines {
   display: -webkit-box;
+  line-clamp: 2;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;

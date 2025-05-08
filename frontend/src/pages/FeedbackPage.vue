@@ -124,7 +124,7 @@ const onSubmit = async () => {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .feedback-page {
   min-height: 100vh;
   background: #f5f5f5;

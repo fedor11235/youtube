@@ -120,18 +120,13 @@ onMounted(async () => {
 
 .q-expansion-item {
   border-radius: 12px;
-}
-
-.q-expansion-item :deep(.q-expansion-item__container) {
-  border-radius: 12px;
-}
-
-.q-expansion-item :deep(.q-item) {
-  border-radius: 12px;
-}
-
-.related-videos {
-  background: rgba(0, 0, 0, 0.02);
-  margin-left: 4px;
+  
+  :deep(.q-expansion-item__container) {
+    border-radius: 12px;
+  }
+  
+  :deep(.q-item) {
+    border-radius: 12px;
+  }
 }
 </style>
