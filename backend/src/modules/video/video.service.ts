@@ -2,7 +2,7 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { DrizzleService } from '../drizzle/drizzle.service';
 import { tags, users, videoLikes, videos, videoTags, videoViews } from '../../database/schema';
 import { desc, eq, gte, inArray, like, ne, or, sql } from 'drizzle-orm';
-import { extractDuration, extractThumbnail } from './video.utils';
+import { extractDuration, extractThumbnail, editVideo } from './video.utils';
 import { subDays } from 'date-fns';
 import * as path from 'path';
 import { promises as fs } from 'fs';
@@ -12,6 +12,8 @@ export class VideoService {
   constructor(private readonly db: DrizzleService) {}
 
   async createVideo(file: Express.Multer.File, createVideoDto: any, userId: number) {
+    const test = await editVideo(file.path);
+    console.log("test ", test)
     const thumbnailUrl = await extractThumbnail(file.path);
     const duration = await extractDuration(file.path);
 
