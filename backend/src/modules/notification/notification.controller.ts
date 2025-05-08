@@ -8,31 +8,31 @@ export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
   @Get()
-  async getUserNotifications(@Request() req) {
-    return this.notificationService.getUserNotifications(req.user.id);
+  async getChannelNotifications(@Request() req) {
+    return this.notificationService.getChannelNotifications(req.channel.id);
   }
 
   @Post(':id/read')
   async markAsRead(@Param('id') id: string, @Request() req) {
-    await this.notificationService.markAsRead(+id, req.user.id);
+    await this.notificationService.markAsRead(+id, req.channel.id);
     return { success: true };
   }
 
   @Post('read-all')
   async markAllAsRead(@Request() req) {
-    await this.notificationService.markAllAsRead(req.user.id);
+    await this.notificationService.markAllAsRead(req.channel.id);
     return { success: true };
   }
 
   @Delete(':id')
   async deleteNotification(@Param('id') id: string, @Request() req) {
-    await this.notificationService.deleteNotification(+id, req.user.id);
+    await this.notificationService.deleteNotification(+id, req.channel.id);
     return { success: true };
   }
 
   @Delete()
   async deleteAllNotifications(@Request() req) {
-    await this.notificationService.deleteAllNotifications(req.user.id);
+    await this.notificationService.deleteAllNotifications(req.channel.id);
     return { success: true };
   }
 }

@@ -11,11 +11,11 @@ export class CommentService {
     private readonly notificationService: NotificationService
   ) {}
 
-  async createComment(userId: number, videoId: number, content: string) {
+  async createComment(channelId: number, videoId: number, content: string) {
     const [comment] = await this.db
       .insert(comments)
       .values({
-        userId,
+        channelId,
         videoId,
         content,
         createdAt: new Date(),
@@ -27,7 +27,7 @@ export class CommentService {
         where: eq(videos.id, videoId),
       });
 
-      if(!video?.userId) return
+      if(!video?.channelId) return
 
       const result = await this.db
       .select(channels, {
@@ -38,17 +38,17 @@ export class CommentService {
         avatar: channels.avatar,
         banner: channels.banner,
         url: channels.url
-      }).where(eq(channels.id, userId));
+      }).where(eq(channels.id, channelId));
 
-      if(video.userId === result[0].id) return
+      if(video.channelId === result[0].id) return
 
       await this.notificationService.createNotification({
-        userId: video.userId,
+        channelId: video.channelId,
         title: 'Новый комментарий',
         message: `Под вашим видео оставили новый комментарий!`,
         type: 'comment',
         data: {
-          user: result[0],
+          channel: result[0],
         }
       });
     
@@ -62,19 +62,19 @@ export class CommentService {
       content: comments.content,
       createdAt: comments.createdAt,
       parentId: comments.parentId,
-      user: {
+      channel: {
         id: channels.id,
         username: channels.username,
         avatar: channels.avatar
       },
-      isCreator: sql<boolean>`CASE WHEN ${videos.userId} = ${channels.id} THEN true ELSE false END`,
+      isCreator: sql<boolean>`CASE WHEN ${videos.channelId} = ${channels.id} THEN true ELSE false END`,
       likes: sql<number>`COUNT(DISTINCT ${commentLikes.id})`
     })
-    .leftJoin(channels, eq(comments.userId, channels.id))
+    .leftJoin(channels, eq(comments.channelId, channels.id))
     .leftJoin(videos, eq(comments.videoId, videos.id))
     .leftJoin(commentLikes, eq(comments.id, commentLikes.commentId))
     .where(eq(comments.videoId, videoId))
-    .groupBy(comments.id, channels.id, videos.userId)
+    .groupBy(comments.id, channels.id, videos.channelId)
     .orderBy(comments.createdAt);
   // Убедимся, что comments является массивом
   if (!Array.isArray(result)) {
@@ -104,7 +104,7 @@ export class CommentService {
   return rootComments;
   }
 
-  async updateComment(commentId: number, userId: number, content: string) {
+  async updateComment(commentId: number, channelId: number, content: string) {
     const [comment] = await this.db
       .select(comments)
       .where(eq(comments.id, commentId));
@@ -113,7 +113,7 @@ export class CommentService {
       throw new NotFoundException('Комментарий не найден');
     }
 
-    if (comment.userId !== userId) {
+    if (comment.channelId !== channelId) {
       throw new Error('Нет прав на редактирование комментария');
     }
 
@@ -127,7 +127,7 @@ export class CommentService {
       .returning();
   }
 
-  async deleteComment(commentId: number, userId: number) {
+  async deleteComment(commentId: number, channelId: number) {
     const [comment] = await this.db
       .select(comments)
       .where(eq(comments.id, commentId));
@@ -136,7 +136,7 @@ export class CommentService {
       throw new NotFoundException('Комментарий не найден');
     }
 
-    if (comment.userId !== userId) {
+    if (comment.channelId !== channelId) {
       throw new Error('Нет прав на удаление комментария');
     }
 
@@ -147,7 +147,7 @@ export class CommentService {
     return { success: true };
   }
 
-  async createReply(userId: number, commentId: number, content: string) {
+  async createReply(channelId: number, commentId: number, content: string) {
     const [parentComment] = await this.db
       .select(comments)
       .where(eq(comments.id, commentId));
@@ -161,7 +161,7 @@ export class CommentService {
       .insert(comments)
       .values({
         content,
-        userId,
+        channelId,
         videoId: parentComment.videoId,
         parentId: commentId
       })
@@ -171,7 +171,7 @@ export class CommentService {
         where: eq(videos.id, parentComment.videoId),
       });
 
-      if(!video?.userId) return
+      if(!video?.channelId) return
 
       const result = await this.db
       .select(channels, {
@@ -182,17 +182,17 @@ export class CommentService {
         avatar: channels.avatar,
         banner: channels.banner,
         url: channels.url
-      }).where(eq(channels.id, userId));
+      }).where(eq(channels.id, channelId));
 
-      if(parentComment.userId === result[0].id) return
+      if(parentComment.channelId === result[0].id) return
 
       await this.notificationService.createNotification({
-        userId: parentComment.userId,
+        channelId: parentComment.channelId,
         title: 'Новый ответ',
         message: `Вам ответили на комментарий!`,
         type: 'comment',
         data: {
-          user: result[0],
+          channel: result[0],
         }
       });
 

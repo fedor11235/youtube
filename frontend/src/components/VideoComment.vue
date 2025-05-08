@@ -3,9 +3,9 @@
     <q-item class="comment-item">
       <q-item-section class="comment-item__avatar" style="justify-content: start;" avatar>
         <UserAvatar
-          :avatar="comment.user.avatar"
-          :url="comment.user.url"
-          :username="comment.user.username"
+          :avatar="comment.channel.avatar"
+          :url="comment.channel.url"
+          :username="comment.channel.username"
           size="40px"
           class="q-mr-md"
         />
@@ -15,7 +15,7 @@
         <div class="row justify-between items-center">
           <div class="row items-center">
             <q-item-label class="text-weight-bold">
-              {{ comment.user.username }}
+              {{ comment.channel.username }}
               <q-badge
                 v-if="isAuthor"
                 color="primary"
@@ -200,7 +200,7 @@ const editContent = ref(props.comment.content);
 
 
 const isAuthor = computed(() => {
-  return props.comment.user.id === props.videoAuthorId;
+  return props.comment.channel.id === props.videoAuthorId;
 });
 
 const isAuthorLike = computed(() => {
@@ -208,7 +208,7 @@ const isAuthorLike = computed(() => {
 });
 
 const isOwner = computed(() => {
-  return authStore.user?.id === props.comment.user.id;
+  return authStore.channel?.id === props.comment.channel.id;
 });
 
 const submitReply = () => {

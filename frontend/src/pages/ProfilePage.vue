@@ -231,7 +231,6 @@ const deleteVideo = async () => {
       if(profile.value) {
         profile.value.videos = profile.value?.videos.filter(video => video.id !== videoToDelete.value.id)
       }
-      // userVideos.value = userVideos.value.filter(v => v.id !== videoToDelete.value.id)
       $q.notify({
         type: 'positive',
         message: 'Видео успешно удалено'

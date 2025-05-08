@@ -35,7 +35,7 @@ const authService = {
     }
   },
 
-  async getCurrentUser() {
+  async getCurrentChannel() {
     try {
       const response = await api.get('/auth/me')
       return response.data
@@ -43,7 +43,7 @@ const authService = {
       if (error instanceof Error) {
         throw new AuthError(error.message)
       }
-      throw new AuthError('Failed to get current user')
+      throw new AuthError('Failed to get current channel')
     }
   },
 

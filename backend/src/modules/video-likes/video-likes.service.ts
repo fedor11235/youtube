@@ -11,16 +11,16 @@ export class VideoLikesService {
     private readonly notificationService: NotificationService
   ) {}
 
-  async likeVideo(userId: number, videoId: number) {
+  async likeVideo(channelId: number, videoId: number) {
     const video = await this.db.query.videos.findFirst({
       where: eq(videos.id, videoId),
     });
 
-    if(!video?.userId) return
+    if(!video?.channelId) return
 
     await this.db.insert(videoLikes)
       .values({
-        userId,
+        channelId,
         videoId,
         createdAt: new Date()
       })
@@ -35,25 +35,25 @@ export class VideoLikesService {
         avatar: channels.avatar,
         banner: channels.banner,
         url: channels.url
-      }).where(eq(channels.id, userId));
+      }).where(eq(channels.id, channelId));
 
       await this.notificationService.createNotification({
-        userId: video.userId,
+        channelId: video.channelId,
         title: 'Новый лайк',
         message: `Ваше видео лайкнул пользователь!`,
         type: 'like',
         data: {
-          user: result[0],
+          channel: result[0],
         }
       });
     return { success: true };
   }
 
-  async unlikeVideo(userId: number, videoId: number) {
+  async unlikeVideo(channelId: number, videoId: number) {
     await this.db.delete(videoLikes)
       .where(
         and(
-          eq(videoLikes.userId, userId),
+          eq(videoLikes.channelId, channelId),
           eq(videoLikes.videoId, videoId)
         )
       )
@@ -69,12 +69,12 @@ export class VideoLikesService {
     return result[0].count;
   }
 
-  async hasUserLiked(userId: number, videoId: number) {
+  async hasChannelLiked(channelId: number, videoId: number) {
     const like = await this.db
       .select(videoLikes)
       .where(
         and(
-          eq(videoLikes.userId, userId),
+          eq(videoLikes.channelId, channelId),
           eq(videoLikes.videoId, videoId)
         )
       )

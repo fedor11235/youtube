@@ -11,20 +11,20 @@ export class CommentLikesService {
     private readonly notificationService: NotificationService
   ) {}
 
-  async likeComment(userId: number, commentId: number) {
+  async likeComment(channelId: number, commentId: number) {
     const [comment] = await this.db
       .select(comments, {
         id: comments.id,
-        userId: comments.userId
+        channelId: comments.channelId
       })
       .where(eq(comments.id, commentId));
 
     // Проверяем, является ли лайкающий пользователь автором комментария
-    const isCreatorLike = comment.userId === userId;
+    const isCreatorLike = comment.channelId === channelId;
 
     await this.db.insert(commentLikes)
       .values({
-        userId,
+        channelId,
         commentId,
         isCreatorLike,
         createdAt: new Date()
@@ -42,7 +42,7 @@ export class CommentLikesService {
       avatar: channels.avatar,
       banner: channels.banner,
       url: channels.url
-    }).where(eq(channels.id, comment.userId));
+    }).where(eq(channels.id, comment.channelId));
 
 
   const resultTwo = await this.db
@@ -54,26 +54,26 @@ export class CommentLikesService {
       avatar: channels.avatar,
       banner: channels.banner,
       url: channels.url
-    }).where(eq(channels.id, userId));
+    }).where(eq(channels.id, channelId));
 
 
     await this.notificationService.createNotification({
-        userId: result[0].id,
+      channelId: result[0].id,
         title: 'Новый лайк',
         message: `На ваш комментарий поставили лайк!`,
         type: 'like',
         data: {
-          user: resultTwo[0],
+          channel: resultTwo[0],
         }
       });
     return { success: true };
   }
 
-  async unlikeComment(userId: number, commentId: number) {
+  async unlikeComment(channelId: number, commentId: number) {
     await this.db.delete(commentLikes)
       .where(
         and(
-          eq(commentLikes.userId, userId),
+          eq(commentLikes.channelId, channelId),
           eq(commentLikes.commentId, commentId)
         )
       )
@@ -89,12 +89,12 @@ export class CommentLikesService {
     return result[0].count;
   }
 
-  async hasUserLiked(userId: number, commentId: number) {
+  async hasChannelLiked(channelId: number, commentId: number) {
     const like = await this.db
       .select(commentLikes)
       .where(
         and(
-          eq(commentLikes.userId, userId),
+          eq(commentLikes.channelId, channelId),
           eq(commentLikes.commentId, commentId)
         )
       )

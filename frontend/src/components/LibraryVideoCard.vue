@@ -28,9 +28,9 @@
             
             <div class="row items-center q-mt-sm">
               <q-avatar size="24px" class="q-mr-sm">
-                <img :src="getAvatar(video.user.avatar)">
+                <img :src="getAvatar(video.channel.avatar)">
               </q-avatar>
-              <span class="text-subtitle2">{{ video.user.username }}</span>
+              <span class="text-subtitle2">{{ video.channel.username }}</span>
             </div>
 
             <div class="text-grey q-mt-sm">

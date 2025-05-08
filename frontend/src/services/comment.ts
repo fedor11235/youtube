@@ -11,7 +11,7 @@ export interface Comment {
   isCreatorLike?: any;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   replies?: any;
-  user: {
+  channel: {
     id: number;
     username: string;
     avatar: string;

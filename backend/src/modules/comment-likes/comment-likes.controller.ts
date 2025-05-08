@@ -12,7 +12,7 @@ export class CommentLikesController {
     @Param('commentId') commentId: number,
     @Request() req
   ) {
-    return this.commentLikesService.likeComment(req.user.id, commentId);
+    return this.commentLikesService.likeComment(req.channel.id, commentId);
   }
 
   @Delete(':commentId')
@@ -21,7 +21,7 @@ export class CommentLikesController {
     @Param('commentId') commentId: number,
     @Request() req
   ) {
-    return this.commentLikesService.unlikeComment(req.user.id, commentId);
+    return this.commentLikesService.unlikeComment(req.channel.id, commentId);
   }
 
   @Get(':commentId/count')
@@ -32,11 +32,11 @@ export class CommentLikesController {
 
   @Get(':commentId/has-liked')
   @UseGuards(JwtAuthGuard)
-  async hasUserLiked(
+  async hasChannelLiked(
     @Param('commentId') commentId: number,
     @Request() req
   ) {
-    const hasLiked = await this.commentLikesService.hasUserLiked(req.user.id, commentId);
+    const hasLiked = await this.commentLikesService.hasChannelLiked(req.channel.id, commentId);
     return { hasLiked };
   }
 }

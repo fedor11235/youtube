@@ -28,7 +28,7 @@ const authStore = useAuthStore();
 const $q = useQuasar();
 const isSubscribed = ref(false);
 const loading = ref(false);
-const userURL = computed(() => authStore.user?.url);
+const userURL = computed(() => authStore.channel?.url);
 
 const toggleSubscription = async () => {
   if (!authStore.isAuthenticated) {

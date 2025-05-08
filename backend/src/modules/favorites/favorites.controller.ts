@@ -12,13 +12,13 @@ export class FavoritesController {
     @Param('videoId') videoId: number,
     @Request() req
   ) {
-    return this.favoritesService.addToFavorites(req.user.id, videoId);
+    return this.favoritesService.addToFavorites(req.channel.id, videoId);
   }
 
   @Get()
   @UseGuards(JwtAuthGuard)
   async getFavorites(@Request() req) {
-    return this.favoritesService.getFavoriteVideos(parseInt(req.user.id));
+    return this.favoritesService.getFavoriteVideos(parseInt(req.channel.id));
   }
 
   @Delete(':videoId')
@@ -27,7 +27,7 @@ export class FavoritesController {
     @Param('videoId') videoId: number,
     @Request() req
   ) {
-    return this.favoritesService.removeFromFavorites(req.user.id, videoId);
+    return this.favoritesService.removeFromFavorites(req.channel.id, videoId);
   }
 
   @Get(':videoId/check')
@@ -36,7 +36,7 @@ export class FavoritesController {
     @Param('videoId') videoId: number,
     @Request() req
   ) {
-    const isInFavorites = await this.favoritesService.isInFavorites(req.user.id, videoId);
+    const isInFavorites = await this.favoritesService.isInFavorites(req.channel.id, videoId);
     return { isInFavorites };
   }
 }

@@ -1,25 +1,17 @@
 import { defineStore } from 'pinia'
 import { api } from 'src/boot/axios'
-
-interface User {
-  id: number
-  email: string
-  username: string
-  avatar: string | null
-  createdAt: string
-  url: string
-}
+import type { Channel } from 'src/types'
 
 export const useUserStore = defineStore('user', {
   state: () => ({
-    users: [] as User[],
-    currentUser: null as User | null,
+    channels: [] as Channel[],
+    currentChannel: null as Channel | null,
   }),
 
   actions: {
-    async fetchUserById(userId: string) {
+    async fetchChannelById(channelId: string) {
       try {
-        const response = await api.get(`/users/${userId}`)
+        const response = await api.get(`/users/${channelId}`)
         return response.data
       } catch (error) {
         console.error('Ошибка получения пользователя:', error)
@@ -29,9 +21,9 @@ export const useUserStore = defineStore('user', {
     deleteVideo(id: number) {
       console.log(id)
     },
-    async searchUsers(query: string): Promise<User[]> {
+    async searchChannels(query: string): Promise<Channel[]> {
       try {
-        const response = await api.get<User[]>('/users/search', {
+        const response = await api.get<Channel[]>('/users/search', {
           params: {
             query: query.trim()
           }

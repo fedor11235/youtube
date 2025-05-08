@@ -7,17 +7,17 @@ import { eq, desc } from 'drizzle-orm';
 export class VideoHistoryService {
   constructor(private readonly db: DrizzleService) {}
 
-  async addToHistory(userId: number, videoId: number) {
+  async addToHistory(channelId: number, videoId: number) {
     return this.db.insert(videoHistory)
       .values({
-        userId,
+        channelId,
         videoId,
         watchedAt: new Date()
       })
       .execute();
   }
 
-  async getHistory(userId: number) {
+  async getHistory(channelId: number) {
     return this.db
       .select(videoHistory, {
         id: videoHistory.id,
@@ -28,7 +28,7 @@ export class VideoHistoryService {
           thumbnailUrl: videos.thumbnailUrl,
           views: videos.views,
           createdAt: videos.createdAt,
-          user: {
+          channel: {
             id: channels.id,
             username: channels.username,
             avatar: channels.avatar
@@ -36,15 +36,15 @@ export class VideoHistoryService {
         }
       })
       .innerJoin(videos, eq(videos.id, videoHistory.videoId))
-      .innerJoin(channels, eq(channels.id, videos.userId))
-      .where(eq(videoHistory.userId, userId))
+      .innerJoin(channels, eq(channels.id, videos.channelId))
+      .where(eq(videoHistory.channelId, channelId))
       .orderBy(desc(videoHistory.watchedAt));
   }
 
-  async clearHistory(userId: number) {
+  async clearHistory(channelId: number) {
     return this.db
       .delete(videoHistory)
-      .where(eq(videoHistory.userId, userId))
+      .where(eq(videoHistory.channelId, channelId))
       .execute();
   }
 }

@@ -12,7 +12,7 @@ export class NotificationService {
   ) {}
 
   async createNotification(data: {
-    userId: number;
+    channelId: number;
     title: string;
     message: string;
     type: 'like' | 'comment' | 'reply' | 'subscribe' | 'system';
@@ -26,42 +26,42 @@ export class NotificationService {
         createdAt: new Date()
       })
       .returning();
-    this.notificationGateway.sendNotification(data.userId, notification)
+    this.notificationGateway.sendNotification(data.channelId, notification)
     return notification;
   }
 
-  async getUserNotifications(userId: number) {
+  async getChannelNotifications(channelId: number) {
     return this.db
       .select(notifications)
-      .where(eq(notifications.userId, userId))
+      .where(eq(notifications.channelId, channelId))
       .orderBy(notifications.createdAt);
   }
 
-  async markAsRead(id: number, userId: number) {
+  async markAsRead(id: number, channelId: number) {
     await this.db
       .update(notifications)
       .set({ read: true })
       .where(eq(notifications.id, id))
-      .where(eq(notifications.userId, userId));
+      .where(eq(notifications.channelId, channelId));
   }
 
-  async markAllAsRead(userId: number) {
+  async markAllAsRead(channelId: number) {
     await this.db
       .update(notifications)
       .set({ read: true })
-      .where(eq(notifications.userId, userId));
+      .where(eq(notifications.channelId, channelId));
   }
 
-  async deleteNotification(id: number, userId: number) {
+  async deleteNotification(id: number, channelId: number) {
     await this.db
       .delete(notifications)
       .where(eq(notifications.id, id))
-      .where(eq(notifications.userId, userId));
+      .where(eq(notifications.channelId, channelId));
   }
 
-  async deleteAllNotifications(userId: number) {
+  async deleteAllNotifications(channelId: number) {
     await this.db
       .delete(notifications)
-      .where(eq(notifications.userId, userId));
+      .where(eq(notifications.channelId, channelId));
   }
 }

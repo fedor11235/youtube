@@ -58,9 +58,9 @@
           <q-btn-dropdown flat>
             <template v-slot:label>
               <q-avatar size="26px">
-                <img :src="getAvatar(authStore?.user?.avatar)">
+                <img :src="getAvatar(authStore?.channel?.avatar)">
               </q-avatar>
-              <span class="q-ml-sm">{{ authStore.userFullName }}</span>
+              <span class="q-ml-sm">{{ authStore.channel?.username }}</span>
             </template>
 
             <q-list>

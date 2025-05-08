@@ -29,7 +29,7 @@ const likesCount = ref(0);
 const loadLikeStatus = async () => {
   try {
     if (authStore.isAuthenticated) {
-      isLiked.value = await videoLikesService.hasUserLiked(props.videoId);
+      isLiked.value = await videoLikesService.hasChannelLiked(props.videoId);
     }
     likesCount.value = await videoLikesService.getLikesCount(props.videoId);
   } catch (error) {

@@ -1,10 +1,3 @@
-export interface Channel {
-  id: number;
-  name: string;
-  avatar: string;
-  subscribers: number;
-}
-
 export interface Video {
   id: number;
   title: string;
@@ -15,10 +8,9 @@ export interface Video {
   likes: number;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   createdAt: any;
-  userId: number;
-  channel: Channel;
+  channelId: number;
   duration: number;
-  user: {
+  channel: {
     id: number;
     username: string;
     avatar?: string;
@@ -36,9 +28,9 @@ export interface VideoComment {
   id: number;
   content: string;
   createdAt: string;
-  userId: number;
+  channelId: number;
   videoId: number;
-  user: {
+  channel: {
     id: number;
     avatar?: string;
   };

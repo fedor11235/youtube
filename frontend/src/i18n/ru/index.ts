@@ -56,8 +56,8 @@ export default {
     markAsUnread: "Отметить как непрочитанное",
     remove: "Удалять",
     newVideo: '{channel} загрузил новое видео',
-    newSubscriber: '{user} подписался на ваш канал',
-    newComment: '{user} оставил комментарий к вашему видео'
+    newSubscriber: '{channel} подписался на ваш канал',
+    newComment: '{channel} оставил комментарий к вашему видео'
   },
   auth: {
     email: 'эл. почта',

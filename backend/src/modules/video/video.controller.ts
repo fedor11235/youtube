@@ -21,7 +21,7 @@ export class VideoController {
     @Body() createVideoDto: CreateVideoDto,
     @Req() req
   ) {
-    return this.videoService.createVideo(file, createVideoDto, req.user.id);
+    return this.videoService.createVideo(file, createVideoDto, req.channel.id);
   }
 
   @Post('thumbnail') 
@@ -42,8 +42,8 @@ export class VideoController {
     @Body() body: { videoId: string }
   ) {
     try {
-      const user = await this.videoService.updateThumbnail(body.videoId, thumbnail);
-      return user;
+      const channel = await this.videoService.updateThumbnail(body.videoId, thumbnail);
+      return channel;
     } catch (error) {
       throw new HttpException('Failed to update thumbnail', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -83,7 +83,7 @@ export class VideoController {
   @Get('liked')
   @UseGuards(JwtAuthGuard)
   async getLikedVideos(@Req() req: any) {
-    return this.videoService.getLikedVideos(parseInt(req.user.id));
+    return this.videoService.getLikedVideos(parseInt(req.channel.id));
   }
 
   @Get(':id')
@@ -97,7 +97,7 @@ export class VideoController {
     @Param('id', ParseIntPipe) id: number,
     @Req() req: any
   ) {
-    return this.videoService.deleteVideo(id, req.user.id);
+    return this.videoService.deleteVideo(id, req.channel.id);
   }
 
   @Post('tags/:videoId')

@@ -1,5 +1,6 @@
 import { api } from 'src/boot/axios'
-import type { Video, VideoUpload, VideoComment } from '../types/video'
+import type { Video } from '../types'
+import type { VideoUpload, VideoComment } from '../types/video'
 
 class VideoError extends Error {
   constructor(message: string) {

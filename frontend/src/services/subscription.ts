@@ -16,8 +16,8 @@ export const subscriptionService = {
     return response.data;
   },
 
-  async getSubscribers(userId: string) {
-    const response = await api.get(`/subscriptions/subscribers/${userId}`);
+  async getSubscribers(channelId: string) {
+    const response = await api.get(`/subscriptions/subscribers/${channelId}`);
     return response.data;
   },
 

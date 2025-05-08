@@ -3,7 +3,7 @@
     <div class="profile-header">
       <div class="cover-photo">
         <img 
-          :src="getBanner(user?.banner)" 
+          :src="getBanner(channel?.banner)" 
           alt="Cover photo"
           class="cover-image"
         />
@@ -13,15 +13,15 @@
         <div class="profile-main">
           <div class="q-mr-xl">
             <q-avatar size="180px">
-              <img :src="getAvatar(user?.avatar)" />
+              <img :src="getAvatar(channel?.avatar)" />
             </q-avatar>
           </div>
 
           <div class="user-details q-ml-md">
-            <h1 class="text-h4 q-mb-sm">{{ user?.username }}</h1>
+            <h1 class="text-h4 q-mb-sm">{{ channel?.username }}</h1>
             <div class="user-stats">
               <span class="stat-item">
-                <span class="stat-value">{{ user?.totalViews || 0 }}</span>
+                <span class="stat-value">{{ channel?.totalViews || 0 }}</span>
                 <span class="stat-label">видео</span>
               </span>
               <span class="stat-separator">•</span>
@@ -87,7 +87,7 @@
 
           <q-tab-panel name="about">
             <div class="text-h6">О пользователе</div>
-            <p>Дата регистрации: {{ formatDate(user?.createdAt || '') }}</p>
+            <p>Дата регистрации: {{ formatDate(channel?.createdAt || '') }}</p>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -107,26 +107,13 @@ import { subscriptionService } from 'src/services/subscription'
 import SubscribeButton from 'components/SubscribeButton.vue';
 import VideoCarTwo from 'components/VideoCarTwo.vue';
 import videoService from 'src/services/video'
-
-interface User {
-  id: string
-  email: string
-  username: string
-  avatar?: string
-  createdAt: string
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  totalViews: any
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  subscribers: any
-  url: string
-  banner: string
-}
+import type { Channel } from 'src/types'
 
 const route = useRoute()
 const authStore = useAuthStore()
 const userStore = useUserStore()
 const tab = ref('videos')
-const user: Ref<User | null> = ref(null)
+const channel: Ref<Channel | null> = ref(null)
 const isSubscribed = ref(false);
 const subscribersCount = ref(0);
 const videoUrl = computed(() => route.params.id)
@@ -134,17 +121,17 @@ const videoUrl = computed(() => route.params.id)
 const videos: any = ref([])
 
 const isOwnProfile = computed(() => {
-  return user.value?.id === authStore.user?.id;
+  return channel.value?.id === authStore.channel?.id;
 });
 
 onMounted(async () => {
-  const userId = route.params.id
+  const channelId = route.params.id
   try {
-    if(typeof userId === 'string') {
-      user.value = await userStore.fetchUserById(userId)
-      isSubscribed.value = await subscriptionService.checkSubscription(userId);
-      const subscribers = await subscriptionService.getSubscribers(userId);
-      const result = await videoService.getChannelVideos(user.value!.id)
+    if(typeof channelId === 'string') {
+      channel.value = await userStore.fetchChannelById(channelId)
+      isSubscribed.value = await subscriptionService.checkSubscription(channelId);
+      const subscribers = await subscriptionService.getSubscribers(channelId);
+      const result = await videoService.getChannelVideos(channel.value!.id)
       videos.value = result.videosChannel
       subscribersCount.value = subscribers.length;
     }

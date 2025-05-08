@@ -9,7 +9,7 @@ export interface RegisterData {
   username: string;
 }
 
-export interface User {
+export interface Channel {
   id: number;
   email: string;
   username: string;

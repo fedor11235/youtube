@@ -14,16 +14,16 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('register')
-  @ApiOperation({ summary: 'Register new user' })
-  @ApiResponse({ status: 201, description: 'User successfully registered' })
-  @ApiResponse({ status: 409, description: 'User already exists' })
+  @ApiOperation({ summary: 'Register new channel' })
+  @ApiResponse({ status: 201, description: 'Channel successfully registered' })
+  @ApiResponse({ status: 409, description: 'Channel already exists' })
   async register(@Body() registerDto: RegisterDto) {
     return this.authService.register(registerDto);
   }
 
   @Post('login')
-  @ApiOperation({ summary: 'User login' })
-  @ApiResponse({ status: 200, description: 'User successfully logged in' })
+  @ApiOperation({ summary: 'Channel login' })
+  @ApiResponse({ status: 200, description: 'Channel successfully logged in' })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   async login(@Body() loginDto: LoginDto) {
     return this.authService.login(loginDto);
@@ -33,7 +33,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async logout(@Req() req) {
     try {
-      await this.authService.logout(req.user.id);
+      await this.authService.logout(req.channel.id);
       return { message: 'Logged out successfully' };
     } catch (error) {
       throw new HttpException('Logout failed', HttpStatus.INTERNAL_SERVER_ERROR);
@@ -42,12 +42,12 @@ export class AuthController {
 
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  async getCurrentUser(@Req() req) {
+  async getCurrentChannel(@Req() req) {
     try {
-      const user = await this.authService.getCurrentUser(req.user.id);
-      return user;
+      const channel = await this.authService.getCurrentChannel(req.channel.id);
+      return channel;
     } catch (error) {
-      throw new HttpException('Failed to get user profile', HttpStatus.INTERNAL_SERVER_ERROR);
+      throw new HttpException('Failed to get channel profile', HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -55,8 +55,8 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   async updateProfile(@Req() req, @Body() updateProfileDto: UpdateProfileDto) {
     try {
-      const user = await this.authService.updateProfile(req.user.id, updateProfileDto);
-      return user;
+      const channel = await this.authService.updateProfile(req.channel.id, updateProfileDto);
+      return channel;
     } catch (error) {
       throw new HttpException('Failed to update profile', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -67,8 +67,8 @@ export class AuthController {
   @UseInterceptors(FileInterceptor('avatar'))
   async updateAvatar(@Req() req, @UploadedFile() file: Express.Multer.File) {
     try {
-      const user = await this.authService.updateAvatar(req.user.id, file);
-      return user;
+      const channel = await this.authService.updateAvatar(req.channel.id, file);
+      return channel;
     } catch (error) {
       throw new HttpException('Failed to update avatar', HttpStatus.INTERNAL_SERVER_ERROR);
     }
@@ -78,7 +78,7 @@ export class AuthController {
   @UseGuards(JwtAuthGuard)
   @UseInterceptors(FileInterceptor('banner'))
   async uploadBanner(@Req() req, @UploadedFile() file: Express.Multer.File) {
-    const user = this.authService.updateBanner(req.user.id, file);
-    return user;
+    const channel = this.authService.updateBanner(req.channel.id, file);
+    return channel;
   }
 }

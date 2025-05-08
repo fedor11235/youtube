@@ -1,19 +1,19 @@
 import { defineStore } from 'pinia'
 import type { ApiError } from '../types/error'
 import authService from '../services/auth'
-import type { LoginCredentials, RegisterData, User } from 'src/types/auth'
+import type { Channel, LoginCredentials, RegisterData } from 'src/types/auth'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({
-    user: null as User | null,
+    channel: null as Channel | null,
     loading: false,
     token: localStorage.getItem('token'),
     error: null as string | null
   }),
 
   getters: {
-    isAuthenticated: (state) => !!state.user,
-    userFullName: (state) => state.user ? state.user.username: '',
+    isAuthenticated: (state) => !!state.channel,
+    userFullName: (state) => state.channel ? state.channel.username: '',
   },
   
 
@@ -23,7 +23,7 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
       try {
         const response = await authService.login(credentials)
-        this.user = response.user 
+        this.channel = response.channel 
       } catch (err) {
         this.error = (err as ApiError).response?.data?.message || 'Login failed'
         throw err
@@ -37,7 +37,7 @@ export const useAuthStore = defineStore('auth', {
       this.error = null
       try {
         const response = await authService.register(data)
-        this.user = response.user
+        this.channel = response.channel
       } catch (err) {
         this.error = (err as ApiError).response?.data?.message || 'Registration failed'
         throw err
@@ -48,15 +48,15 @@ export const useAuthStore = defineStore('auth', {
 
     async logout() {
       await authService.logout()
-      this.user = null
+      this.channel = null
     },
 
     async checkAuth() {
       try {
-        this.user = await authService.getCurrentUser()
+        this.channel = await authService.getCurrentChannel()
       } catch (err) {
         console.error(err)
-        this.user = null
+        this.channel = null
       }
     },
 

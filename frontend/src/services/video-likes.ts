@@ -16,7 +16,7 @@ export const videoLikesService = {
     return response.data;
   },
 
-  async hasUserLiked(videoId: number) {
+  async hasChannelLiked(videoId: number) {
     const response = await api.get(`/video-likes/${videoId}/has-liked`);
     return response.data.hasLiked;
   }

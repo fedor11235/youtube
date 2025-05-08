@@ -28,13 +28,13 @@
         </div>
 
         <div v-else-if="searchResults.length > 0">
-          <q-card v-for="user in searchResults" :key="user.id" class="user-card q-mb-md">
+          <q-card v-for="channel in searchResults" :key="channel.id" class="user-card q-mb-md">
             <!-- Баннер пользователя -->
-            <div class="user-banner">
+            <div class="channel-banner">
               <img 
-                :src="user.banner || 'https://picsum.photos/1200/300'" 
+                :src="channel.banner || 'https://picsum.photos/1200/300'" 
                 class="banner-image"
-                alt="User banner"
+                alt="Channel banner"
               >
             </div>
 
@@ -45,25 +45,25 @@
                   <div class="row items-center">
                     <div class="col-auto avatar-container">
                       <UserAvatar
-                        :avatar="user.avatar"
-                        :username="user.username"
-                        :user-id="user.id"
-                        :url="user.url"
+                        :avatar="channel.avatar"
+                        :username="channel.username"
+                        :user-id="channel.id"
+                        :url="channel.url"
                         size="80px"
                         clickable
                       />
                     </div>
                     <div class="col q-ml-md q-mt-lg">
-                      <div class="text-h6">{{ user.username }}</div>
-                      <div class="text-subtitle2 text-grey-7">{{ user.email }}</div>
+                      <div class="text-h6">{{ channel.username }}</div>
+                      <div class="text-subtitle2 text-grey-7">{{ channel.email }}</div>
                       <div class="row items-center q-gutter-x-md q-mt-sm">
                         <div class="text-caption">
                           <q-icon name="people" size="16px" class="q-mr-xs" />
-                          {{ user.subscribersCount }} подписчиков
+                          {{ channel.subscribersCount }} подписчиков
                         </div>
                         <div class="text-caption">
                           <q-icon name="video_library" size="16px" class="q-mr-xs" />
-                          {{ user.videosCount }} видео
+                          {{ channel.videosCount }} видео
                         </div>
                       </div>
                     </div>
@@ -73,9 +73,9 @@
                 <!-- Кнопка подписки -->
                 <div class="col-12 col-sm-4 text-right">
                   <SubscribeButton
-                    v-if="authStore.user?.id !== user.id"
-                    :channel-url="user.url"
-                    :subscribers-count="user.subscribersCount"
+                    v-if="authStore.channel?.id !== channel.id"
+                    :channel-url="channel.url"
+                    :subscribers-count="channel.subscribersCount"
                   />
                 </div>
               </div>
@@ -124,7 +124,7 @@ const handleSearch = async (query: string) => {
   if (query.length >= 2) {
     try {
       loading.value = true
-      const results = await userStore.searchUsers(query)
+      const results = await userStore.searchChannels(query)
       searchResults.value = results
     } catch (error) {
       console.error('Ошибка поиска:', error)

@@ -7,7 +7,7 @@
     >
       <q-item-section avatar>
         <q-avatar>
-          <img :src="getAvatar(notification?.data?.user?.avatar)">
+          <img :src="getAvatar(notification?.data?.channel?.avatar)">
         </q-avatar>
       </q-item-section>
 

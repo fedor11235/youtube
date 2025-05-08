@@ -7,11 +7,11 @@ import { and, desc, eq } from 'drizzle-orm';
 export class FavoritesService {
   constructor(private readonly db: DrizzleService) {}
 
-  async addToFavorites(userId: number, videoId: number) {
+  async addToFavorites(channelId: number, videoId: number) {
     try {
       await this.db.insert(favorites)
         .values({
-          userId,
+          channelId,
           videoId,
           createdAt: new Date()
         })
@@ -25,11 +25,11 @@ export class FavoritesService {
     }
   }
 
-  async removeFromFavorites(userId: number, videoId: number) {
+  async removeFromFavorites(channelId: number, videoId: number) {
     await this.db.delete(favorites)
       .where(
         and(
-          eq(favorites.userId, userId),
+          eq(favorites.channelId, channelId),
           eq(favorites.videoId, videoId)
         )
       )
@@ -37,12 +37,12 @@ export class FavoritesService {
     return { success: true };
   }
 
-  async isInFavorites(userId: number, videoId: number) {
+  async isInFavorites(channelId: number, videoId: number) {
     const result = await this.db
       .select(favorites)
       .where(
         and(
-          eq(favorites.userId, userId),
+          eq(favorites.channelId, channelId),
           eq(favorites.videoId, videoId)
         )
       )
@@ -50,7 +50,7 @@ export class FavoritesService {
     return result.length > 0;
   }
 
-  async getFavoriteVideos(userId: number) {
+  async getFavoriteVideos(channelId: number) {
     return this.db
       .select(favorites, {
         id: videos.id,
@@ -59,15 +59,15 @@ export class FavoritesService {
         thumbnailUrl: videos.thumbnailUrl,
         createdAt: videos.createdAt,
         views: videos.views,
-        user: {
+        channel: {
           id: channels.id,
           username: channels.username,
           avatar: channels.avatar
         }
       })
       .innerJoin(videos, eq(favorites.videoId, videos.id))
-      .innerJoin(channels, eq(videos.userId, channels.id))
-      .where(eq(favorites.userId, userId))
+      .innerJoin(channels, eq(videos.channelId, channels.id))
+      .where(eq(favorites.channelId, channelId))
       .orderBy(desc(favorites.createdAt))
       .execute();
   }

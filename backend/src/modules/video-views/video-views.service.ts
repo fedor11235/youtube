@@ -7,15 +7,15 @@ import { and, eq, sql } from 'drizzle-orm';
 export class VideoViewsService {
   constructor(private readonly db: DrizzleService) {}
 
-  async addView(userId: number | null, videoId: number) {
+  async addView(channelId: number | null, videoId: number) {
     // Если пользователь авторизован, сохраняем информацию о просмотре
-    if (userId) {
+    if (channelId) {
       // Проверяем, не смотрел ли пользователь это видео в последние 24 часа
       const recentView = await this.db
         .select(videoViews)
         .where(
           and(
-            eq(videoViews.userId, userId),
+            eq(videoViews.channelId, channelId),
             eq(videoViews.videoId, videoId),
             sql`${videoViews.createdAt} > NOW() - INTERVAL '24 hours'`
           )
@@ -24,7 +24,7 @@ export class VideoViewsService {
 
         this.db.insert(videoHistory)
           .values({
-            userId,
+            channelId,
             videoId,
             watchedAt: new Date()
           })
@@ -34,7 +34,7 @@ export class VideoViewsService {
         await this.db
           .insert(videoViews)
           .values({
-            userId,
+            channelId,
             videoId,
             createdAt: new Date(),
           })

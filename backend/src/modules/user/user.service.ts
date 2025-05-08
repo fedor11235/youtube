@@ -15,13 +15,13 @@ export class UsereSrvice {
     if (!result.length) {
       throw new NotFoundException(`Пользователь с ID ${id} не найден`);
     }
-    const user = result[0];
-    delete user.password;
+    const channel = result[0];
+    delete channel.password;
 
-    return user;
+    return channel;
   }
 
-  async searchUsers(query: string) {
+  async searchChannels(query: string) {
     const searchQuery = `%${query}%`;
     
     const result = await this.db

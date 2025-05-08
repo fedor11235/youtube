@@ -13,7 +13,7 @@ export class CommentController {
     @Body('content') content: string,
     @Request() req
   ) {
-    return this.commentService.createComment(req.user.id, parseInt(videoId), content);
+    return this.commentService.createComment(req.channel.id, parseInt(videoId), content);
   }
 
   @Get('video/:videoId')
@@ -33,7 +33,7 @@ export class CommentController {
     @Body('content') content: string,
     @Request() req
   ) {
-    return this.commentService.createReply(req.user.id, parseInt(commentId), content);
+    return this.commentService.createReply(req.channel.id, parseInt(commentId), content);
   }
 
   @Put(':id')
@@ -43,7 +43,7 @@ export class CommentController {
     @Body('content') content: string,
     @Request() req
   ) {
-    return this.commentService.updateComment(parseInt(id), req.user.id, content);
+    return this.commentService.updateComment(parseInt(id), req.channel.id, content);
   }
 
   @Delete(':id')
@@ -52,6 +52,6 @@ export class CommentController {
     @Param('id') id: string,
     @Request() req
   ) {
-    return this.commentService.deleteComment(parseInt(id), req.user.id);
+    return this.commentService.deleteComment(parseInt(id), req.channel.id);
   }
 }

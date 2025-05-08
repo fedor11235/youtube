@@ -35,14 +35,14 @@
                 <div class="col-auto">
                   <div class="row items-center">
                     <UserAvatar
-                      :avatar="video.user.avatar"
-                      :url="video.user.url"
-                      :username="video.user.username"
+                      :avatar="video.channel.avatar"
+                      :url="video.channel.url"
+                      :username="video.channel.username"
                       size="40px"
                       class="q-mr-md"
                     />
                     <div>
-                      <div class="text-weight-bold">{{ video.user.username }}</div>
+                      <div class="text-weight-bold">{{ video.channel.username }}</div>
                       <div class="text-caption text-grey">{{ subscribersCount }} подписчиков</div>
                     </div>
                   </div>
@@ -50,7 +50,7 @@
                 
                 <div class="col-auto">
                   <SubscribeButton
-                    :channel-url="video.user.url"
+                    :channel-url="video.channel.url"
                     v-model:subscribers-count="subscribersCount"
                   />
                 </div>
@@ -67,7 +67,7 @@
 
         <CommentSection
           :video-id="video.id"
-          :video-author-id="video.user.id"
+          :video-author-id="video.channel.id"
         />
       </div>
 
@@ -81,7 +81,6 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-// import { date } from 'quasar'
 import type { Video } from '../types'
 import videoService from 'src/services/video'
 import LikeButton from '../components/LikeButton.vue'
@@ -103,11 +102,9 @@ const subscribersCount = ref(0);
 onMounted(async () => {
   const videoId = parseInt(route.params.id as string)
     try {
-      // Проверяем статус подписки
       video.value = await videoService.getVideo(videoId);
       relatedVideos.value = await videoService.getRelatedVideos(videoId);
-      // Получаем количество подписчиков
-      const subscribers = await subscriptionService.getSubscribers(video.value.user.url);
+      const subscribers = await subscriptionService.getSubscribers(video.value.channel.url);
       subscribersCount.value = subscribers.length;
     } catch (error) {
       console.error('Ошибка при загрузке данных о подписке:', error);

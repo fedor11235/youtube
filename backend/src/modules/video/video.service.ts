@@ -9,7 +9,7 @@ import { subDays } from 'date-fns';
 export class VideoService {
   constructor(private readonly db: DrizzleService) {}
 
-  async createVideo(file: Express.Multer.File, createVideoDto: any, userId: number) {
+  async createVideo(file: Express.Multer.File, createVideoDto: any, channelId: number) {
     const test = await editVideo(file.path);
     const thumbnailUrl = await extractThumbnail(file.path);
     const duration = await extractDuration(file.path);
@@ -19,7 +19,7 @@ export class VideoService {
       description: createVideoDto.description,
       videoUrl: file.filename,
       thumbnailUrl,
-      userId: userId,
+      channelId: channelId,
       duration
     }).returning();
   
@@ -38,7 +38,7 @@ export class VideoService {
         views: videos.views,
         createdAt: videos.createdAt,
         duration: videos.duration,
-        user: {
+        channel: {
           id: channels.id,
           username: channels.username,
           email: channels.email,
@@ -46,15 +46,15 @@ export class VideoService {
           url: channels.url
         }
       })
-      .leftJoin(channels, eq(videos.userId, channels.id));
+      .leftJoin(channels, eq(videos.channelId, channels.id));
   
     return result.map(video => ({
       ...video,
       channel: {
-        id: video.user.id,
-        username: video.user.username,
-        avatar: video.user.avatar || null,
-        url: video.user.url
+        id: video.channel.id,
+        username: video.channel.username,
+        avatar: video.channel.avatar || null,
+        url: video.channel.url
       },
       user: undefined // удаляем исходные данные пользователя
     }));
@@ -70,7 +70,7 @@ export class VideoService {
         views: videos.views,
         createdAt: videos.createdAt,
         duration: videos.duration,
-        user: {
+        channel: {
           id: channels.id,
           username: channels.username,
           email: channels.email,
@@ -79,7 +79,7 @@ export class VideoService {
         }
       })
       .where(eq(videos.id, id))
-      .leftJoin(channels, eq(videos.userId, channels.id))
+      .leftJoin(channels, eq(videos.channelId, channels.id))
       .limit(1);
 
     if (!video.length) {
@@ -89,7 +89,7 @@ export class VideoService {
     return video[0];
   }
 
-  async deleteVideo(id: number, userId: number) {
+  async deleteVideo(id: number, channelId: number) {
     const video = await this.db.select(videos)
       .where(eq(videos.id, id))
       .limit(1);
@@ -98,7 +98,7 @@ export class VideoService {
       throw new NotFoundException('Видео не найдено');
     }
   
-    if (video[0].userId !== userId) {
+    if (video[0].channelId !== channelId) {
       throw new UnauthorizedException('У вас нет прав на удаление этого видео');
     }
   
@@ -118,7 +118,7 @@ export class VideoService {
         thumbnailUrl: videos.thumbnailUrl,
         views: videos.views,
         createdAt: videos.createdAt,
-        userId: videos.userId,
+        channelId: videos.channelId,
         duration: videos.duration,
         channel: {
           id: channels.id,
@@ -126,8 +126,8 @@ export class VideoService {
           avatar: channels.avatar
         }
       })
-      .innerJoin(channels, eq(channels.id, videos.userId))
-      .where(eq(videos.userId, channelId))
+      .innerJoin(channels, eq(channels.id, videos.channelId))
+      .where(eq(videos.channelId, channelId))
       .orderBy(desc(videos.createdAt));
   
     return {
@@ -146,15 +146,15 @@ export class VideoService {
         createdAt: videos.createdAt,
         viewsCount: videos.views,
         duration: videos.duration,
-        user: {
+        channel: {
           id: channels.id,
           username: channels.username,
           avatar: channels.avatar
         }
       })
       .innerJoin(videos, eq(videoLikes.videoId, videos.id))
-      .innerJoin(channels, eq(videos.userId, channels.id))
-      .where(eq(videoLikes.userId, userId))
+      .innerJoin(channels, eq(videos.channelId, channels.id))
+      .where(eq(videoLikes.channelId, userId))
       .orderBy(desc(videoLikes.createdAt))
       .execute();
   }
@@ -171,14 +171,14 @@ export class VideoService {
         createdAt: videos.createdAt,
         views: sql`COUNT(${videoViews.id})`,
         duration: videos.duration,
-        user: {
+        channel: {
           id: channels.id,
           username: channels.username,
           avatar: channels.avatar,
           url: channels.url
         }
       })
-      .leftJoin(channels, eq(videos.userId, channels.id))
+      .leftJoin(channels, eq(videos.channelId, channels.id))
       .leftJoin(videoViews, eq(videos.id, videoViews.videoId))
       .where(
           gte(videoViews.createdAt, yesterday)
@@ -199,7 +199,7 @@ export class VideoService {
         views: videos.views,
         createdAt: videos.createdAt,
         duration: videos.duration,
-        user: {
+        channel: {
           id: channels.id,
           username: channels.username,
           email: channels.email,
@@ -207,16 +207,16 @@ export class VideoService {
           url: channels.url
         }
       })
-      .leftJoin(channels, eq(videos.userId, channels.id))
+      .leftJoin(channels, eq(videos.channelId, channels.id))
       .where(ne(videos.id, id)); // Добавляем условие для исключения текущего видео
 
     return result.map(video => ({
       ...video,
       channel: {
-        id: video.user.id,
-        username: video.user.username,
-        avatar: video.user.avatar || null,
-        url: video.user.url
+        id: video.channel.id,
+        username: video.channel.username,
+        avatar: video.channel.avatar || null,
+        url: video.channel.url
       },
       user: undefined // удаляем исходные данные пользователя
     }));
@@ -233,14 +233,14 @@ export class VideoService {
         views: videos.views,
         createdAt: videos.createdAt,
         duration: videos.duration,
-        user: {
+        channel: {
           id: channels.id,
           username: channels.username,
           avatar: channels.avatar,
           url: channels.url
         }
       })
-      .leftJoin(channels, eq(videos.userId, channels.id));
+      .leftJoin(channels, eq(videos.channelId, channels.id));
   
     if (query) {
       videosQuery = videosQuery.where(
@@ -265,10 +265,10 @@ export class VideoService {
     return result.map(video => ({
       ...video,
       channel: {
-        id: video.user.id,
-        name: video.user.username,
-        avatar: video.user.avatar || null,
-        url: video.user.url
+        id: video.channel.id,
+        name: video.channel.username,
+        avatar: video.channel.avatar || null,
+        url: video.channel.url
       },
       user: undefined
     }));
@@ -315,7 +315,7 @@ export class VideoService {
       .set({ thumbnailUrl: file.filename })
       .where(eq(videos.id, videoId))
       .returning();
-    console.log("updatedVideo: ", updatedVideo)
+
     if (!updatedVideo.length) {
       throw new NotFoundException('Пользователь не найден');
     }

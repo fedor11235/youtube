@@ -16,7 +16,7 @@ export const commentLikesService = {
     return response.data.count;
   },
 
-  async hasUserLiked(commentId: number) {
+  async hasChannelLiked(commentId: number) {
     const response = await api.get(`/comment-likes/${commentId}/has-liked`);
     return response.data.hasLiked;
   },

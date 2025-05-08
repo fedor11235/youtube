@@ -54,7 +54,7 @@ const loadLikeStatus = async () => {
   if (!authStore.isAuthenticated) return;
   
   try {
-    isLiked.value = await commentLikesService.hasUserLiked(props.commentId);
+    isLiked.value = await commentLikesService.hasChannelLiked(props.commentId);
     likesCount.value = await commentLikesService.getLikesCount(props.commentId);
     creatorLikesCount.value = await commentLikesService.checkCreatorLike(props.commentId);
     console.log("creatorLikesCount.value: ", creatorLikesCount.value)

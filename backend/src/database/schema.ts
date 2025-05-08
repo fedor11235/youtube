@@ -16,7 +16,7 @@ export const videos = pgTable('videos', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description'),
-  userId: integer('user_id').references(() => channels.id),
+  channelId: integer('channel_id').references(() => channels.id),
   videoUrl: varchar('video_url', { length: 255 }).notNull(),
   thumbnailUrl: varchar('thumbnail_url', { length: 255 }),
   createdAt: timestamp('created_at').defaultNow(),
@@ -39,7 +39,7 @@ export const comments = pgTable('comments', {
   id: serial('id').primaryKey(),
   content: text('content').notNull(),
   parentId: integer('parent_id').references(() => comments.id, { onDelete: 'cascade' }),
-  userId: integer('user_id').references(() => channels.id),
+  channelId: integer('channel_id').references(() => channels.id),
   videoId: integer('video_id').references(() => videos.id),
   createdAt: timestamp('created_at').defaultNow(),
   updatedAt: timestamp('updated_at').notNull().defaultNow(),
@@ -47,14 +47,14 @@ export const comments = pgTable('comments', {
 
 export const likes = pgTable('likes', {
   id: serial('id').primaryKey(),
-  userId: integer('user_id').references(() => channels.id),
+  channelId: integer('channel_id').references(() => channels.id),
   videoId: integer('video_id').references(() => videos.id),
   createdAt: timestamp('created_at').defaultNow()
 });
 
 export const favorites = pgTable('favorites', {
   id: serial('id').primaryKey(),
-  userId: integer('user_id').references(() => channels.id),
+  channelId: integer('channel_id').references(() => channels.id),
   videoId: integer('video_id').references(() => videos.id),
   createdAt: timestamp('created_at').defaultNow()
 });
@@ -68,40 +68,40 @@ export const subscriptions = pgTable('subscriptions', {
 
 export const videoHistory = pgTable('video_history', {
   id: serial('id').primaryKey(),
-  userId: integer('user_id').notNull().references(() => channels.id, { onDelete: 'cascade' }),
+  channelId: integer('channel_id').notNull().references(() => channels.id, { onDelete: 'cascade' }),
   videoId: integer('video_id').notNull().references(() => videos.id, { onDelete: 'cascade' }),
   watchedAt: timestamp('watched_at').notNull().defaultNow(),
 });
 
 export const videoLikes = pgTable('video_likes', {
   id: serial('id').primaryKey(),
-  userId: integer('user_id').notNull().references(() => channels.id, { onDelete: 'cascade' }),
+  channelId: integer('channel_id').notNull().references(() => channels.id, { onDelete: 'cascade' }),
   videoId: integer('video_id').notNull().references(() => videos.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').notNull().defaultNow()
 });
 
 export const commentLikes = pgTable('comment_likes', {
   id: serial('id').primaryKey(),
-  userId: integer('user_id').notNull().references(() => channels.id, { onDelete: 'cascade' }),
+  channelId: integer('channel_id').notNull().references(() => channels.id, { onDelete: 'cascade' }),
   commentId: integer('comment_id').notNull().references(() => comments.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
   isCreatorLike: boolean('is_creator_like').default(false),
 }, (table) => {
   return {
-    uniqueUserComment: uniqueIndex('unique_user_comment').on(table.userId, table.commentId),
+    uniqueUserComment: uniqueIndex('unique_user_comment').on(table.channelId, table.commentId),
   };
 });
 
 export const videoViews = pgTable('video_views', {
   id: serial('id').primaryKey(),
-  userId: integer('user_id').references(() => channels.id),
+  channelId: integer('channel_id').references(() => channels.id),
   videoId: integer('video_id').references(() => videos.id),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
 export const notifications = pgTable('notifications', {
   id: serial('id').primaryKey(),
-  userId: integer('user_id').notNull().references(() => channels.id, { onDelete: 'cascade' }),
+  channelId: integer('channel_id').notNull().references(() => channels.id, { onDelete: 'cascade' }),
   title: varchar('title', { length: 255 }).notNull(),
   message: text('message').notNull(),
   type: varchar('type', { length: 50 }).notNull(), // 'video', 'subscription', 'comment', 'system'

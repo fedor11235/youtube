@@ -35,12 +35,12 @@
             <q-card-section>
               <div class="row no-wrap">
                 <q-avatar size="40px" class="q-mr-sm">
-                  <img :src="getAvatar(video.user.avatar)">
+                  <img :src="getAvatar(video.channel.avatar)">
                 </q-avatar>
 
                 <div>
                   <div class="text-weight-bold ellipsis-2-lines">{{ video.title }}</div>
-                  <div class="text-grey">{{ video.user.username }}</div>
+                  <div class="text-grey">{{ video.channel.username }}</div>
                   <div class="text-grey text-caption">
                     {{ video.views || 0 }} views • {{ formatDate(video.createdAt) }}
                   </div>

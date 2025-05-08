@@ -3,13 +3,13 @@ import { AuthGuard } from '@nestjs/passport';
 
 @Injectable()
 export class OptionalJwtAuthGuard extends AuthGuard('jwt') {
-  handleRequest(err: any, user: any, info: any) {
+  handleRequest(err: any, channel: any, info: any) {
     // В отличие от стандартного JwtAuthGuard, этот guard не выбрасывает ошибку
     // если токен отсутствует или недействителен
-    if (err || !user) {
+    if (err || !channel) {
       return null; // Возвращаем null вместо ошибки
     }
-    return user;
+    return channel;
   }
 
   async canActivate(context: ExecutionContext) {

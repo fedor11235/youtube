@@ -23,11 +23,11 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
       }
 
       const payload = this.jwtService.verify(token);
-      const userId = payload.sub;
+      const channelId = payload.sub;
 
       // Подписываем клиента на его личный канал
-      await client.join(`user_${userId}`);
-      console.log(`Клиент подключен: user_${userId}`);
+      await client.join(`channel_${channelId}`);
+      console.log(`Клиент подключен: channel_${channelId}`);
     } catch (error) {
       console.error('Ошибка подключения WebSocket:', error);
       client.disconnect();
@@ -35,8 +35,8 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
   }
 
   // Метод для отправки уведомления конкретному пользователю
-  async sendNotification(userId: number, notification: any) {
-    this.server.to(`user_${userId}`).emit('newNotification', notification);
+  async sendNotification(channelId: number, notification: any) {
+    this.server.to(`channel_${channelId}`).emit('newNotification', notification);
   }
 
   handleDisconnect(client: Socket) {

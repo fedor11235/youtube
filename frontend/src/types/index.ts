@@ -1,27 +1,13 @@
-export interface User {
-  id: number;
-  name: string;
-  username?: string;
-  avatar: string;
-  subscribers?: number;
-}
-
 export interface Channel {
   id: number;
   name: string;
   avatar: string;
+  banner: string;
   subscribers: number;
-  username?: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  url?: any;
-}
- 
-export interface Channel {
-  id: number;
-  name: string;
-  avatar: string;
-  subscribers: number;
-  username?: string;
+  username: string;
+  url: string;
+  createdAt?: string;
+  totalViews?: number;
 }
 
 export interface Video {
@@ -34,15 +20,13 @@ export interface Video {
   views: number;
   createdAt: string;
   channel: Channel;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  user: any;
 }
 
 export interface Comment {
   id: number;
   content: string;
   createdAt: Date;
-  user: User;
+  channel: Channel;
   likes?: number;
   dislikes?: number;
 }

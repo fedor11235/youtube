@@ -9,13 +9,13 @@ export class UserController {
 
   @Get('search')
   @ApiOperation({ summary: 'Search users by query' })
-  async searchUsers(@Query('query') query: string) {
-    return this.usersService.searchUsers(query);
+  async searchChannels(@Query('query') query: string) {
+    return this.usersService.searchChannels(query);
   }
 
   @Get(':id')
   @ApiOperation({ summary: 'Get user by id' })
-  async getUserById(@Param('id') id: string) {
+  async getChannelById(@Param('id') id: string) {
     return this.usersService.findById(id)
   }
 }

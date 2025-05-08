@@ -47,7 +47,7 @@ export class SubscriptionService {
     }).where(eq(channels.id, userId));
 
     await this.notificationService.createNotification({
-      userId: channel.id,
+      channelId: channel.id,
       title: 'Новый подписчик',
       message: `У вас новый подписчик!`,
       type: 'subscribe',

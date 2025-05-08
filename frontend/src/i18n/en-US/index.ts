@@ -56,8 +56,8 @@ export default {
     remove: "Remove",
     empty: 'No notifications',
     newVideo: '{channel} uploaded a new video',
-    newSubscriber: '{user} subscribed to your channel',
-    newComment: '{user} commented on your video'
+    newSubscriber: '{channel} subscribed to your channel',
+    newComment: '{channel} commented on your video'
   },
   auth: {
     noAccount: 'no account',

@@ -12,16 +12,16 @@ export class VideoHistoryController {
     @Request() req,
     @Param('videoId') videoId: string
   ) {
-    return this.videoHistoryService.addToHistory(req.user.id, parseInt(videoId));
+    return this.videoHistoryService.addToHistory(req.channel.id, parseInt(videoId));
   }
 
   @Get()
   async getHistory(@Request() req) {
-    return this.videoHistoryService.getHistory(req.user.id);
+    return this.videoHistoryService.getHistory(req.channel.id);
   }
 
   @Delete()
   async clearHistory(@Request() req) {
-    return this.videoHistoryService.clearHistory(req.user.id);
+    return this.videoHistoryService.clearHistory(req.channel.id);
   }
 }

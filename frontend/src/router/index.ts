@@ -22,7 +22,7 @@ export default defineRouter(function () {
   Router.beforeEach(async (to, from, next) => {
     const authStore = useAuthStore()
 
-    if (!authStore.user && authStore.token) {
+    if (!authStore.channel && authStore.token) {
       await authStore.checkAuth()
     }
 

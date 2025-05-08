@@ -12,7 +12,7 @@ export class VideoLikesController {
     @Request() req,
     @Param('videoId') videoId: string
   ) {
-    return this.videoLikesService.likeVideo(req.user.id, parseInt(videoId));
+    return this.videoLikesService.likeVideo(req.channel.id, parseInt(videoId));
   }
 
   @Delete(':videoId')
@@ -21,7 +21,7 @@ export class VideoLikesController {
     @Request() req,
     @Param('videoId') videoId: string
   ) {
-    return this.videoLikesService.unlikeVideo(req.user.id, parseInt(videoId));
+    return this.videoLikesService.unlikeVideo(req.channel.id, parseInt(videoId));
   }
 
   @Get(':videoId/count')
@@ -31,12 +31,12 @@ export class VideoLikesController {
 
   @Get(':videoId/has-liked')
   @UseGuards(JwtAuthGuard)
-  async hasUserLiked(
+  async hasChannelLiked(
     @Request() req,
     @Param('videoId') videoId: string
   ) {
     return {
-      hasLiked: await this.videoLikesService.hasUserLiked(req.user.id, parseInt(videoId))
+      hasLiked: await this.videoLikesService.hasChannelLiked(req.channel.id, parseInt(videoId))
     };
   }
 }

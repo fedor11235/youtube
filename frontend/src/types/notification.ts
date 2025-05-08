@@ -9,6 +9,6 @@ export interface Notification {
   data?: {
     videoId?: number;
     commentId?: number;
-    userId?: number;
+    channelId?: number;
   };
 }
