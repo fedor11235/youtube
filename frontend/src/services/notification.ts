@@ -23,8 +23,7 @@ class NotificationService {
     this.socket.on('connect', () => {
       console.log('Socket подключен');
     });
-
-    // Изменяем название события на 'newNotification'
+  
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.socket.on('newNotification', (notification: any) => {
       console.log('Получено новое уведомление:', notification);
@@ -35,8 +34,7 @@ class NotificationService {
       console.log('Socket отключен');
     });
 
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.socket.on('connect_error', (error: any) => {
+    this.socket.on('connect_error', (error: string) => {
       console.error('Ошибка подключения Socket:', error);
     });
   }

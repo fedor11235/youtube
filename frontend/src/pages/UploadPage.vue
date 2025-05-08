@@ -158,9 +158,8 @@ const videoFile = ref<File | null>(null)
 const thumbnailFile = ref<File | null>(null)
 const selectedVideo = ref<boolean>(false)
 const uploading = ref<boolean>(false)
-const selectedTags = ref([]);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const availableTags = ref<any>([]);
+const selectedTags = ref<string[]>([]);
+const availableTags = ref<string[]>([]);
 
 const uploadProgress = ref({
   show: false,
@@ -247,8 +246,7 @@ const handleUpload = async () => {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const updateThumbnail = async (videoId: any) => {
+const updateThumbnail = async (videoId: number) => {
   if (!thumbnailFile.value) return
   try {
     await videoService.updateThumbnail(videoId, thumbnailFile.value)

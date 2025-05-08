@@ -7,8 +7,7 @@ export interface Comment {
   updatedAt: string;
   likesCount: number;
   authorLiked: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  isCreatorLike?: any;
+  isCreatorLike: boolean;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   replies?: any;
   channel: {

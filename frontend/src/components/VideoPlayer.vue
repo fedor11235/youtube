@@ -16,10 +16,10 @@ import { ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getThumbnail, getVideo } from '../utils/avatar'
 import videoService from 'src/services/video'
+import type { Video } from 'src/types';
 
 defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  video: any;
+  video: Video;
 }>();
 
 const route = useRoute()

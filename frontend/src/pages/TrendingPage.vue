@@ -16,9 +16,9 @@
 import { ref, onMounted } from 'vue'
 import VideoCard from '../components/VideoCard.vue'
 import videoService from 'src/services/video';
+import type { Video } from 'src/types';
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const trendingVideos = ref<any[]>([])
+const trendingVideos = ref<Video[]>([])
 const loading = ref(false)
 const error = ref('')
 

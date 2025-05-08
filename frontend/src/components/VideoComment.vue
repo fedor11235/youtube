@@ -183,7 +183,6 @@ const props = defineProps<{
   comment: Comment;
   videoAuthorId: number;
   isReply?: boolean;
-  // node: any;
 }>();
 
 const emit = defineEmits<{

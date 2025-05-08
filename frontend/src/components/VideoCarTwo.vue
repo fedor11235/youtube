@@ -39,10 +39,10 @@
 import { getThumbnail } from '../utils/avatar'
 import ChannelAvatar from 'components/ChannelAvatar.vue';
 import { formatDate } from '../utils/date'
+import type { Video } from 'src/types';
 
 defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  video: any;
+  video: Video;
 }>();
 
 const formatDuration = (seconds: number): string => {

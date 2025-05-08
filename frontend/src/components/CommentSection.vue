@@ -137,7 +137,7 @@ const updateReply = async (id: any, content: any) => {
 };
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const updateComment = async (id: any, content: any) => {
+const updateComment = async (id: number, content: any) => {
   if (!content) return;
 
   try {

@@ -62,8 +62,7 @@ const videoService = {
     }
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async getChannelVideos(channelId: any) {
+  async getChannelVideos(channelId: number) {
     try {
       const response = await api.get(`/videos/channel/${channelId}`);
       return response.data;
@@ -178,10 +177,8 @@ const videoService = {
     return response.data.count;
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async getTrendingVideos(): Promise<any[]> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data } = await api.get<any[]>('/videos/trending');
+  async getTrendingVideos(): Promise<Video[]> {
+    const { data } = await api.get<Video[]>('/videos/trending');
     return data;
   },
 
@@ -214,12 +211,11 @@ const videoService = {
     }
   },
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async updateThumbnail(videoId: any, file: File) {
+  async updateThumbnail(videoId: number, file: File) {
     try {
       const formData = new FormData()
       formData.append('thumbnail', file)
-      formData.append('videoId', videoId)
+      formData.append('videoId', String(videoId))
       const response = await api.post('/videos/thumbnail', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'

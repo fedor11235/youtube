@@ -1,10 +1,10 @@
 import { api } from 'src/boot/axios';
+import type { Video } from 'src/types';
 
 interface HistoryEntry {
   id: number;
   watchedAt: string;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  video: any;
+  video: Video;
 }
 
 export const videoHistoryService = {

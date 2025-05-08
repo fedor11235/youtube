@@ -28,12 +28,12 @@
 </template>
 
 <script setup lang="ts">
+import type { Video } from 'src/types';
 import { getThumbnail } from '../utils/avatar'
 import { formatDate } from '../utils/date'
 
 defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  relatedVideos: any;
+  relatedVideos: Video[];
 }>();
 </script>
 
