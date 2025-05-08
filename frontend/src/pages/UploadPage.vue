@@ -82,17 +82,17 @@
                   autogrow
                 />
 
-                <!-- <q-file
+                <q-file
                   v-model="thumbnailFile"
                   label="Custom Thumbnail"
                   outlined
-                  accept="image/*"
+                  accept=".jpg,.png,.jpeg"
                   class="q-mt-md"
                 >
                   <template v-slot:prepend>
                     <q-icon name="image" />
                   </template>
-                </q-file> -->
+                </q-file>
 
                 <div class="row justify-between q-mt-lg">
                   <q-btn
@@ -141,7 +141,7 @@ import { onMounted, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
-import type { VideoUpload } from 'src/types/video'
+// import type { VideoUpload } from 'src/types/video'
 import videoService from 'src/services/video'
 
 const { t } = useI18n()
@@ -212,11 +212,11 @@ const handleUpload = async () => {
   uploadProgress.value.show = true
 
   try {
-    const uploadData: VideoUpload = {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const uploadData: any = {
       title: videoDetails.value.title,
       description: videoDetails.value.description,
-      videoFile: videoFile.value,
-      thumbnailFile: thumbnailFile.value
+      videoFile: videoFile.value
     }
 
     const video = await videoService.uploadVideo(uploadData)
@@ -224,6 +224,8 @@ const handleUpload = async () => {
     if (selectedTags.value.length > 0) {
       await videoService.addVideoTags(video.id, selectedTags.value);
     }
+
+    await updateThumbnail(video.id)
 
     $q.notify({
       type: 'positive',
@@ -245,53 +247,24 @@ const handleUpload = async () => {
   }
 }
 
-// const handleUpload = async () => {
-//   if (!videoFile.value) return
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const updateThumbnail = async (videoId: any) => {
+  if (!thumbnailFile.value) return
+  try {
+    await videoService.updateThumbnail(videoId, thumbnailFile.value)
+    $q.notify({
+      type: 'positive',
+      message: 'Миниатюра успешно обновлена'
+    })
+  } catch (err) {
+    console.error('Error updating banner:', err)
+    $q.notify({
+      type: 'negative',
+      message: 'Не удалось обновить миниатюру'
+    })
+  }
+}
 
-//   uploading.value = true
-//   uploadProgress.value.show = true
-
-//   try {
-//     const formData = new FormData()
-//     formData.append('video', videoFile.value)
-//     formData.append('title', videoDetails.value.title)
-//     formData.append('description', videoDetails.value.description)
-    
-//     if (thumbnailFile.value) {
-//       formData.append('thumbnail', thumbnailFile.value)
-//     }
-
-//     // Simulating upload progress
-//     const interval = setInterval(() => {
-//       if (uploadProgress.value.value < 0.95) {
-//         uploadProgress.value.value += 0.1
-//       }
-//     }, 500)
-
-//     // Replace with actual API call
-//     await new Promise(resolve => setTimeout(resolve, 3000))
-
-//     clearInterval(interval)
-//     uploadProgress.value.value = 1
-
-//     $q.notify({
-//       type: 'positive',
-//       message: 'Video uploaded successfully'
-//     })
-
-//     await router.push('/')
-//   } catch (err) {
-//     console.error(err)
-//     $q.notify({
-//       type: 'negative',
-//       message: 'Failed to upload video'
-//     })
-//   } finally {
-//     uploading.value = false
-//     uploadProgress.value.show = false
-//     uploadProgress.value.value = 0
-//   }
-// }
 onMounted(async () => {
   try {
     const tags = await videoService.getTags();

@@ -283,7 +283,6 @@ const updateBanner = async () => {
     })
   }
 }
-// .
 
 const updateProfile = async () => {
   try {

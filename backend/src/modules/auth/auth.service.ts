@@ -2,7 +2,7 @@ import { Injectable, UnauthorizedException, ConflictException, NotFoundException
 import { JwtService } from '@nestjs/jwt';
 import { hash, compare } from 'bcrypt';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { User, users, videos } from '../../database/schema';
+import { users, videos } from '../../database/schema';
 import { eq } from 'drizzle-orm';
 import { UpdateProfileDto } from './dto/update-profile.dto';
 import * as path from 'path';
@@ -31,6 +31,7 @@ export class AuthService {
   }
 
   async updateAvatar(userId: number, file: Express.Multer.File) {
+    console.log(file)
     // Создаем директорию для аватаров, если её нет
     const uploadDir = path.join(process.cwd(), 'uploads', 'avatars');
 

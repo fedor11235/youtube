@@ -53,7 +53,6 @@ const profileService = {
 
   async updateBanner(file: File) {
     try {
-      console.log("!@#")
       const formData = new FormData()
       formData.append('banner', file)
       const response = await api.post('/auth/banner', formData, {

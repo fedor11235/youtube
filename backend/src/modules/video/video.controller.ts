@@ -1,9 +1,10 @@
-import { Controller, Post, UseInterceptors, UploadedFile, Body, Get, Param, UseGuards, Req, Delete, ParseIntPipe, Query } from '@nestjs/common';
+import { Controller, Post, UseInterceptors, UploadedFile, Body, Get, Param, UseGuards, Req, Delete, ParseIntPipe, Query, HttpStatus, HttpException } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiTags, ApiConsumes, ApiBearerAuth, ApiOperation } from '@nestjs/swagger';
 import { VideoService } from './video.service';
 import { CreateVideoDto } from './dto/create-video.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { diskStorage } from 'multer';
 
 @ApiTags('Videos')
 @Controller('videos')
@@ -21,6 +22,31 @@ export class VideoController {
     @Req() req
   ) {
     return this.videoService.createVideo(file, createVideoDto, req.user.id);
+  }
+
+  @Post('thumbnail') 
+  @UseGuards(JwtAuthGuard) 
+  @UseInterceptors(
+    FileInterceptor('thumbnail', {
+      storage: diskStorage({
+        destination: './uploads/thumbnails',
+        filename: (req, file, callback) => {
+          const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+          callback(null, uniqueSuffix + '-' + file.originalname);
+        }
+      })
+    })
+  ) 
+  async updateThumbnail(
+    @UploadedFile() thumbnail: Express.Multer.File,
+    @Body() body: { videoId: string }
+  ) {
+    try {
+      const user = await this.videoService.updateThumbnail(body.videoId, thumbnail);
+      return user;
+    } catch (error) {
+      throw new HttpException('Failed to update thumbnail', HttpStatus.INTERNAL_SERVER_ERROR);
+    }
   }
 
   @Get()

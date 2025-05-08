@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
 import { tags, users, videoLikes, videos, videoTags, videoViews } from '../../database/schema';
-import { and, desc, eq, gte, inArray, like, ne, or, sql } from 'drizzle-orm';
+import { desc, eq, gte, inArray, like, ne, or, sql } from 'drizzle-orm';
 import { extractDuration, extractThumbnail } from './video.utils';
 import { subDays } from 'date-fns';
+import * as path from 'path';
+import { promises as fs } from 'fs';
 
 @Injectable()
 export class VideoService {
@@ -313,6 +315,20 @@ export class VideoService {
           .onConflictDoNothing()
       )
     );
+  }
+
+  async updateThumbnail(videoId: any, file: Express.Multer.File) {
+    const updatedVideo = await this.db
+      .update(videos)
+      .set({ thumbnailUrl: file.filename })
+      .where(eq(videos.id, videoId))
+      .returning();
+    console.log("updatedVideo: ", updatedVideo)
+    if (!updatedVideo.length) {
+      throw new NotFoundException('Пользователь не найден');
+    }
+
+    return updatedVideo[0];
   }
 }
 

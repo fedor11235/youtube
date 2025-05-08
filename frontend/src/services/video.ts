@@ -211,8 +211,25 @@ const videoService = {
       console.error('Ошибка при добавлении тегов:', error);
       throw error;
     }
-  }
+  },
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async updateThumbnail(videoId: any, file: File) {
+    try {
+      const formData = new FormData()
+      formData.append('thumbnail', file)
+      formData.append('videoId', videoId)
+      const response = await api.post('/videos/thumbnail', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      return response.data
+    } catch (error) {
+      console.error('Failed to update banner:', error);
+      throw error;
+    }
+  }
 }
 
 export default videoService
