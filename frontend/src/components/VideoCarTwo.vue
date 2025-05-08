@@ -16,16 +16,16 @@
     <q-card-section>
       <div class="row no-wrap">
         <UserAvatar
-          :avatar="video.user.avatar"
-          :url="video.user.url"
-          :username="video.user.firstName || 'Test'"
+          :avatar="video.channel.avatar"
+          :url="video.channel.url"
+          :username="video.channel.firstName || 'Test'"
           size="40px"
           class="q-mr-sm"
         />
         
         <div>
           <div class="text-weight-bold ellipsis-2-lines">{{ video.title }}</div>
-          <div class="text-grey">{{ video.user.name }}</div>
+          <div class="text-grey">{{ video.channel.name }}</div>
           <div class="text-grey text-caption">
             {{ video.views }} views • {{ formatDate(video.createdAt) }}
           </div>

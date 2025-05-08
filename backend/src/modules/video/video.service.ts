@@ -13,7 +13,6 @@ export class VideoService {
 
   async createVideo(file: Express.Multer.File, createVideoDto: any, userId: number) {
     const test = await editVideo(file.path);
-    console.log("test ", test)
     const thumbnailUrl = await extractThumbnail(file.path);
     const duration = await extractDuration(file.path);
 
@@ -125,7 +124,7 @@ export class VideoService {
         createdAt: videos.createdAt,
         userId: videos.userId,
         duration: videos.duration,
-        user: {
+        channel: {
           id: users.id,
           firstName: users.firstName,
           lastName: users.lastName,
