@@ -61,7 +61,8 @@ const videoService = {
     }
   },
 
-  async getChannelVideos(channelId: number) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  async getChannelVideos(channelId: any) {
     try {
       const response = await api.get(`/videos/channel/${channelId}`);
       return response.data;

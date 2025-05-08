@@ -62,41 +62,14 @@
       </div>
     </div>
     <div class="row q-col-gutter-md">
-      <div v-for="video in videos" :key="video.id" class="col-12 col-sm-6 col-md-4 col-lg-3">
-        <q-card class="video-card" flat bordered>
-          <q-img
-            :src="getThumbnail(video.thumbnailUrl)"
-            @click="$router.push(`/watch/${video.id}`)"
-            style="cursor: pointer"
-            :ratio="16/9"
-          >
-            <div class="absolute-bottom text-subtitle2 bg-transparent">
-              <q-badge color="dark" class="q-pa-xs">
-                {{ formatDuration(video.duration) }}
-              </q-badge>
-            </div>
-          </q-img>
-          
-          <q-card-section>
-            <div class="row no-wrap">
-              <UserAvatar
-                :avatar="video.channel.avatar"
-                :url="video.channel.url"
-                :username="video.channel.firstName || 'Test'"
-                size="40px"
-                class="q-mr-sm"
-              />
-              
-              <div>
-                <div class="text-weight-bold ellipsis-2-lines">{{ video.title }}</div>
-                <div class="text-grey">{{ video.channel.name }}</div>
-                <div class="text-grey text-caption">
-                  {{ video.views }} views • {{ formatDate(video.createdAt) }}
-                </div>
-              </div>
-            </div>
-          </q-card-section>
-        </q-card>
+      <div
+        v-for="video in videos"
+        :key="video.id"
+        class="col-12 col-sm-6 col-md-4 col-lg-3"
+      >
+        <VideoCarTwo
+          :video="video"
+        />
       </div>
     </div>
 
@@ -114,10 +87,8 @@
 import { ref, onMounted } from 'vue'
 // import { useVideo } from 'src/composable/useVideo'
 import videoService from 'src/services/video'
-import { getThumbnail } from '../utils/avatar'
 import type { Video } from '../types'
-import UserAvatar from 'components/UserAvatar.vue';
-import { formatDate } from '../utils/date'
+import VideoCarTwo from 'components/VideoCarTwo.vue';
 
 const videos = ref<Video[]>([])
 const loading = ref(false)
@@ -169,17 +140,6 @@ const handleSearch = async () => {
 const clearSearch = () => {
   searchQuery.value = ''
   videos.value = allVideos.value
-}
-
-const formatDuration = (seconds: number): string => {
-  const hours = Math.floor(seconds / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-  const remainingSeconds = seconds % 60
-
-  if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
-  }
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
 }
 
 onMounted(async () => {

@@ -70,7 +70,18 @@
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="videos">
             <div class="row q-col-gutter-md">
-              <!-- Здесь будет список видео -->
+              <template v-if="videos.length">
+                <div v-for="video in videos" :key="video.id" class="col-12 col-sm-6 col-md-4 col-lg-3">
+                  <VideoCarTwo
+                    :video="video"
+                  />
+                </div>
+              </template>
+        
+              <div v-else class="col-12 text-center q-pa-lg">
+                <q-icon name="videocam_off" size="48px" color="grey-6" />
+                <div class="text-h6 text-grey-6 q-mt-sm">Нет загруженных видео</div>
+              </div>
             </div>
           </q-tab-panel>
 
@@ -94,6 +105,8 @@ import { useAuthStore } from '../stores/auth'
 import { useUserStore } from '../stores/user'
 import { subscriptionService } from 'src/services/subscription'
 import SubscribeButton from 'components/SubscribeButton.vue';
+import VideoCarTwo from 'components/VideoCarTwo.vue';
+import videoService from 'src/services/video'
 
 interface User {
   id: string
@@ -120,6 +133,8 @@ const user: Ref<User | null> = ref(null)
 const isSubscribed = ref(false);
 const subscribersCount = ref(0);
 const videoUrl = computed(() => route.params.id)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const videos: any = ref([])
 
 const isOwnProfile = computed(() => {
   return user.value?.id === authStore.user?.id;
@@ -132,6 +147,8 @@ onMounted(async () => {
       user.value = await userStore.fetchUserById(userId)
       isSubscribed.value = await subscriptionService.checkSubscription(userId);
       const subscribers = await subscriptionService.getSubscribers(userId);
+      const result = await videoService.getChannelVideos(user.value!.id)
+      videos.value = result.videosChannel
       subscribersCount.value = subscribers.length;
     }
   } catch (error) {
