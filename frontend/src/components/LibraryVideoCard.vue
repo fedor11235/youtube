@@ -44,32 +44,6 @@
               Added {{ formatDate(video.addedAt) }}
             </div>
           </div>
-
-          <div>
-            <q-btn
-              flat
-              round
-              icon="more_vert"
-              class="q-ml-sm"
-            >
-              <q-menu>
-                <q-list style="min-width: 150px">
-                  <q-item clickable @click="$emit('remove')">
-                    <q-item-section avatar>
-                      <q-icon name="delete" />
-                    </q-item-section>
-                    <q-item-section>Remove</q-item-section>
-                  </q-item>
-                  <q-item clickable @click="addToPlaylist">
-                    <q-item-section avatar>
-                      <q-icon name="playlist_add" />
-                    </q-item-section>
-                    <q-item-section>Save to playlist</q-item-section>
-                  </q-item>
-                </q-list>
-              </q-menu>
-            </q-btn>
-          </div>
         </div>
       </div>
     </div>
@@ -99,10 +73,6 @@ const formatDuration = (seconds: number): string => {
     return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
   }
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
-}
-
-const addToPlaylist = () => {
-  // Implement playlist functionality
 }
 </script>
 

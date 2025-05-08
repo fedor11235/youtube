@@ -30,7 +30,6 @@ export class AuthService {
   }
 
   async updateAvatar(channelId: number, file: Express.Multer.File) {
-    console.log(file)
     // Создаем директорию для аватаров, если её нет
     const uploadDir = path.join(process.cwd(), 'uploads', 'avatars');
 

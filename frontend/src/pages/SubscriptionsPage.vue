@@ -45,30 +45,6 @@
                     {{ video.views || 0 }} views • {{ formatDate(video.createdAt) }}
                   </div>
                 </div>
-
-                <q-btn
-                  flat
-                  round
-                  icon="more_vert"
-                  class="q-ml-sm"
-                >
-                  <q-menu>
-                    <q-list style="min-width: 150px">
-                      <q-item clickable v-close-popup @click="addToWatchLater(video.id)">
-                        <q-item-section avatar>
-                          <q-icon name="watch_later" />
-                        </q-item-section>
-                        <q-item-section>Watch later</q-item-section>
-                      </q-item>
-                      <q-item clickable v-close-popup @click="addToPlaylist(video.id)">
-                        <q-item-section avatar>
-                          <q-icon name="playlist_add" />
-                        </q-item-section>
-                        <q-item-section>Add to playlist</q-item-section>
-                      </q-item>
-                    </q-list>
-                  </q-menu>
-                </q-btn>
               </div>
             </q-card-section>
           </q-card>
@@ -135,16 +111,6 @@ const formatDuration = (seconds: number): string => {
     return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
   }
   return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
-}
-
-const addToWatchLater = (videoId: number) => {
-  console.log(videoId)
-  // Implement watch later functionality
-}
-
-const addToPlaylist = (videoId: number) => {
-  console.log(videoId)
-  // Implement playlist functionality
 }
 
 onMounted(async () => {

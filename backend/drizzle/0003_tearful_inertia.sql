@@ -1,1 +1,0 @@
-ALTER TABLE "users" ALTER COLUMN "url" SET DEFAULT 'keke';

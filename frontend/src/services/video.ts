@@ -93,7 +93,6 @@ const videoService = {
         onUploadProgress: (progressEvent) => {
           const percentCompleted = Math.round((progressEvent.loaded * 100) / progressEvent.total!)
           console.log(percentCompleted)
-          // Здесь можно добавить обработку прогресса
         }
       })
       return response.data

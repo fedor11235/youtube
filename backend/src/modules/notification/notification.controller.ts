@@ -9,8 +9,6 @@ export class NotificationController {
 
   @Get()
   async getChannelNotifications(@Req() req) {
-    console.log(req.channel)
-    console.log(req.user)
     return this.notificationService.getChannelNotifications(req.user.id);
   }
 

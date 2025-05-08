@@ -18,9 +18,6 @@ export const useChannelStore = defineStore('channel', {
         throw error
       }
     },
-    deleteVideo(id: number) {
-      console.log(id)
-    },
     async searchChannels(query: string): Promise<Channel[]> {
       try {
         const response = await api.get<Channel[]>('/channels/search', {

@@ -1,1 +1,0 @@
-ALTER TABLE "comment_likes" ADD COLUMN "is_creator_like" boolean DEFAULT false;
