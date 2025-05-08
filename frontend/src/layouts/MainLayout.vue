@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh lpR fFf">
-    <q-header elevated class="bg-white text-black">
+    <q-header elevated class="bg-grey-2 text-black">
       <q-toolbar>
         <q-btn flat dense round icon="menu" @click="toggleLeftDrawer" />
         
@@ -90,7 +90,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" bordered>
+    <q-drawer v-model="leftDrawerOpen" class="bg-grey-3" bordered>
       <q-list>
         <q-item clickable v-ripple to="/" exact>
           <q-item-section avatar>
