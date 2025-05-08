@@ -25,12 +25,12 @@ const routes: RouteRecordRaw[] = [
         meta: { requiresAuth: true }
       },
       {
-        path: '/user/:id',
+        path: '/channel/:id',
         component: () => import('layouts/MainLayout.vue'),
         children: [
           { 
             path: '', 
-            component: () => import('pages/UserPage.vue'),
+            component: () => import('pages/ChannelPage.vue'),
             props: true
           }
         ]

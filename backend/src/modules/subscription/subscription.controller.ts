@@ -12,19 +12,19 @@ export class SubscriptionController {
   @Post(':channelId')
   @ApiOperation({ summary: 'Subscribe to channel' })
   async subscribe(@Req() req, @Param('channelId') channelId: string) {
-    return this.subscriptionService.subscribe(req.channel.id, channelId);
+    return this.subscriptionService.subscribe(req.user.id, channelId);
   }
 
   @Delete(':channelId')
   @ApiOperation({ summary: 'Unsubscribe from channel' })
   async unsubscribe(@Req() req, @Param('channelId') channelId: string) {
-    return this.subscriptionService.unsubscribe(req.channel.id, channelId);
+    return this.subscriptionService.unsubscribe(req.user.id, channelId);
   }
 
   @Get()
   @ApiOperation({ summary: 'Get channel subscriptions' })
   async getSubscriptions(@Req() req) {
-    return this.subscriptionService.getSubscriptions(req.channel.id);
+    return this.subscriptionService.getSubscriptions(req.user.id);
   }
 
   @Get('subscribers/:channelId')
@@ -37,7 +37,7 @@ export class SubscriptionController {
   @ApiOperation({ summary: 'Check subscription status' })
   async checkSubscription(@Req() req, @Param('channelId') channelId: string) {
     const isSubscribed = await this.subscriptionService.checkSubscription(
-      req.channel.id,
+      req.user.id,
       channelId
     );
     return { isSubscribed };

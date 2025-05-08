@@ -34,7 +34,7 @@
               <div class="row items-center justify-between">
                 <div class="col-auto">
                   <div class="row items-center">
-                    <UserAvatar
+                    <ChannelAvatar
                       :avatar="video.channel.avatar"
                       :url="video.channel.url"
                       :username="video.channel.username"
@@ -87,7 +87,7 @@ import LikeButton from '../components/LikeButton.vue'
 import CommentSection from 'components/CommentSection.vue';
 import { subscriptionService } from 'src/services/subscription'
 import SubscribeButton from 'components/SubscribeButton.vue';
-import UserAvatar from 'components/UserAvatar.vue';
+import ChannelAvatar from 'components/ChannelAvatar.vue';
 import ShareVideo from 'components/ShareVideo.vue'
 import FavoriteButton from 'components/FavoriteButton.vue';
 import VideoPlayer from 'components/VideoPlayer.vue';

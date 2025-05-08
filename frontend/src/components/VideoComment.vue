@@ -2,7 +2,7 @@
   <div class="comment-wrapper q-mb-md" :class="{ 'reply-comment': isReply }">
     <q-item class="comment-item">
       <q-item-section class="comment-item__avatar" style="justify-content: start;" avatar>
-        <UserAvatar
+        <ChannelAvatar
           :avatar="comment.channel.avatar"
           :url="comment.channel.url"
           :username="comment.channel.username"
@@ -175,7 +175,7 @@
 import { ref, computed } from 'vue';
 import { useAuthStore } from 'src/stores/auth';
 import type { Comment } from 'src/services/comment';
-import UserAvatar from './UserAvatar.vue';
+import ChannelAvatar from './ChannelAvatar.vue';
 import LikeComment from './LikeComment.vue';
 import { formatDate } from '../utils/date'
 

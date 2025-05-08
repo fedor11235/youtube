@@ -15,7 +15,7 @@
     
     <q-card-section>
       <div class="row no-wrap">
-        <UserAvatar
+        <ChannelAvatar
           :avatar="video.channel.avatar"
           :url="video.channel.url"
           :username="video.channel.username || 'Test'"
@@ -37,7 +37,7 @@
 
 <script setup lang="ts">
 import { getThumbnail } from '../utils/avatar'
-import UserAvatar from 'components/UserAvatar.vue';
+import ChannelAvatar from 'components/ChannelAvatar.vue';
 import { formatDate } from '../utils/date'
 
 defineProps<{

@@ -44,7 +44,7 @@
                 <div class="col-12 col-sm-8">
                   <div class="row items-center">
                     <div class="col-auto avatar-container">
-                      <UserAvatar
+                      <ChannelAvatar
                         :avatar="channel.avatar"
                         :username="channel.username"
                         :user-id="channel.id"
@@ -107,13 +107,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useUserStore } from 'src/stores/user'
+import { useChannelStore } from 'src/stores/channel'
 import { useAuthStore } from 'src/stores/auth'
-// import { useDebounce } from '@vueuse/core'
-import UserAvatar from '../components/UserAvatar.vue'
+import ChannelAvatar from '../components/ChannelAvatar.vue'
 import SubscribeButton from '../components/SubscribeButton.vue'
 
-const userStore = useUserStore()
+const channelStore = useChannelStore()
 const authStore = useAuthStore()
 const searchQuery = ref('')
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -124,7 +123,7 @@ const handleSearch = async (query: string) => {
   if (query.length >= 2) {
     try {
       loading.value = true
-      const results = await userStore.searchChannels(query)
+      const results = await channelStore.searchChannels(query)
       searchResults.value = results
     } catch (error) {
       console.error('Ошибка поиска:', error)
@@ -158,16 +157,16 @@ const clearSearch = () => {
   margin: 0 auto;
 }
 
-.user-card {
+.channel-card {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.user-card:hover {
+.channel-card:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
-.user-banner {
+.channel-banner {
   position: relative;
   width: 100%;
   height: 150px;
@@ -181,7 +180,7 @@ const clearSearch = () => {
   object-fit: cover;
 }
 
-.user-info-section {
+.channel-info-section {
   position: relative;
   margin-top: -40px;
 }
@@ -193,7 +192,7 @@ const clearSearch = () => {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
 
-.user-card {
+.channel-card {
   overflow: hidden;
 }
 </style>

@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Delete, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Get, Post, Delete, Param, UseGuards, Request, Req } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -8,31 +8,33 @@ export class NotificationController {
   constructor(private readonly notificationService: NotificationService) {}
 
   @Get()
-  async getChannelNotifications(@Request() req) {
-    return this.notificationService.getChannelNotifications(req.channel.id);
+  async getChannelNotifications(@Req() req) {
+    console.log(req.channel)
+    console.log(req.user)
+    return this.notificationService.getChannelNotifications(req.user.id);
   }
 
   @Post(':id/read')
   async markAsRead(@Param('id') id: string, @Request() req) {
-    await this.notificationService.markAsRead(+id, req.channel.id);
+    await this.notificationService.markAsRead(+id, req.user.id);
     return { success: true };
   }
 
   @Post('read-all')
   async markAllAsRead(@Request() req) {
-    await this.notificationService.markAllAsRead(req.channel.id);
+    await this.notificationService.markAllAsRead(req.user.id);
     return { success: true };
   }
 
   @Delete(':id')
   async deleteNotification(@Param('id') id: string, @Request() req) {
-    await this.notificationService.deleteNotification(+id, req.channel.id);
+    await this.notificationService.deleteNotification(+id, req.user.id);
     return { success: true };
   }
 
   @Delete()
   async deleteAllNotifications(@Request() req) {
-    await this.notificationService.deleteAllNotifications(req.channel.id);
+    await this.notificationService.deleteAllNotifications(req.user.id);
     return { success: true };
   }
 }

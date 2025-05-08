@@ -12,8 +12,7 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
-    isAuthenticated: (state) => !!state.channel,
-    userFullName: (state) => state.channel ? state.channel.username: '',
+    isAuthenticated: (state) => !!state.channel
   },
   
 

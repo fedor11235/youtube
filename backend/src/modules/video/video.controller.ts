@@ -21,7 +21,7 @@ export class VideoController {
     @Body() createVideoDto: CreateVideoDto,
     @Req() req
   ) {
-    return this.videoService.createVideo(file, createVideoDto, req.channel.id);
+    return this.videoService.createVideo(file, createVideoDto, req.user.id);
   }
 
   @Post('thumbnail') 
@@ -83,7 +83,7 @@ export class VideoController {
   @Get('liked')
   @UseGuards(JwtAuthGuard)
   async getLikedVideos(@Req() req: any) {
-    return this.videoService.getLikedVideos(parseInt(req.channel.id));
+    return this.videoService.getLikedVideos(parseInt(req.user.id));
   }
 
   @Get(':id')
@@ -97,7 +97,7 @@ export class VideoController {
     @Param('id', ParseIntPipe) id: number,
     @Req() req: any
   ) {
-    return this.videoService.deleteVideo(id, req.channel.id);
+    return this.videoService.deleteVideo(id, req.user.id);
   }
 
   @Post('tags/:videoId')

@@ -17,9 +17,9 @@
             </q-avatar>
           </div>
 
-          <div class="user-details q-ml-md">
+          <div class="channel-details q-ml-md">
             <h1 class="text-h4 q-mb-sm">{{ channel?.username }}</h1>
-            <div class="user-stats">
+            <div class="channel-stats">
               <span class="stat-item">
                 <span class="stat-value">{{ channel?.totalViews || 0 }}</span>
                 <span class="stat-label">видео</span>
@@ -30,7 +30,7 @@
                 <span class="stat-label">подписчиков</span>
               </span>
             </div>
-            <p class="user-bio q-mt-sm">{{ 'Нет описания' }}</p>
+            <p class="channel-bio q-mt-sm">{{ 'Нет описания' }}</p>
           </div>
 
           <div class="profile-actions">
@@ -102,7 +102,7 @@ import type { Ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { formatDate } from '../utils/date'
 import { useAuthStore } from '../stores/auth'
-import { useUserStore } from '../stores/user'
+import { useChannelStore } from '../stores/channel'
 import { subscriptionService } from 'src/services/subscription'
 import SubscribeButton from 'components/SubscribeButton.vue';
 import VideoCarTwo from 'components/VideoCarTwo.vue';
@@ -111,7 +111,7 @@ import type { Channel } from 'src/types'
 
 const route = useRoute()
 const authStore = useAuthStore()
-const userStore = useUserStore()
+const channelStore = useChannelStore()
 const tab = ref('videos')
 const channel: Ref<Channel | null> = ref(null)
 const isSubscribed = ref(false);
@@ -128,7 +128,7 @@ onMounted(async () => {
   const channelId = route.params.id
   try {
     if(typeof channelId === 'string') {
-      channel.value = await userStore.fetchChannelById(channelId)
+      channel.value = await channelStore.fetchChannelById(channelId)
       isSubscribed.value = await subscriptionService.checkSubscription(channelId);
       const subscribers = await subscriptionService.getSubscribers(channelId);
       const result = await videoService.getChannelVideos(channel.value!.id)
@@ -214,12 +214,12 @@ onMounted(async () => {
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.user-details {
+.channel-details {
   flex-grow: 1;
   padding-bottom: 8px;
 }
 
-.user-stats {
+.channel-stats {
   display: flex;
   align-items: center;
   color: #666;
@@ -239,7 +239,7 @@ onMounted(async () => {
   margin: 0 12px;
 }
 
-.user-bio {
+.channel-bio {
   color: #666;
   max-width: 600px;
 }
@@ -257,7 +257,7 @@ onMounted(async () => {
     text-align: center;
   }
 
-  .user-details {
+  .channel-details {
     margin-top: 16px;
     margin-left: 0 !important;
   }
@@ -267,7 +267,7 @@ onMounted(async () => {
     padding-bottom: 0;
   }
 
-  .user-stats {
+  .channel-stats {
     justify-content: center;
   }
 }</style>

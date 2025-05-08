@@ -4,7 +4,7 @@ import { channels } from '../../database/schema';
 import { eq, ilike, or } from 'drizzle-orm';
 
 @Injectable()
-export class UsereSrvice {
+export class ChannelSrvice {
   constructor(private readonly db: DrizzleService) {}
 
   async findById(id: string) {

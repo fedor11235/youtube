@@ -4,7 +4,7 @@ import { DrizzleModule } from './modules/drizzle/drizzle.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { VideoModule } from './modules/video/video.module';
 import { FileModule } from './modules/file/file.module';
-import { UserModule } from './modules/user/user.module';
+import { ChannelModule } from './modules/channel/channel.module';
 import { VideoHistoryModule } from './modules/video-history/video-history.module';
 import { VideoLikesModule } from './modules/video-likes/video-likes.module';
 import { SubscriptionModule } from './modules/subscription/subscription.module';
@@ -24,7 +24,7 @@ import { TagModule } from './modules/tag/tag.module';
     AuthModule,
     VideoModule,
     FileModule,
-    UserModule,
+    ChannelModule,
     SubscriptionModule,
     VideoHistoryModule,
     VideoLikesModule,

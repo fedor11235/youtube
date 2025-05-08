@@ -2,7 +2,7 @@ import { defineStore } from 'pinia'
 import { api } from 'src/boot/axios'
 import type { Channel } from 'src/types'
 
-export const useUserStore = defineStore('user', {
+export const useChannelStore = defineStore('channel', {
   state: () => ({
     channels: [] as Channel[],
     currentChannel: null as Channel | null,
@@ -11,7 +11,7 @@ export const useUserStore = defineStore('user', {
   actions: {
     async fetchChannelById(channelId: string) {
       try {
-        const response = await api.get(`/users/${channelId}`)
+        const response = await api.get(`/channels/${channelId}`)
         return response.data
       } catch (error) {
         console.error('Ошибка получения пользователя:', error)
@@ -23,7 +23,7 @@ export const useUserStore = defineStore('user', {
     },
     async searchChannels(query: string): Promise<Channel[]> {
       try {
-        const response = await api.get<Channel[]>('/users/search', {
+        const response = await api.get<Channel[]>('/channels/search', {
           params: {
             query: query.trim()
           }

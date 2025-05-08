@@ -5,7 +5,7 @@
     :icon="isSubscribed ? 'done' : 'add'"
     @click="toggleSubscription"
     :loading="loading"
-    :disable="userURL === channelUrl"
+    :disable="curentChannelURL === channelUrl"
   />
 </template>
 
@@ -28,7 +28,7 @@ const authStore = useAuthStore();
 const $q = useQuasar();
 const isSubscribed = ref(false);
 const loading = ref(false);
-const userURL = computed(() => authStore.channel?.url);
+const curentChannelURL = computed(() => authStore.channel?.url);
 
 const toggleSubscription = async () => {
   if (!authStore.isAuthenticated) {

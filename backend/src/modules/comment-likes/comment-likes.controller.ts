@@ -12,7 +12,7 @@ export class CommentLikesController {
     @Param('commentId') commentId: number,
     @Request() req
   ) {
-    return this.commentLikesService.likeComment(req.channel.id, commentId);
+    return this.commentLikesService.likeComment(req.user.id, commentId);
   }
 
   @Delete(':commentId')
@@ -21,7 +21,7 @@ export class CommentLikesController {
     @Param('commentId') commentId: number,
     @Request() req
   ) {
-    return this.commentLikesService.unlikeComment(req.channel.id, commentId);
+    return this.commentLikesService.unlikeComment(req.user.id, commentId);
   }
 
   @Get(':commentId/count')
@@ -36,7 +36,7 @@ export class CommentLikesController {
     @Param('commentId') commentId: number,
     @Request() req
   ) {
-    const hasLiked = await this.commentLikesService.hasChannelLiked(req.channel.id, commentId);
+    const hasLiked = await this.commentLikesService.hasChannelLiked(req.user.id, commentId);
     return { hasLiked };
   }
 }
