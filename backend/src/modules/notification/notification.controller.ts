@@ -12,12 +12,6 @@ export class NotificationController {
     return this.notificationService.getChannelNotifications(req.user.id);
   }
 
-  @Post(':id/read')
-  async markAsRead(@Param('id') id: string, @Request() req) {
-    await this.notificationService.markAsRead(+id, req.user.id);
-    return { success: true };
-  }
-
   @Post('read-all')
   async markAllAsRead(@Request() req) {
     await this.notificationService.markAllAsRead(req.user.id);
@@ -27,6 +21,12 @@ export class NotificationController {
   @Delete(':id')
   async deleteNotification(@Param('id') id: string, @Request() req) {
     await this.notificationService.deleteNotification(+id, req.user.id);
+    return { success: true };
+  }
+
+  @Post(':id/read')
+  async markAsRead(@Param('id') id: string, @Request() req) {
+    await this.notificationService.markAsRead(+id, req.user.id);
     return { success: true };
   }
 

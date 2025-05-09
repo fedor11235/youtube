@@ -6,6 +6,12 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 export class FavoritesController {
   constructor(private readonly favoritesService: FavoritesService) {}
 
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  async getFavorites(@Request() req) {
+    return this.favoritesService.getFavoriteVideos(parseInt(req.user.id));
+  }
+  
   @Post(':videoId')
   @UseGuards(JwtAuthGuard)
   async addToFavorites(
@@ -13,12 +19,6 @@ export class FavoritesController {
     @Request() req
   ) {
     return this.favoritesService.addToFavorites(req.user.id, videoId);
-  }
-
-  @Get()
-  @UseGuards(JwtAuthGuard)
-  async getFavorites(@Request() req) {
-    return this.favoritesService.getFavoriteVideos(parseInt(req.user.id));
   }
 
   @Delete(':videoId')

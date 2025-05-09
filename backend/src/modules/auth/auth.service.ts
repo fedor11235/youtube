@@ -4,9 +4,6 @@ import { hash, compare } from 'bcrypt';
 import { DrizzleService } from '../drizzle/drizzle.service';
 import { channels, videos } from '../../database/schema';
 import { eq } from 'drizzle-orm';
-import { UpdateProfileDto } from './dto/update-profile.dto';
-import * as path from 'path';
-import { promises as fs } from 'fs';
 
 @Injectable()
 export class AuthService {
@@ -14,44 +11,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
     private readonly drizzleService: DrizzleService,
   ) {}
-
-  async updateProfile(channelId: number, updateProfileDto: UpdateProfileDto) {
-    const updatedChannel = await this.drizzleService.db
-      .update(channels)
-      .set(updateProfileDto)
-      .where(eq(channels.id, channelId))
-      .returning();
-
-    if (!updatedChannel.length) {
-      throw new NotFoundException('Пользователь не найден');
-    }
-
-    return updatedChannel[0];
-  }
-
-  async updateAvatar(channelId: number, file: Express.Multer.File) {
-    const uploadDir = path.join(process.cwd(), 'uploads', 'avatars');
-
-    await fs.mkdir(uploadDir, { recursive: true });
-
-    const fileExt = path.extname(file.originalname);
-    const fileName = `avatar-${channelId}-${Date.now()}${fileExt}`;
-    const filePath = path.join(uploadDir, fileName);
-
-    await fs.writeFile(filePath, file.buffer);
-
-    const updatedChannel = await this.drizzleService.db
-      .update(channels)
-      .set({ avatar: fileName })
-      .where(eq(channels.id, channelId))
-      .returning();
-
-    if (!updatedChannel.length) {
-      throw new NotFoundException('Пользователь не найден');
-    }
-
-    return updatedChannel[0];
-  }
 
   async register(registerDto: {
     email: string;
@@ -188,29 +147,5 @@ export class AuthService {
     ...result[0].channel,
     videos: channelVideos
   };
-  }
-
-  async updateBanner(channelId: number,  file: Express.Multer.File) {
-    const uploadDir = path.join(process.cwd(), 'uploads', 'banners');
-
-    await fs.mkdir(uploadDir, { recursive: true });
-
-    const fileExt = path.extname(file.originalname);
-    const fileName = `banner-${channelId}-${Date.now()}${fileExt}`;
-    const filePath = path.join(uploadDir, fileName);
-
-    await fs.writeFile(filePath, file.buffer);
-
-    const updatedChannel = await this.drizzleService.db
-      .update(channels)
-      .set({ banner: fileName })
-      .where(eq(channels.id, channelId))
-      .returning();
-
-    if (!updatedChannel.length) {
-      throw new NotFoundException('Пользователь не найден');
-    }
-
-    return updatedChannel[0];
   }
 }

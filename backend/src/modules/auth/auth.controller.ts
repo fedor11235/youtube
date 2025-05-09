@@ -1,10 +1,8 @@
-import { Body, Controller, Get, HttpException, HttpStatus, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { Body, Controller, Get, HttpException, HttpStatus, Post, Req, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { LoginDto, RegisterDto } from './dto/auth.dto';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { UpdateProfileDto } from './dto/update-profile.dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -47,36 +45,5 @@ export class AuthController {
     } catch (error) {
       throw new HttpException('Failed to get channel profile', HttpStatus.INTERNAL_SERVER_ERROR);
     }
-  }
-
-  @Patch('profile')
-  @UseGuards(JwtAuthGuard)
-  async updateProfile(@Req() req, @Body() updateProfileDto: UpdateProfileDto) {
-    try {
-      const channel = await this.authService.updateProfile(req.user.id, updateProfileDto);
-      return channel;
-    } catch (error) {
-      throw new HttpException('Failed to update profile', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  @Post('avatar')
-  @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('avatar'))
-  async updateAvatar(@Req() req, @UploadedFile() file: Express.Multer.File) {
-    try {
-      const channel = await this.authService.updateAvatar(req.user.id, file);
-      return channel;
-    } catch (error) {
-      throw new HttpException('Failed to update avatar', HttpStatus.INTERNAL_SERVER_ERROR);
-    }
-  }
-
-  @Post('banner')
-  @UseGuards(JwtAuthGuard)
-  @UseInterceptors(FileInterceptor('banner'))
-  async uploadBanner(@Req() req, @UploadedFile() file: Express.Multer.File) {
-    const channel = this.authService.updateBanner(req.user.id, file);
-    return channel;
   }
 }

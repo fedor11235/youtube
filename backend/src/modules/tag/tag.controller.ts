@@ -14,17 +14,17 @@ export class TagController {
     return this.tagService.getTags();
   }
 
-  @Get(':id')
-  @ApiOperation({ summary: 'Получить тег по ID' })
-  @ApiResponse({ status: 200, description: 'Тег успешно получен' })
-  async getTagById(@Param('id') id: number) {
-    return this.tagService.getTagById(id);
-  }
-
   @Get('video/:videoId')
   @ApiOperation({ summary: 'Получить теги видео' })
   @ApiResponse({ status: 200, description: 'Теги видео успешно получены' })
   async getVideoTags(@Param('videoId') videoId: number) {
     return this.tagService.getVideoTags(videoId);
+  }
+
+  @Get(':id')
+  @ApiOperation({ summary: 'Получить тег по ID' })
+  @ApiResponse({ status: 200, description: 'Тег успешно получен' })
+  async getTagById(@Param('id') id: number) {
+    return this.tagService.getTagById(id);
   }
 }

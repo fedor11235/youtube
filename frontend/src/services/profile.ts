@@ -23,7 +23,7 @@ const profileService = {
 
   async updateProfile(data: Partial<Profile>) {
     try {
-      const response = await api.patch('/auth/profile', data)
+      const response = await api.patch('/channel/profile', data)
       return response.data
     } catch (error) {
       if (error instanceof Error) {
@@ -37,7 +37,7 @@ const profileService = {
     try {
       const formData = new FormData()
       formData.append('avatar', file)
-      const response = await api.post('/auth/avatar', formData, {
+      const response = await api.post('/channel/avatar', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -55,7 +55,7 @@ const profileService = {
     try {
       const formData = new FormData()
       formData.append('banner', file)
-      const response = await api.post('/auth/banner', formData, {
+      const response = await api.post('/channel/banner', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

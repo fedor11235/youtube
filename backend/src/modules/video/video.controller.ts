@@ -53,6 +53,7 @@ export class VideoController {
   async getAllVideos() {
     return this.videoService.getAllVideos();
   }
+
   @Get('search')
   @ApiOperation({ summary: 'Поиск видео' })
   async searchVideos(
