@@ -4,7 +4,7 @@
 
     <div class="row q-col-gutter-md">
       <template v-for="video in trendingVideos" :key="video.id">
-        <VideoCard
+        <VideoCardTrending
           :video="video"
         />
       </template>
@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import VideoCard from '../components/VideoCard.vue'
+import VideoCardTrending from '../components/VideoCardTrending.vue'
 import videoService from 'src/services/video';
 import type { Video } from 'src/types';
 

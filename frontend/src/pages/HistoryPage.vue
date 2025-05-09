@@ -13,7 +13,7 @@
 
     <div v-if="history.length" class="history-list">
       <div v-for="entry in history" :key="entry.id" class="history-item q-mb-md">
-        <VideoCard
+        <VideoCardHistory
           :video="entry.video"
         />
       </div>
@@ -43,7 +43,7 @@
 import { ref, onMounted } from 'vue';
 import { videoHistoryService } from 'src/services/video-history';
 import { useQuasar } from 'quasar';
-import VideoCard from '../components/VideoCard.vue'
+import VideoCardHistory from '../components/VideoCardHistory.vue'
 import type { Video } from 'src/types';
 
 interface HistoryEntry {
