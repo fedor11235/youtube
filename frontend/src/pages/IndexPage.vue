@@ -67,7 +67,7 @@
         :key="video.id"
         class="col-12 col-sm-6 col-md-4 col-lg-3"
       >
-        <VideoCarTwo
+        <VideoCardMain
           :video="video"
         />
       </div>
@@ -88,7 +88,7 @@ import { ref, onMounted } from 'vue'
 // import { useVideo } from 'src/composable/useVideo'
 import videoService from 'src/services/video'
 import type { Video } from '../types'
-import VideoCarTwo from 'components/VideoCarTwo.vue';
+import VideoCardMain from 'components/VideoCardMain.vue';
 
 const videos = ref<Video[]>([])
 const loading = ref(false)

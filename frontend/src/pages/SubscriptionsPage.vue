@@ -18,36 +18,9 @@
     <div class="row q-col-gutter-md">
       <template v-for="video in channelVideos" :key="video.id">
         <div class="col-12 col-sm-6 col-md-4 col-lg-3">
-          <q-card class="video-card" flat bordered>
-            <q-img
-              :src="getThumbnail(video.thumbnailUrl)"
-              @click="$router.push(`/watch/${video.id}`)"
-              style="cursor: pointer"
-              :ratio="16/9"
-            >
-              <div class="absolute-bottom text-subtitle2 bg-transparent">
-                <q-badge color="dark" class="q-pa-xs">
-                  {{ formatDuration(video.duration) }}
-                </q-badge>
-              </div>
-            </q-img>
-
-            <q-card-section>
-              <div class="row no-wrap">
-                <q-avatar size="40px" class="q-mr-sm">
-                  <img :src="getAvatar(video.channel.avatar)">
-                </q-avatar>
-
-                <div>
-                  <div class="text-weight-bold ellipsis-2-lines">{{ video.title }}</div>
-                  <div class="text-grey">{{ video.channel.username }}</div>
-                  <div class="text-grey text-caption">
-                    {{ video.views || 0 }} views • {{ formatDate(video.createdAt) }}
-                  </div>
-                </div>
-              </div>
-            </q-card-section>
-          </q-card>
+          <VideoCardMain
+            :video="video"
+          />
         </div>
       </template>
     </div>
@@ -71,9 +44,9 @@
 import { ref, onMounted } from 'vue'
 import type { Channel, Video } from '../types'
 import videoService from 'src/services/video';
-import { getAvatar, getThumbnail } from '../utils/avatar'
+import { getAvatar } from '../utils/avatar'
 import { subscriptionService } from 'src/services/subscription';
-import { formatDate } from '../utils/date'
+import VideoCardMain from 'components/VideoCardMain.vue';
 
 interface Subscription {
   channel: Channel
@@ -99,17 +72,6 @@ const selectChannel = async (channelId: number) => {
   await loadChannelVideos(channelId);
 };
 
-const formatDuration = (seconds: number): string => {
-  const hours = Math.floor(seconds / 3600)
-  const minutes = Math.floor((seconds % 3600) / 60)
-  const remainingSeconds = seconds % 60
-
-  if (hours > 0) {
-    return `${hours}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`
-  }
-  return `${minutes}:${remainingSeconds.toString().padStart(2, '0')}`
-}
-
 onMounted(async () => {
   try {
     const subscriptions = await subscriptionService.getSubscriptions();
@@ -128,21 +90,3 @@ onMounted(async () => {
   }
 });
 </script>
-
-<style lang="scss" scoped>
-.video-card {
-  transition: transform 0.2s;
-  
-  &:hover {
-    transform: translateY(-2px);
-  }
-}
-
-.ellipsis-2-lines {
-  display: -webkit-box;
-  line-clamp: 2;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-}
-</style>

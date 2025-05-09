@@ -67,7 +67,7 @@
             <div class="row q-col-gutter-md">
               <template v-for="video in favoriteVideos" :key="video.id">
                 <div class="col-12">
-                  <LibraryVideoCard 
+                  <VideoCardLibrary
                     :video="video" 
                     @remove="removeFromFavorites(video.id)"
                   />
@@ -83,7 +83,7 @@
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
-import LibraryVideoCard from '../components/LibraryVideoCard.vue'
+import VideoCardLibrary from '../components/VideoCardLibrary.vue'
 import type { Video } from '../types'
 import { favoritesService } from 'src/services/favorites';
 import { useQuasar } from 'quasar';

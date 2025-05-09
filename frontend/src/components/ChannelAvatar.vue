@@ -28,7 +28,7 @@ const props = defineProps<{
 }>();
 
 const handlerOpenProfile =  async() => {
-  await router.push(`/user/${props.url}`);
+  await router.push(`/channel/${props.url}`);
 };
 </script>
 

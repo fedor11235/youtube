@@ -72,7 +72,7 @@
             <div class="row q-col-gutter-md">
               <template v-if="videos.length">
                 <div v-for="video in videos" :key="video.id" class="col-12 col-sm-6 col-md-4 col-lg-3">
-                  <VideoCarTwo
+                  <VideoCardMain
                     :video="video"
                   />
                 </div>
@@ -105,7 +105,7 @@ import { useAuthStore } from '../stores/auth'
 import { useChannelStore } from '../stores/channel'
 import { subscriptionService } from 'src/services/subscription'
 import SubscribeButton from 'components/SubscribeButton.vue';
-import VideoCarTwo from 'components/VideoCarTwo.vue';
+import VideoCardMain from 'src/components/VideoCardMain.vue';
 import videoService from 'src/services/video'
 import type { Channel, Video } from 'src/types'
 

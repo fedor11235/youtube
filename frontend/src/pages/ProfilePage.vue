@@ -80,27 +80,10 @@
           <q-tab-panel name="videos">
             <div  v-if="profile?.videos.length"  class="row q-col-gutter-md">
               <div v-for="video in profile?.videos" :key="video.id" class="col-12 col-sm-6 col-md-4">
-                <q-card class="video-card">
-                  <div class="video-thumbnail-container">
-                    <img :src="getThumbnail(video.thumbnailUrl)" class="video-thumbnail">
-                    <div class="video-overlay">
-                      <q-btn
-                        flat
-                        round
-                        color="white"
-                        icon="delete"
-                        class="delete-btn"
-                        @click.stop="confirmDelete(video)"
-                      />
-                    </div>
-                  </div>
-                  <q-card-section>
-                    <div class="text-h6 ellipsis">{{ video.title }}</div>
-                    <div class="text-subtitle2 text-grey">
-                      {{ video.views }} просмотров
-                    </div>
-                  </q-card-section>
-                </q-card>
+                <VideoCardProfile
+                  :video="video"
+                  @delete-video="videoId => deleteVideo(videoId)"
+                />
               </div>
             </div>
           </q-tab-panel>
@@ -171,19 +154,6 @@
       </div>
     </div>
   </q-page>
-  <q-dialog v-model="deleteDialog" persistent>
-    <q-card>
-      <q-card-section class="row items-center">
-        <q-avatar icon="warning" color="warning" text-color="white" />
-        <span class="q-ml-sm">Вы уверены, что хотите удалить это видео?</span>
-      </q-card-section>
-
-      <q-card-actions align="right">
-        <q-btn flat label="Отмена" color="primary" v-close-popup />
-        <q-btn flat label="Удалить" color="negative" @click="deleteVideo" v-close-popup />
-      </q-card-actions>
-    </q-card>
-  </q-dialog>
 </template>
 
 <script setup lang="ts">
@@ -192,9 +162,9 @@ import { ref, onMounted } from 'vue'
 import type { Profile } from '../types/profile'
 import profileService from '../services/profile'
 import { useQuasar } from 'quasar'
-import { getAvatar, getBanner, getThumbnail } from '../utils/avatar'
+import { getAvatar, getBanner } from '../utils/avatar'
 import videoService from 'src/services/video'
-import type { Video } from 'src/types'
+import VideoCardProfile from '../components/VideoCardProfile.vue'
 
 interface ProfileForm {
   username: string;
@@ -207,13 +177,6 @@ const $q = useQuasar()
 const tab = ref('videos')
 const profile = ref<Profile | null>(null)
 const newAvatar = ref<File | null>(null)
-const deleteDialog = ref(false)
-const videoToDelete = ref<Video | null>(null)
-
-const confirmDelete = (video: Video) => {
-  videoToDelete.value = video
-  deleteDialog.value = true
-}
 
 const profileForm = ref<ProfileForm>({
   email: '',
@@ -223,18 +186,16 @@ const profileForm = ref<ProfileForm>({
 
 const newBanner = ref<File | null>(null)
 
-const deleteVideo = async () => {
-  try {
-    if(videoToDelete.value) {      
-      await videoService.deleteVideo(videoToDelete.value.id)
-      if(profile.value) {
-        profile.value.videos = profile.value.videos.filter(video => video.id !== videoToDelete.value!.id)
-      }
-      $q.notify({
-        type: 'positive',
-        message: 'Видео успешно удалено'
-      })
+const deleteVideo = async (videoId: number) => {
+  try {  
+    await videoService.deleteVideo(videoId)
+    if(profile.value) {
+      profile.value.videos = profile.value.videos.filter(video => video.id !== videoId)
     }
+    $q.notify({
+      type: 'positive',
+      message: 'Видео успешно удалено'
+    })
   } catch {
     $q.notify({
       type: 'negative',
@@ -318,14 +279,6 @@ onMounted(async () => {
 </script>
 
 <style lang="scss" scoped>
-.video-card {
-  transition: transform 0.2s;
-  
-  &:hover {
-    transform: translateY(-2px);
-  }
-}
-
 .avatar-upload-container {
   position: relative;
   cursor: pointer;
@@ -359,40 +312,6 @@ onMounted(async () => {
   &:hover {
     .avatar-upload-overlay,
     .banner-upload-overlay {
-      opacity: 1;
-    }
-  }
-}
-
-.video-thumbnail-container {
-  position: relative;
-  
-  .video-thumbnail {
-    width: 100%;
-    height: 180px;
-    object-fit: cover;
-  }
-  
-  .video-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
-    
-    .delete-btn {
-      background: rgba(0, 0, 0, 0.7);
-    }
-  }
-  
-  &:hover {
-    .video-overlay {
       opacity: 1;
     }
   }
