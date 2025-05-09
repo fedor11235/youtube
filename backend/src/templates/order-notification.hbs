@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    .container {
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+    .order-details {
+      background: #f5f5f5;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>Новый заказ видео</h2>
+    
+    <div class="order-details">
+      <h3>Детали заказа:</h3>
+      <ul>
+        <li><strong>Название:</strong> {{title}}</li>
+        <li><strong>Описание:</strong> {{description}}</li>
+        <li><strong>Бюджет:</strong> {{budget}}$</li>
+        <li><strong>Способ связи:</strong> {{contact}}</li>
+        <li><strong>Срок выполнения:</strong> {{deadline}}</li>
+        <li><strong>Дата заказа:</strong> {{submissionDate}}</li>
+      </ul>
+    </div>
+  </div>
+</body>
+</html>

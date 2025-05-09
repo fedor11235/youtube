@@ -1,20 +1,20 @@
 import { Module } from '@nestjs/common';
-import { StudioController } from './studio.controller';
-import { StudioService } from './studio.service';
-import { DrizzleModule } from '../drizzle/drizzle.module';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { OrdersController } from './orders.controller';
+import { OrdersService } from './orders.service';
 import { MailerModule } from '@nestjs-modules/mailer';
 import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { join } from 'path';
 
 @Module({
   imports: [
-    DrizzleModule,
+    ConfigModule,
     MailerModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (config: ConfigService) => ({
         transport: {
-          host: config.get('MAIL_HOST'),
+          host: 'smtp.gmail.com',
+          port: 587,
           secure: false,
           auth: {
             user: config.get('MAIL_USER'),
@@ -22,7 +22,7 @@ import { join } from 'path';
           },
         },
         defaults: {
-          from: `"Верификация" <${config.get('MAIL_FROM')}>`,
+          from: config.get('MAIL_FROM'),
         },
         template: {
           dir: join(process.cwd(), 'src', 'templates'),
@@ -35,7 +35,7 @@ import { join } from 'path';
       inject: [ConfigService],
     }),
   ],
-  controllers: [StudioController],
-  providers: [StudioService],
+  controllers: [OrdersController],
+  providers: [OrdersService],
 })
-export class StudioModule {}
+export class OrdersModule {}

@@ -29,10 +29,18 @@
               />
 
               <q-input
+                v-model="form.contact"
+                type="textarea"
+                label="Напишите как с ами можно связаться"
+                :rules="[val => !!val || 'Обязательное поле']"
+                outlined
+              />
+
+              <q-input
                 v-model="form.budget"
                 type="number"
                 label="Бюджет"
-                suffix="₽"
+                suffix="$"
                 :rules="[val => val > 0 || 'Бюджет должен быть больше 0']"
                 outlined
               />
@@ -64,6 +72,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
+import orderService from '../services/order'
 
 const $q = useQuasar()
 const loading = ref(false)
@@ -72,14 +81,15 @@ const form = ref({
   title: '',
   description: '',
   budget: 0,
-  deadline: ''
+  deadline: '',
+  contact: ''
 })
 
 const handleSubmit = async () => {
   loading.value = true
   try {
+    await orderService.submitOrder(form.value)
     // Здесь будет логика отправки заказа
-    await new Promise(resolve => setTimeout(resolve, 1000))
     $q.notify({
       type: 'positive',
       message: 'Заказ успешно отправлен'
@@ -88,7 +98,8 @@ const handleSubmit = async () => {
       title: '',
       description: '',
       budget: 0,
-      deadline: ''
+      deadline: '',
+      contact: ''
     }
   } catch {
     $q.notify({

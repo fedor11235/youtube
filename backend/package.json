@@ -42,7 +42,7 @@
     "start:prod": "node .",
     "generate": "drizzle-kit generate",
     "migrate": "ts-node src/database/migrate.ts",
-    "copy:templates": "cp -r src/modules/studio/templates dist/src/modules/studio/templates",
+    "copy:templates": "cp -r src/templates dist/src/templates",
     "seed:tags": "ts-node src/database/seeds/tags.ts"
   },
   "devDependencies": {

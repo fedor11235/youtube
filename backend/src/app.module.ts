@@ -15,6 +15,7 @@ import { VideoViewsModule } from './modules/video-views/video-views.module';
 import { NotificationModule } from './modules/notification/notification.module';
 import { StudioModule } from './modules/studio/studio.module';
 import { TagModule } from './modules/tag/tag.module';
+import { OrdersModule } from './modules/orders/orders.module';
 
 @Module({
   imports: [
@@ -35,7 +36,8 @@ import { TagModule } from './modules/tag/tag.module';
     VideoViewsModule,
     NotificationModule,
     TagModule,
-    StudioModule
+    StudioModule,
+    OrdersModule
   ],
 })
 export class AppModule {}
