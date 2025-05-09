@@ -1,6 +1,6 @@
 import { io, type Socket } from 'socket.io-client';
 import { api } from 'src/boot/axios';
-import type { Notification } from 'src/types';
+import type { Notification } from 'src/types/notification';
 
 type Listener = (notification: Notification) => void;
 

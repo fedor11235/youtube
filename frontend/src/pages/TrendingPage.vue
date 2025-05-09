@@ -16,7 +16,7 @@
 import { ref, onMounted } from 'vue'
 import VideoCardTrending from '../components/VideoCardTrending.vue'
 import videoService from 'src/services/video';
-import type { Video } from 'src/types';
+import type { Video } from 'src/types/video';
 
 const trendingVideos = ref<Video[]>([])
 const loading = ref(false)

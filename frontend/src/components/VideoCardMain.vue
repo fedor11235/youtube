@@ -39,7 +39,7 @@
 import { getThumbnail } from '../utils/avatar'
 import ChannelAvatar from 'components/ChannelAvatar.vue';
 import { formatDate } from '../utils/date'
-import type { Video } from 'src/types';
+import type { Video } from 'src/types/video';
 
 defineProps<{
   video: Video;

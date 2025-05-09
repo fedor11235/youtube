@@ -111,7 +111,7 @@ import { useChannelStore } from 'src/stores/channel'
 import { useAuthStore } from 'src/stores/auth'
 import ChannelAvatar from '../components/ChannelAvatar.vue'
 import SubscribeButton from '../components/SubscribeButton.vue'
-import type { Channel } from 'src/types'
+import type { Channel } from 'src/types/channel'
 
 const channelStore = useChannelStore()
 const authStore = useAuthStore()

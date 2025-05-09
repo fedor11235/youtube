@@ -1,5 +1,5 @@
 import { api } from 'src/boot/axios';
-import type { Video } from 'src/types';
+import type { Video } from 'src/types/video';
 
 interface HistoryEntry {
   id: number;

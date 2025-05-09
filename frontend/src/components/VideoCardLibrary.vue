@@ -53,7 +53,7 @@
 <script setup lang="ts">
 import { getAvatar, getThumbnail } from '../utils/avatar'
 import { formatDate } from '../utils/date'
-import type { LibraryVideo } from '../types'
+import type { LibraryVideo } from '../types/video'
 
 defineProps<{
   video: LibraryVideo

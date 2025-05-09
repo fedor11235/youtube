@@ -81,7 +81,7 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
-import type { Video } from '../types'
+import type { Video } from '../types/video'
 import videoService from 'src/services/video'
 import LikeButton from '../components/LikeButton.vue'
 import CommentSection from 'components/CommentSection.vue';

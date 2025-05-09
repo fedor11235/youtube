@@ -28,7 +28,7 @@
 </template>
 
 <script setup lang="ts">
-import type { Video } from 'src/types';
+import type { Video } from 'src/types/video';
 import { getThumbnail } from '../utils/avatar'
 import { formatDate } from '../utils/date'
 

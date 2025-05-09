@@ -1,5 +1,5 @@
 import { api } from 'src/boot/axios'
-import type { Video } from '../types'
+import type { Video } from '../types/video'
 import type { VideoUpload, VideoComment } from '../types/video'
 
 class VideoError extends Error {

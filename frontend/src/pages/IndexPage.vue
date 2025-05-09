@@ -87,7 +87,7 @@
 import { ref, onMounted } from 'vue'
 // import { useVideo } from 'src/composable/useVideo'
 import videoService from 'src/services/video'
-import type { Video } from '../types'
+import type { Video } from '../types/video'
 import VideoCardMain from 'components/VideoCardMain.vue';
 
 const videos = ref<Video[]>([])

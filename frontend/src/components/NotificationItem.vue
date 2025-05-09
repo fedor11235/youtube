@@ -45,11 +45,10 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { date } from 'quasar';
 import { getAvatar } from '../utils/avatar'
-import type { Notification } from '../types/index'
+import type { Notification } from '../types/notification'
 
 const { t } = useI18n();
 

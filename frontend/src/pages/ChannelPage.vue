@@ -107,7 +107,8 @@ import { subscriptionService } from 'src/services/subscription'
 import SubscribeButton from 'components/SubscribeButton.vue';
 import VideoCardMain from 'src/components/VideoCardMain.vue';
 import videoService from 'src/services/video'
-import type { Channel, Video } from 'src/types'
+import type { Video } from 'src/types/video'
+import type { Channel } from 'src/types/channel'
 
 const route = useRoute()
 const authStore = useAuthStore()

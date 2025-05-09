@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia'
 import { api } from 'src/boot/axios'
-import type { Channel } from 'src/types'
+import type { Channel } from 'src/types/channel'
 
 export const useChannelStore = defineStore('channel', {
   state: () => ({

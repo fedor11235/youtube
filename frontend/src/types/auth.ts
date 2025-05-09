@@ -8,11 +8,3 @@ export interface RegisterData {
   password: string;
   username: string;
 }
-
-export interface Channel {
-  id: number;
-  email: string;
-  username: string;
-  avatar?: string;
-  url?: string
-}

@@ -1,3 +1,22 @@
+import type { Channel } from "./channel";
+
+export interface Video {
+  id: number;
+  title: string;
+  description?: string;
+  thumbnailUrl: string;
+  videoUrl?: string;
+  duration: number;
+  views: number;
+  createdAt: string;
+  channel: Channel;
+}
+
+export interface LibraryVideo extends Video {
+  watchedAt?: string;
+  addedAt?: string;
+}
+
 export interface VideoUpload {
   title: string;
   description: string;

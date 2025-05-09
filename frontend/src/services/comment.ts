@@ -1,5 +1,5 @@
 import { api } from 'src/boot/axios';
-import type { Channel } from 'src/types';
+import type { Channel } from 'src/types/channel';
 
 export interface Comment {
   id: number;

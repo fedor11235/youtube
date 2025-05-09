@@ -44,7 +44,7 @@ import { ref, onMounted } from 'vue';
 import { videoHistoryService } from 'src/services/video-history';
 import { useQuasar } from 'quasar';
 import VideoCardHistory from '../components/VideoCardHistory.vue'
-import type { Video } from 'src/types';
+import type { Video } from 'src/types/video';
 
 interface HistoryEntry {
   id: number;

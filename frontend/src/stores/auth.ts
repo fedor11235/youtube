@@ -1,7 +1,8 @@
 import { defineStore } from 'pinia'
 import type { ApiError } from '../types/error'
 import authService from '../services/auth'
-import type { Channel, LoginCredentials, RegisterData } from 'src/types/auth'
+import type { LoginCredentials, RegisterData } from 'src/types/auth'
+import type { Channel } from 'src/types/channel'
 
 export const useAuthStore = defineStore('auth', {
   state: () => ({

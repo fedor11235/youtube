@@ -84,7 +84,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import VideoCardLibrary from '../components/VideoCardLibrary.vue'
-import type { Video } from '../types'
+import type { Video } from '../types/video'
 import { favoritesService } from 'src/services/favorites';
 import { useQuasar } from 'quasar';
 import videoService from 'src/services/video';

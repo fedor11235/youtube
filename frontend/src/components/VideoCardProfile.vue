@@ -39,7 +39,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { getThumbnail } from '../utils/avatar'
-import type { Video } from 'src/types'
+import type { Video } from 'src/types/video'
 
 defineProps<{
   video: Video;

@@ -16,7 +16,7 @@ import { type ComponentPublicInstance, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getThumbnail, getVideo } from '../utils/avatar'
 import videoService from 'src/services/video'
-import type { Video } from 'src/types';
+import type { Video } from 'src/types/video';
 
 defineProps<{
   video: Video;

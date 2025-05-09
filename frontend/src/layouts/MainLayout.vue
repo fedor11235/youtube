@@ -188,7 +188,7 @@ import { getAvatar } from '../utils/avatar'
 import NotificationsPanel from '../components/NotificationsPanel.vue'
 import notificationService from '../services/notification'
 import { useI18n } from 'vue-i18n'
-import type { Notification } from '../types/index'
+import type { Notification } from '../types/notification'
 
 const authStore = useAuthStore()
 const router = useRouter()

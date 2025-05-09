@@ -1,4 +1,4 @@
-import type { Video } from './index'
+import type { Video } from './video'
 
 export interface Profile {
   id: number;

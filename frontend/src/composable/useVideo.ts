@@ -1,5 +1,6 @@
 import { ref } from 'vue'
-import type { Video, Comment } from '../types'
+import type { Video } from '../types/video'
+import type { Comment } from '../types/comment'
 
 export function useVideo() {
   const loading = ref<boolean>(false)

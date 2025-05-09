@@ -45,7 +45,7 @@
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
 import { getThumbnail, getAvatar } from '../utils/avatar'
-import type { Video } from 'src/types';
+import type { Video } from 'src/types/video';
 import { formatDate } from '../utils/date'
 
 defineProps<{

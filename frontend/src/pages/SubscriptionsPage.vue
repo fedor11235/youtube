@@ -42,7 +42,8 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { Channel, Video } from '../types'
+import type { Video } from '../types/video'
+import type { Channel } from '../types/channel'
 import videoService from 'src/services/video';
 import { getAvatar } from '../utils/avatar'
 import { subscriptionService } from 'src/services/subscription';

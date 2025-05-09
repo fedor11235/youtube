@@ -58,7 +58,7 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NotificationItem from './NotificationItem.vue'
-import type { Notification } from '../types/index'
+import type { Notification } from '../types/notification'
 
 const { t } = useI18n()
 
