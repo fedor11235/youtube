@@ -1,0 +1,13 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1746808834786,
+      "tag": "0001_chemical_thunderball",
+      "breakpoints": true
+    }
+  ]
+}

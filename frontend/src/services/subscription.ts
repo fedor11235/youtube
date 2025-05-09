@@ -16,13 +16,13 @@ export const subscriptionService = {
     return response.data;
   },
 
-  async getSubscribers(channelId: string) {
-    const response = await api.get(`/subscriptions/subscribers/${channelId}`);
+  async getSubscribers(channelUrl: string) {
+    const response = await api.get(`/subscriptions/subscribers/${channelUrl}`);
     return response.data;
   },
 
-  async checkSubscription(channelId: string) {
-    const response = await api.get(`/subscriptions/check/${channelId}`);
+  async checkSubscription(channelUrl: string) {
+    const response = await api.get(`/subscriptions/check/${channelUrl}`);
     return response.data.isSubscribed;
   },
 };

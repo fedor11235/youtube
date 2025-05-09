@@ -12,7 +12,7 @@ export class SubscriptionService {
     private readonly notificationService: NotificationService
   ) {}
 
-  async subscribe(userId: number, channelURL: string) {
+  async subscribe(subscriberId: number, channelURL: string) {
     const channel = await this.drizzleService.db
       .select()
       .from(channels)
@@ -29,7 +29,7 @@ export class SubscriptionService {
       .from(subscriptions)
       .where(
         and(
-          eq(subscriptions.userId, userId),
+          eq(subscriptions.subscriberId, subscriberId),
           eq(subscriptions.channelId, channel.id)
         )
       )
@@ -50,7 +50,7 @@ export class SubscriptionService {
       url: channels.url
     })
     .from(channels)
-    .where(eq(channels.id, userId));
+    .where(eq(channels.id, subscriberId));
 
     await this.notificationService.createNotification({
       channelId: channel.id,
@@ -66,14 +66,14 @@ export class SubscriptionService {
     return this.drizzleService.db
       .insert(subscriptions)
       .values({
-        userId: userId,
+        subscriberId: subscriberId,
         channelId: channel.id,
         createdAt: new Date()
       })
       .execute();
   }
 
-  async unsubscribe(userId: number, channelURL: string) {
+  async unsubscribe(subscriberId: number, channelURL: string) {
     const channel = await this.drizzleService.db
       .select()
       .from(channels)
@@ -89,7 +89,7 @@ export class SubscriptionService {
       .delete(subscriptions)
       .where(
         and(
-          eq(subscriptions.userId, userId),
+          eq(subscriptions.subscriberId, subscriberId),
           eq(subscriptions.channelId, channel.id)
         )
       )
@@ -102,7 +102,7 @@ export class SubscriptionService {
     return result;
   }
 
-  async getSubscriptions(userId: number) {  
+  async getSubscriptions(subscriberId: number) {  
     return this.drizzleService.db
       .select({
         channel: {
@@ -118,7 +118,7 @@ export class SubscriptionService {
       })
       .from(subscriptions)
       .innerJoin(channels, eq(channels.id, subscriptions.channelId))
-      .where(eq(subscriptions.userId, userId))
+      .where(eq(subscriptions.subscriberId, subscriberId))
       .groupBy(channels.id)
       .execute();
   }
@@ -144,12 +144,12 @@ export class SubscriptionService {
         }
       })
       .from(subscriptions)
-      .innerJoin(channels, eq(channels.id, subscriptions.userId))
+      .innerJoin(channels, eq(channels.id, subscriptions.subscriberId))
       .where(eq(subscriptions.channelId, channel.id))
       .execute();
   }
 
-  async checkSubscription(userId: number, channelURL: string) {
+  async checkSubscription(subscriberId: number, channelURL: string) {
     const channel = await this.drizzleService.db
       .select()
       .from(channels)
@@ -166,7 +166,7 @@ export class SubscriptionService {
       .from(subscriptions)
       .where(
         and(
-          eq(subscriptions.userId, userId),
+          eq(subscriptions.subscriberId, subscriberId),
           eq(subscriptions.channelId, channel.id)
         )
       )

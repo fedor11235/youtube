@@ -10,12 +10,11 @@ async function bootstrap() {
     console.error('FFmpeg is required but not found. Please install FFmpeg first.');
     process.exit(1);
   }
-  // const app = await NestFactory.create(AppModule);
+
   const app = await NestFactory.create(AppModule, {
     logger: ['log', 'error', 'warn', 'debug', 'verbose'], // Включаем все уровни логов
   });
 
-  // Enable CORS
   app.enableCors({
     origin: 'http://localhost:9000',
     methods: ['GET', 'POST', 'PATCH', 'PUT', 'DELETE', 'OPTIONS'],

@@ -13,6 +13,7 @@ import { CommentLikesModule } from './modules/comment-likes/comment-likes.module
 import { FavoritesModule } from './modules/favorites/favorites.module';
 import { VideoViewsModule } from './modules/video-views/video-views.module';
 import { NotificationModule } from './modules/notification/notification.module';
+import { StudioModule } from './modules/studio/studio.module';
 import { TagModule } from './modules/tag/tag.module';
 
 @Module({
@@ -33,7 +34,8 @@ import { TagModule } from './modules/tag/tag.module';
     FavoritesModule,
     VideoViewsModule,
     NotificationModule,
-    TagModule
+    TagModule,
+    StudioModule
   ],
 })
 export class AppModule {}

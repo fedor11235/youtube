@@ -9,9 +9,9 @@ export const useChannelStore = defineStore('channel', {
   }),
 
   actions: {
-    async fetchChannelById(channelId: string) {
+    async fetchChannelByUrl(channelUrl: string) {
       try {
-        const response = await api.get(`/channels/${channelId}`)
+        const response = await api.get(`/channels/${channelUrl}`)
         return response.data
       } catch (error) {
         console.error('Ошибка получения пользователя:', error)

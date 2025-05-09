@@ -140,7 +140,7 @@ export class VideoService {
     };
   }
 
-  async getLikedVideos(userId: number) {
+  async getLikedVideos(channelId: number) {
     return this.drizzleService.db
       .select({
         id: videos.id,
@@ -159,7 +159,7 @@ export class VideoService {
       .from(videoLikes)
       .innerJoin(videos, eq(videoLikes.videoId, videos.id))
       .innerJoin(channels, eq(videos.channelId, channels.id))
-      .where(eq(videoLikes.channelId, userId))
+      .where(eq(videoLikes.channelId, channelId))
       .orderBy(desc(videoLikes.createdAt))
       .execute();
   }

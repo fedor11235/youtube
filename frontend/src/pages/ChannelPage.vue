@@ -125,12 +125,12 @@ const isOwnProfile = computed(() => {
 });
 
 onMounted(async () => {
-  const channelId = route.params.id
+  const channelUrl = route.params.url
   try {
-    if(typeof channelId === 'string') {
-      channel.value = await channelStore.fetchChannelById(channelId)
-      isSubscribed.value = await subscriptionService.checkSubscription(channelId);
-      const subscribers = await subscriptionService.getSubscribers(channelId);
+    if(typeof channelUrl === 'string') {
+      channel.value = await channelStore.fetchChannelByUrl(channelUrl)
+      isSubscribed.value = await subscriptionService.checkSubscription(channelUrl);
+      const subscribers = await subscriptionService.getSubscribers(channelUrl);
       const result = await videoService.getChannelVideos(channel.value!.id)
       videos.value = result.videosChannel
       subscribersCount.value = subscribers.length;

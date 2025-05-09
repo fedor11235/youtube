@@ -8,6 +8,7 @@ export const channels = pgTable('channels', {
   avatar: varchar('avatar', { length: 255 }),
   banner: varchar('banner', { length: 255 }),
   isModel: boolean('is_model').default(false),
+  passportPath: text('passport_path'),
   createdAt: timestamp('created_at').defaultNow(),
   url: varchar('url', { length: 255 }).notNull().unique(),
 });
@@ -61,7 +62,7 @@ export const favorites = pgTable('favorites', {
 
 export const subscriptions = pgTable('subscriptions', {
   id: serial('id').primaryKey(),
-  userId: integer('user_id').notNull().references(() => channels.id, { onDelete: 'cascade' }),
+  subscriberId: integer('subscriber_id').notNull().references(() => channels.id, { onDelete: 'cascade' }),
   channelId: integer('channel_id').notNull().references(() => channels.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at').notNull().defaultNow(),
 });
@@ -88,7 +89,7 @@ export const commentLikes = pgTable('comment_likes', {
   isCreatorLike: boolean('is_creator_like').default(false),
 }, (table) => {
   return {
-    uniqueUserComment: uniqueIndex('unique_user_comment').on(table.channelId, table.commentId),
+    uniqueSubscriberComment: uniqueIndex('unique_subscriber_comment').on(table.channelId, table.commentId),
   };
 });
 

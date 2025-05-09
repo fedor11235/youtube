@@ -149,6 +149,58 @@
                 />
               </div>
             </q-form>
+            <q-card class="q-mt-md">
+        <q-card-section>
+          <div class="text-h6">Настройки студии</div>
+          
+          <q-item tag="label" v-ripple>
+            <q-item-section>
+              <q-item-label>Включить режим студии</q-item-label>
+              <q-item-label caption>
+                Активируйте для доступа к расширенным функциям студии
+              </q-item-label>
+            </q-item-section>
+            <q-item-section side>
+              <q-toggle v-model="studioMode" @update:model-value="handleStudioModeChange" />
+            </q-item-section>
+          </q-item>
+
+          <div v-if="studioMode" class="q-mt-md">
+            <div class="text-subtitle2 q-mb-sm">Подтверждение возраста</div>
+
+            
+            
+            <div v-if="!hasPassportPhoto" class="passport-upload q-pa-md">
+              <q-uploader
+                label="Загрузите фото паспорта"
+                accept=".jpg,.jpeg,.png"
+                :max-files="1"
+                @added="handlePassportUpload"
+                class="full-width"
+                flat
+                bordered
+                :disable="isUploading"
+              >
+                <template>
+                  <div class="row no-wrap items-center q-pa-sm">
+                    <q-icon name="add_photo_alternate" size="24px" class="q-mr-sm" />
+                    <div class="col">Загрузите фото паспорта для подтверждения возраста</div>
+                  </div>
+                </template>
+              </q-uploader>
+              <div class="text-caption q-mt-sm text-grey-7">
+                Загружая изображение паспорта, вы подтверждаете, что документ принадлежит вам, и даёте согласие на обработку персональных данных в целях верификации возраста.
+            </div>
+
+          </div>
+            
+            <div v-else class="passport-verified q-pa-sm">
+              <q-icon name="check_circle" color="positive" size="24px" class="q-mr-sm" />
+              <span class="text-positive">Паспорт загружен и ожидает проверки</span>
+            </div>
+          </div>
+        </q-card-section>
+      </q-card>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -164,6 +216,8 @@ import profileService from '../services/profile'
 import { useQuasar } from 'quasar'
 import { getAvatar, getBanner } from '../utils/avatar'
 import videoService from 'src/services/video'
+import studioService from '../services/studio'
+
 import VideoCardProfile from '../components/VideoCardProfile.vue'
 
 interface ProfileForm {
@@ -177,6 +231,9 @@ const $q = useQuasar()
 const tab = ref('videos')
 const profile = ref<Profile | null>(null)
 const newAvatar = ref<File | null>(null)
+const hasPassportPhoto = ref<boolean>(false)
+const studioMode = ref(false)
+const isUploading = ref(false)
 
 const profileForm = ref<ProfileForm>({
   email: '',
@@ -185,6 +242,39 @@ const profileForm = ref<ProfileForm>({
 })
 
 const newBanner = ref<File | null>(null)
+
+const handleStudioModeChange = (value: boolean) => {
+  if (value && !hasPassportPhoto.value) {
+    $q.notify({
+      type: 'warning',
+      message: 'Для активации режима студии необходимо подтвердить возраст'
+    })
+  }
+}
+
+const handlePassportUpload = async (files: readonly File[]) => {
+  if (!files.length) return
+  
+  const file = files[0]
+  if(!file) return
+  isUploading.value = true
+
+  try {
+    await studioService.uploadPassport(file)
+    hasPassportPhoto.value = true
+    $q.notify({
+      type: 'positive',
+      message: 'Паспорт успешно загружен и отправлен на проверку'
+    })
+  } catch {
+    $q.notify({
+      type: 'negative',
+      message: 'Ошибка при загрузке паспорта. Пожалуйста, попробуйте снова.'
+    })
+  } finally {
+    isUploading.value = false
+  }
+}
 
 const deleteVideo = async (videoId: number) => {
   try {  

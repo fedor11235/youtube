@@ -1,0 +1,1 @@
+ALTER TABLE "channels" ADD COLUMN "passport_path" text;
