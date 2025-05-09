@@ -24,7 +24,7 @@ const props = defineProps<{
   avatar?: string | undefined;
   size?: string;
   username?: string;
-  url: string;
+  url?: string;
 }>();
 
 const handlerOpenProfile =  async() => {

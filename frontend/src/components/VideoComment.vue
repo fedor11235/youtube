@@ -238,8 +238,6 @@ const cancelEdit = () => {
 };
 
 const saveEdit = () => {
-  console.log("props.comment: ", props.comment)
-  console.log("editContent.value : ", editContent.value.trim() )
   if (!editContent.value.trim()) return;
   emit('update-comment', props.comment.id, editContent.value);
   isEditing.value = false;
