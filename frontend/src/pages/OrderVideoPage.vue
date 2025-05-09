@@ -89,7 +89,7 @@ const handleSubmit = async () => {
   loading.value = true
   try {
     await orderService.submitOrder(form.value)
-    // Здесь будет логика отправки заказа
+
     $q.notify({
       type: 'positive',
       message: 'Заказ успешно отправлен'

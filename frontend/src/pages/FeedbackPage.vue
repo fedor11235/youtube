@@ -26,6 +26,14 @@
             />
 
             <q-input
+              v-model="feedback.contact"
+              type="textarea"
+              label="Напишите как с ами можно связаться"
+              :rules="[val => !!val || 'Обязательное поле']"
+              outlined
+            />
+
+            <q-input
               v-model="feedback.message"
               type="textarea"
               label="Сообщение"
@@ -34,46 +42,17 @@
               :rules="[val => !!val || 'Пожалуйста, напишите сообщение']"
             />
 
-            <q-file
-              v-model="feedback.attachments"
-              label="Прикрепить файлы"
-              outlined
-              multiple
-              accept=".jpg,.png,.pdf"
-              max-files="3"
-              max-file-size="5242880"
-            >
-              <template v-slot:prepend>
-                <q-icon name="attach_file" />
-              </template>
-            </q-file>
-
             <div class="row justify-end q-mt-md">
               <q-btn
                 label="Отправить"
                 type="submit"
                 color="primary"
-                :loading="submitting"
+                :loading="loading"
               />
             </div>
           </q-form>
         </q-card-section>
       </q-card>
-
-      <q-dialog v-model="showSuccessDialog">
-        <q-card>
-          <q-card-section class="row items-center">
-            <q-avatar icon="check_circle" color="positive" text-color="white" />
-            <span class="q-ml-sm">Спасибо за обратную связь!</span>
-          </q-card-section>
-          <q-card-section>
-            Мы получили ваше сообщение и ответим вам в ближайшее время.
-          </q-card-section>
-          <q-card-actions align="right">
-            <q-btn flat label="Закрыть" color="primary" v-close-popup />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
     </div>
   </q-page>
 </template>
@@ -81,6 +60,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useQuasar } from 'quasar'
+import feedbackService from '../services/feedback'
 
 const $q = useQuasar()
 
@@ -94,24 +74,27 @@ const feedbackTypes = [
 const feedback = ref({
   subject: '',
   type: null,
+  contact: '',
   message: '',
-  attachments: null
 })
 
-const submitting = ref(false)
-const showSuccessDialog = ref(false)
+const loading = ref(false)
 
 const onSubmit = async () => {
+  loading.value = true
   try {
-    submitting.value = true
-    // Здесь будет логика отправки формы на бэкенд
-    await new Promise(resolve => setTimeout(resolve, 1000))
-    showSuccessDialog.value = true
+    await feedbackService.submitFeedback(feedback.value)
+
+    $q.notify({
+      type: 'positive',
+      message: 'Ваш отзыв отправлен'
+    })
+
     feedback.value = {
       subject: '',
       type: null,
-      message: '',
-      attachments: null
+      contact: '',
+      message: ''
     }
   } catch {
     $q.notify({
@@ -119,7 +102,7 @@ const onSubmit = async () => {
       message: 'Произошла ошибка при отправке формы'
     })
   } finally {
-    submitting.value = false
+    loading.value = false
   }
 }
 </script>
