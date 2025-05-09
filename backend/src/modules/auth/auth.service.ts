@@ -58,9 +58,13 @@ export class AuthService {
     password: string;
     username: string;
   }) {
-    const existingChannel = await this.drizzleService.db.query.channels.findFirst({
-      where: eq(channels.email, registerDto.email),
-    });
+
+    const existingChannel = await this.drizzleService.db
+      .select()
+      .from(channels)
+      .where(eq(channels.email, registerDto.email))
+      .limit(1)
+      .then(rows => rows[0]);
 
     if (existingChannel) {
       throw new ConflictException('Channel with this email already exists');
@@ -94,9 +98,13 @@ export class AuthService {
   }
 
   async login(loginDto: { email: string; password: string }) {
-    const channel = await this.drizzleService.db.query.channels.findFirst({
-      where: eq(channels.email, loginDto.email),
-    });
+
+    const channel = await this.drizzleService.db
+      .select()
+      .from(channels)
+      .where(eq(channels.email, loginDto.email))
+      .limit(1)
+      .then(rows => rows[0]);
 
     if (!channel) {
       throw new UnauthorizedException('Invalid credentials');
@@ -127,7 +135,12 @@ export class AuthService {
 
   async logout(channelId: number) {
     try {
-      const channel = await this.drizzleService.db.query.channels.findFirst({ where:  eq(channels.id, channelId) });
+      const channel = await this.drizzleService.db
+        .select()
+        .from(channels)
+        .where(eq(channels.id, channelId))
+        .limit(1)
+        .then(rows => rows[0]);
       if (!channel) {
         throw new NotFoundException('User not found');
       }

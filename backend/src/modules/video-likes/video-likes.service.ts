@@ -12,9 +12,12 @@ export class VideoLikesService {
   ) {}
 
   async likeVideo(channelId: number, videoId: number) {
-    const video = await this.drizzleService.db.query.videos.findFirst({
-      where: eq(videos.id, videoId),
-    });
+    const video = await this.drizzleService.db
+      .select()
+      .from(videos)
+      .where(eq(videos.id, videoId))
+      .limit(1)
+      .then(rows => rows[0]);
 
     if(!video?.channelId) return
 

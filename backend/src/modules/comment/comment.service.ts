@@ -25,9 +25,12 @@ export class CommentService {
 
       const comment = commentsResult[0]
 
-      const video = await this.drizzleService.db.query.videos.findFirst({
-        where: eq(videos.id, videoId),
-      });
+      const video = await this.drizzleService.db
+      .select()
+      .from(videos)
+      .where(eq(videos.id, videoId))
+      .limit(1)
+      .then(rows => rows[0]);
 
       if(!video?.channelId) return
 
@@ -171,9 +174,12 @@ export class CommentService {
 
       const reply = replyResult[0]
 
-      const video = await this.drizzleService.db.query.videos.findFirst({
-        where: eq(videos.id, parentComment.videoId),
-      });
+      const video = await this.drizzleService.db
+        .select()
+        .from(videos)
+        .where(eq(videos.id, parentComment.videoId))
+        .limit(1)
+        .then(rows => rows[0]);
 
       if(!video?.channelId) return
 

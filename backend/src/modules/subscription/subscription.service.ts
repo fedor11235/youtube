@@ -13,9 +13,12 @@ export class SubscriptionService {
   ) {}
 
   async subscribe(userId: number, channelURL: string) {
-    const channel = await this.drizzleService.db.query.channels.findFirst({
-      where: eq(channels.url, channelURL),
-    });
+    const channel = await this.drizzleService.db
+      .select()
+      .from(channels)
+      .where(eq(channels.url, channelURL))
+      .limit(1)
+      .then(rows => rows[0]);
 
     if(!channel) {
       return
@@ -71,9 +74,12 @@ export class SubscriptionService {
   }
 
   async unsubscribe(userId: number, channelURL: string) {
-    const channel = await this.drizzleService.db.query.channels.findFirst({
-      where: eq(channels.url, channelURL),
-    });
+    const channel = await this.drizzleService.db
+      .select()
+      .from(channels)
+      .where(eq(channels.url, channelURL))
+      .limit(1)
+      .then(rows => rows[0]);
 
     if(!channel) {
       return
@@ -118,9 +124,12 @@ export class SubscriptionService {
   }
 
   async getSubscribers(channelURL: string) {
-    const channel = await this.drizzleService.db.query.channels.findFirst({
-      where: eq(channels.url, channelURL),
-    });
+    const channel = await this.drizzleService.db
+      .select()
+      .from(channels)
+      .where(eq(channels.url, channelURL))
+      .limit(1)
+      .then(rows => rows[0]);
 
     if(!channel) {
       return
@@ -141,9 +150,12 @@ export class SubscriptionService {
   }
 
   async checkSubscription(userId: number, channelURL: string) {
-    const channel = await this.drizzleService.db.query.channels.findFirst({
-      where: eq(channels.url, channelURL),
-    });
+    const channel = await this.drizzleService.db
+      .select()
+      .from(channels)
+      .where(eq(channels.url, channelURL))
+      .limit(1)
+      .then(rows => rows[0]);
 
     if(!channel) {
       return
