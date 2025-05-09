@@ -194,6 +194,7 @@ import profileService from '../services/profile'
 import { useQuasar } from 'quasar'
 import { getAvatar, getBanner, getThumbnail } from '../utils/avatar'
 import videoService from 'src/services/video'
+import type { Video } from 'src/types'
 
 interface ProfileForm {
   username: string;
@@ -207,11 +208,9 @@ const tab = ref('videos')
 const profile = ref<Profile | null>(null)
 const newAvatar = ref<File | null>(null)
 const deleteDialog = ref(false)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const videoToDelete: any = ref(null)
+const videoToDelete = ref<Video | null>(null)
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const confirmDelete = (video: any) => {
+const confirmDelete = (video: Video) => {
   videoToDelete.value = video
   deleteDialog.value = true
 }
@@ -229,15 +228,14 @@ const deleteVideo = async () => {
     if(videoToDelete.value) {      
       await videoService.deleteVideo(videoToDelete.value.id)
       if(profile.value) {
-        profile.value.videos = profile.value?.videos.filter(video => video.id !== videoToDelete.value.id)
+        profile.value.videos = profile.value.videos.filter(video => video.id !== videoToDelete.value!.id)
       }
       $q.notify({
         type: 'positive',
         message: 'Видео успешно удалено'
       })
     }
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-  } catch (error: any) {
+  } catch {
     $q.notify({
       type: 'negative',
       message: 'Ошибка при удалении видео'

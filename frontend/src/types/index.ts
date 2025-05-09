@@ -1,3 +1,15 @@
+export interface Notification {
+  id: number;
+  title: string;
+  message: string;
+  createdAt: string;
+  data: {
+    videoId?: number,
+    channel: Channel
+  };
+  read: boolean;
+}
+
 export interface Tag {
   id: number;
   name: string;
@@ -10,9 +22,12 @@ export interface Channel {
   banner: string;
   subscribers: number;
   username: string;
+  email: string;
   url: string;
-  createdAt?: string;
-  totalViews?: number;
+  createdAt: string;
+  totalViews: number;
+  videosCount: number;
+  subscribersCount: number;
 }
 
 export interface Video {

@@ -22,9 +22,6 @@
               <q-item clickable v-close-popup @click="emit('clear-all')">
                 <q-item-section>{{ t('notifications.clearAll') }}</q-item-section>
               </q-item>
-              <!-- <q-item clickable v-close-popup @click="openSettings">
-                <q-item-section>{{ t('notifications.settings') }}</q-item-section>
-              </q-item> -->
             </q-list>
           </q-menu>
         </q-btn>
@@ -61,13 +58,13 @@
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import NotificationItem from './NotificationItem.vue'
+import type { Notification } from '../types/index'
 
 const { t } = useI18n()
 
 const props = defineProps<{
   modelValue: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  notifications: any;
+  notifications: Notification[];
 }>()
 
 const emit = defineEmits<{

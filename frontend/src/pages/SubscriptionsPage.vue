@@ -69,17 +69,14 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import type { Video } from '../types'
+import type { Channel, Video } from '../types'
 import videoService from 'src/services/video';
 import { getAvatar, getThumbnail } from '../utils/avatar'
 import { subscriptionService } from 'src/services/subscription';
 import { formatDate } from '../utils/date'
 
-interface Channel {
-  id: number;
-  name: string;
-  avatar: string;
-  subscribers: number;
+interface Subscription {
+  channel: Channel
 }
 
 const subscribedChannels = ref<Channel[]>([])
@@ -115,10 +112,8 @@ const formatDuration = (seconds: number): string => {
 
 onMounted(async () => {
   try {
-    // Получаем список подписок
     const subscriptions = await subscriptionService.getSubscriptions();
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    subscribedChannels.value = subscriptions.map((sub: any) => ({
+    subscribedChannels.value = subscriptions.map((sub: Subscription) => ({
       id: sub.channel.id,
       name: sub.channel.username,
       avatar: sub.channel.avatar,

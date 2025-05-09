@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { commentLikes, comments, channels, videos } from '../../database/schema';
+import { commentLikes, comments, channels, videos, type Comment } from '../../database/schema';
 import { eq, sql } from 'drizzle-orm';
 import { NotificationService } from '../notification/notification.service';
 
@@ -53,7 +53,7 @@ export class CommentService {
         type: 'comment',
         data: {
           channel: channelsResult[0],
-        }
+        },
       });
     
     return comment;
@@ -81,27 +81,22 @@ export class CommentService {
     .where(eq(comments.videoId, videoId))
     .groupBy(comments.id, channels.id, videos.channelId)
     .orderBy(comments.createdAt);
-  // Убедимся, что comments является массивом
   if (!Array.isArray(result)) {
     return [];
   }
 
-  // Создаем Map для хранения комментариев и их ответов
   const commentMap = new Map();
-  const rootComments: any = [];
-  // Первый проход: создаем все комментарии
+  const rootComments: Comment[] = [];
+
   result.forEach(comment => {
     commentMap.set(comment.id, { ...comment, replies: [] });
   });
 
-  // Второй проход: организуем структуру ответов
-  result.forEach((comment: any) => {
+  result.forEach((comment: Comment) => {
     if (comment.parentId && commentMap.has(comment.parentId)) {
-      // Это ответ - добавляем его к родительскому комментарию
       const parentComment = commentMap.get(comment.parentId);
       parentComment.replies.push(commentMap.get(comment.id));
     } else {
-      // Это корневой комментарий
       rootComments.push(commentMap.get(comment.id));
     }
   });
@@ -164,7 +159,6 @@ export class CommentService {
       throw new NotFoundException('Комментарий не найден');
     }
 
-    // Создаем ответ на комментарий
     const replyResult = await this.drizzleService.db
       .insert(comments)
       .values({

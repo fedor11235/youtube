@@ -188,6 +188,7 @@ import { getAvatar } from '../utils/avatar'
 import NotificationsPanel from '../components/NotificationsPanel.vue'
 import notificationService from '../services/notification'
 import { useI18n } from 'vue-i18n'
+import type { Notification } from '../types/index'
 
 const authStore = useAuthStore()
 const router = useRouter()
@@ -196,8 +197,8 @@ const { locale, t } = useI18n()
 const changeLanguage = (lang: string) => {
   locale.value = lang
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const notifications = ref<any[]>([])
+
+const notifications = ref<Notification[]>([])
 const showNotifications = ref(false)
 const hasUnreadNotifications = computed(() => unreadCount.value > 0)
 const unreadCount = ref(0) // Replace with actual unread count from your state management
@@ -224,8 +225,8 @@ const handleLogout = async () => {
   await router.push('/login')
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const handleNotificationClick = async (notification: any) => {
+
+const handleNotificationClick = async (notification: Notification) => {
   if (!notification.read) {
     await toggleRead(notification)
     unreadCount.value--;
@@ -238,8 +239,7 @@ const handleNotificationClick = async (notification: any) => {
   showNotifications.value = false
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const toggleRead = async (notification: any) => {
+const toggleRead = async (notification: Notification) => {
   try {
     await notificationService.markAsRead(notification.id)
     notification.read = !notification.read
@@ -281,8 +281,7 @@ const clearAll = async () => {
 onMounted(async () => {
   await loadNotifications()
   
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  unsubscribe = notificationService.subscribe((notification: any) => {
+  unsubscribe = notificationService.subscribe((notification: Notification) => {
     notifications.value = [notification, ...notifications.value];
     // Увеличиваем счетчик при получении нового уведомления
     if (!notification.read) {

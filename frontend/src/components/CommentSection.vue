@@ -4,7 +4,6 @@
 
     <div v-if="authStore.isAuthenticated" class="comment-form q-mt-md">
       <q-input
-        ref="commentInput"
         v-model="newComment"
         type="textarea"
         label="Добавить комментарий"
@@ -80,8 +79,6 @@ const comments = ref<Comment[]>([]);
 const newComment = ref('');
 const deleteDialog = ref(false);
 const commentToDelete = ref<Comment | null>(null);
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const commentInput = ref<any>(null);
 
 const loadComments = async () => {
   try {
@@ -119,8 +116,7 @@ const submitComment = async () => {
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const updateReply = async (id: any, content: any) => {
+const updateReply = async (id: number, content: string) => {
   try {
     await commentService.createReply(id, content);
     await loadComments();
@@ -136,8 +132,7 @@ const updateReply = async (id: any, content: any) => {
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const updateComment = async (id: number, content: any) => {
+const updateComment = async (id: number, content: string) => {
   if (!content) return;
 
   try {

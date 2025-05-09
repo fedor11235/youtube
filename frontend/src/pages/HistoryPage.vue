@@ -44,11 +44,16 @@ import { ref, onMounted } from 'vue';
 import { videoHistoryService } from 'src/services/video-history';
 import { useQuasar } from 'quasar';
 import VideoCard from '../components/VideoCard.vue'
-// import { getThumbnail } from '../utils/avatar'
+import type { Video } from 'src/types';
+
+interface HistoryEntry {
+  id: number;
+  watchedAt: string;
+  video: Video;
+}
 
 const $q = useQuasar();
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const history: any = ref([]);
+const history = ref<HistoryEntry[]>([]);
 const clearConfirmDialog = ref(false);
 
 const loadHistory = async () => {

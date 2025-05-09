@@ -2,7 +2,7 @@
   <video
     controls
     :poster="getThumbnail(video?.thumbnailUrl)"
-    :ref="videoRef"
+    :ref="el => setVideoRef(el)"
     class="full-width"
     style="max-height: 70vh"
     :src="getVideo(video?.videoUrl)"
@@ -12,7 +12,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { type ComponentPublicInstance, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { getThumbnail, getVideo } from '../utils/avatar'
 import videoService from 'src/services/video'
@@ -23,9 +23,12 @@ defineProps<{
 }>();
 
 const route = useRoute()
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const videoRef = ref<any>(null);
+const videoRef = ref<Element | ComponentPublicInstance | null>(null);
 const viewAdded = ref(false);
+
+const setVideoRef = (el: Element | ComponentPublicInstance | null) => {
+  videoRef.value = el;
+};
 
 const handlePlay = async () => {
   if (!viewAdded.value) {
@@ -37,8 +40,7 @@ const handleTimeUpdate = async () => {
   const video = videoRef.value;
   if (!video || viewAdded.value) return;
 
-  // Добавляем просмотр после 5 секунд воспроизведения
-  if (video.currentTime >= 5) {
+  if ((video as HTMLVideoElement).currentTime >= 5) {
     await addView();
   }
 };

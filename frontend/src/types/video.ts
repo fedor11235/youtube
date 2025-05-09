@@ -2,7 +2,7 @@ export interface VideoUpload {
   title: string;
   description: string;
   videoFile: File;
-  thumbnailFile: File | null;
+  thumbnailFile?: File;
 }
 
 export interface VideoComment {

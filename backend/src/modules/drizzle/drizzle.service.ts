@@ -5,7 +5,6 @@ import * as schema from '../../database/schema';
 
 @Injectable()
 export class DrizzleService implements OnModuleInit, OnModuleDestroy {
-  [x: string]: any;
   private pool: Pool;
   public db: ReturnType<typeof drizzle<typeof schema>>;
 
@@ -22,7 +21,6 @@ export class DrizzleService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleInit() {
-    // Test the connection
     try {
       await this.pool.connect();
       console.log('Database connection established');

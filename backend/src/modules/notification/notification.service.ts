@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { notifications } from '../../database/schema';
+import { CreateNotification, notifications, type Notification } from '../../database/schema';
 import { NotificationGateway} from './notification.gateway';
 import { eq } from 'drizzle-orm';
 
@@ -11,13 +11,7 @@ export class NotificationService {
     private readonly notificationGateway: NotificationGateway
   ) {}
 
-  async createNotification(data: {
-    channelId: number;
-    title: string;
-    message: string;
-    type: 'like' | 'comment' | 'reply' | 'subscribe' | 'system';
-    data?: any;
-  }) {
+  async createNotification(data: CreateNotification) {
     const [notification] = await this.drizzleService.db
       .insert(notifications)
       .values({

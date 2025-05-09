@@ -7,7 +7,7 @@
     >
       <q-item-section avatar>
         <q-avatar>
-          <img :src="getAvatar(notification?.data?.channel?.avatar)">
+          <img :src="getAvatar(notification.data.channel.avatar)">
         </q-avatar>
       </q-item-section>
 
@@ -49,12 +49,12 @@ import { defineProps, defineEmits } from 'vue';
 import { useI18n } from 'vue-i18n';
 import { date } from 'quasar';
 import { getAvatar } from '../utils/avatar'
+import type { Notification } from '../types/index'
 
 const { t } = useI18n();
 
 defineProps<{
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  notification: any;
+  notification: Notification;
   isLast: boolean;
 }>();
 

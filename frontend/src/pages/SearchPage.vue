@@ -7,7 +7,7 @@
         outlined
         class="search-input"
         placeholder="Введите имя пользователя или email"
-        @update:model-value="(event: any) => handleSearch(event)"
+        @update:model-value="(event: string | number | null) => handleSearch(event)"
       >
         <template v-slot:prepend>
           <q-icon name="search" />
@@ -111,15 +111,16 @@ import { useChannelStore } from 'src/stores/channel'
 import { useAuthStore } from 'src/stores/auth'
 import ChannelAvatar from '../components/ChannelAvatar.vue'
 import SubscribeButton from '../components/SubscribeButton.vue'
+import type { Channel } from 'src/types'
 
 const channelStore = useChannelStore()
 const authStore = useAuthStore()
 const searchQuery = ref('')
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const searchResults: any = ref([])
+const searchResults= ref<Channel[]>([])
 const loading = ref(false)
-//useDebounce?
-const handleSearch = async (query: string) => {
+
+const handleSearch = async (query: string | number | null) => {
+  query = String(query)
   if (query.length >= 2) {
     try {
       loading.value = true

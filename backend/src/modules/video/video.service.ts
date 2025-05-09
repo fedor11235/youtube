@@ -4,12 +4,13 @@ import { tags, channels, videoLikes, videos, videoTags, videoViews, Video } from
 import { desc, eq, gte, inArray, like, ne, or, sql } from 'drizzle-orm';
 import { extractDuration, extractThumbnail, editVideo } from './video.utils';
 import { subDays } from 'date-fns';
+import { PgSelect } from 'drizzle-orm/pg-core';
 
 @Injectable()
 export class VideoService {
   constructor(private readonly drizzleService: DrizzleService) {}
 
-  async createVideo(file: Express.Multer.File, createVideoDto: any, channelId: number) {
+  async createVideo(file: Express.Multer.File, createVideoDto, channelId: number) {
     const test = await editVideo(file.path);
     const thumbnailUrl = await extractThumbnail(file.path);
     const duration = await extractDuration(file.path);
@@ -223,61 +224,54 @@ export class VideoService {
         username: video.channel!.username,
         avatar: video.channel!.avatar,
         url: video.channel!.url
-      },
-      user: undefined // удаляем исходные данные пользователя
+      }
     }));
   }
 
   async searchVideos(query: string, tagNames: string[] = []) {
-    let videosQuery: any = this.drizzleService.db
-      .selectDistinct({
-        id: videos.id,
-        title: videos.title,
-        description: videos.description,
-        videoUrl: videos.videoUrl,
-        thumbnailUrl: videos.thumbnailUrl,
-        views: videos.views,
-        createdAt: videos.createdAt,
-        duration: videos.duration,
-        channel: {
-          id: channels.id,
-          username: channels.username,
-          avatar: channels.avatar,
-          url: channels.url
-        }
-      })
-      .from(videos)
-      .leftJoin(channels, eq(videos.channelId, channels.id));
-    
-    if (query) {
-      videosQuery = videosQuery.where(
-        or(
-          like(videos.title, `%${query}%`),
-          like(videos.description, `%${query}%`),
-          like(channels.username, `%${query}%`)
-        )
-      );
-    }
+    const result = await this.drizzleService.db.execute(
+      sql`
+        SELECT DISTINCT ON (videos.id)
+          videos.id,
+          videos.title,
+          videos.description,
+          videos.video_url AS "videoUrl",
+          videos.thumbnail_url AS "thumbnailUrl",
+          videos.views,
+          videos.created_at AS "createdAt",
+          videos.duration,
+          channels.id AS "channelId",
+          channels.username,
+          channels.avatar,
+          channels.url
+        FROM videos
+        LEFT JOIN channels ON videos.channel_id = channels.id
+        ${query ? sql`WHERE videos.title ILIKE ${'%' + query + '%'} OR videos.description ILIKE ${'%' + query + '%'} OR channels.username ILIKE ${'%' + query + '%'}` : sql``}
+        ${tagNames.length > 0 ? sql`
+          INNER JOIN video_tags ON video_tags.video_id = videos.id
+          INNER JOIN tags ON tags.id = video_tags.tag_id
+          WHERE tags.name IN (${sql.join(tagNames, sql`, `)})
+        ` : sql``}
+        ORDER BY videos.id, videos.created_at DESC;
+      `
+    );
   
-    if (tagNames.length > 0) {
-      videosQuery = videosQuery
-        .innerJoin(videoTags, eq(videos.id, videoTags.videoId))
-        .innerJoin(tags, eq(videoTags.tagId, tags.id))
-        .where(inArray(tags.name, tagNames))
-        .groupBy(videos.id, channels.id, channels.username, channels.avatar, channels.url);
-    }
-  
-    const result = await videosQuery;
-  
-    return result.map(video => ({
-      ...video,
+    // Формируем результат с типами
+    return result.rows.map(row => ({
+      id: row.id,
+      title: row.title,
+      description: row.description,
+      videoUrl: row.videoUrl,
+      thumbnailUrl: row.thumbnailUrl,
+      views: row.views,
+      createdAt: row.createdAt,
+      duration: row.duration,
       channel: {
-        id: video.channel.id,
-        name: video.channel.username,
-        avatar: video.channel.avatar,
-        url: video.channel.url
+        id: row.channelId,
+        username: row.username,
+        avatar: row.avatar,
+        url: row.url,
       },
-      user: undefined
     }));
   }
 
@@ -317,7 +311,7 @@ export class VideoService {
     );
   }
 
-  async updateThumbnail(videoId: any, file: Express.Multer.File) {
+  async updateThumbnail(videoId: number, file: Express.Multer.File) {
     const updatedVideo = await this.drizzleService.db
       .update(videos)
       .set({ thumbnailUrl: file.filename })

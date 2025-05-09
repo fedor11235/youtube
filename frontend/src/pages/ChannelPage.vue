@@ -107,7 +107,7 @@ import { subscriptionService } from 'src/services/subscription'
 import SubscribeButton from 'components/SubscribeButton.vue';
 import VideoCarTwo from 'components/VideoCarTwo.vue';
 import videoService from 'src/services/video'
-import type { Channel } from 'src/types'
+import type { Channel, Video } from 'src/types'
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -117,8 +117,7 @@ const channel: Ref<Channel | null> = ref(null)
 const isSubscribed = ref(false);
 const subscribersCount = ref(0);
 const videoUrl = computed(() => route.params.id)
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const videos: any = ref([])
+const videos = ref<Video[]>([])
 
 const isOwnProfile = computed(() => {
   return channel.value?.id === authStore.channel?.id;

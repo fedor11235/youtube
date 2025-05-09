@@ -106,11 +106,18 @@ export const notifications = pgTable('notifications', {
   message: text('message').notNull(),
   type: varchar('type', { length: 50 }).notNull(), // 'video', 'subscription', 'comment', 'system'
   read: boolean('read').default(false),
-  link: varchar('link', { length: 255 }),
   data: jsonb('data'),
   createdAt: timestamp('created_at').defaultNow(),
 });
 
+export type CreateNotification = {
+  channelId: number,
+  title: string,
+  message: string,
+  type: string,
+  data: unknown
+}
+export type Notification = typeof notifications.$inferSelect;
 export type Video = typeof videos.$inferSelect;
 export type Tag = typeof tags.$inferSelect;
 export type Comment = typeof comments.$inferSelect;

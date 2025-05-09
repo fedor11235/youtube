@@ -96,8 +96,7 @@ const error = ref<string | null>(null)
 const searchQuery = ref('')
 const selectedTags = ref([])
 const allVideos = ref<Video[]>([])
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const availableTags = ref<any>([])
+const availableTags = ref<string[]>([])
 
 const loadVideos = async () => {  
   try {

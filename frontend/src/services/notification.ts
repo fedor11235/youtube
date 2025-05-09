@@ -1,12 +1,12 @@
-import { io } from 'socket.io-client';
+import { io, type Socket } from 'socket.io-client';
 import { api } from 'src/boot/axios';
-import type { Notification } from 'src/types/notification';
+import type { Notification } from 'src/types';
+
+type Listener = (notification: Notification) => void;
 
 class NotificationService {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private socket: any = null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private listeners: any[] = [];
+  private socket: Socket | null = null;
+  private listeners: Listener[]= [];
 
   constructor() {
     this.connect();
@@ -24,8 +24,7 @@ class NotificationService {
       console.log('Socket подключен');
     });
   
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.socket.on('newNotification', (notification: any) => {
+    this.socket.on('newNotification', (notification: Notification) => {
       console.log('Получено новое уведомление:', notification);
       this.notifyListeners(notification);
     });
@@ -34,13 +33,12 @@ class NotificationService {
       console.log('Socket отключен');
     });
 
-    this.socket.on('connect_error', (error: string) => {
+    this.socket.on('connect_error', error => {
       console.error('Ошибка подключения Socket:', error);
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  subscribe(listener: any): () => void {
+  subscribe(listener: Listener): () => void {
     this.listeners.push(listener);
     return () => {
       this.listeners = this.listeners.filter(l => l !== listener);

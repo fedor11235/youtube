@@ -143,6 +143,7 @@ import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 // import type { VideoUpload } from 'src/types/video'
 import videoService from 'src/services/video'
+import type { VideoUpload } from 'src/types/video'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -205,14 +206,13 @@ const resetForm = () => {
 }
 
 const handleUpload = async () => {
+  try{
   if (!videoFile.value) return
 
   uploading.value = true
   uploadProgress.value.show = true
 
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const uploadData: any = {
+    const uploadData: VideoUpload = {
       title: videoDetails.value.title,
       description: videoDetails.value.description,
       videoFile: videoFile.value

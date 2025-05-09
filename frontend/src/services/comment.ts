@@ -1,4 +1,5 @@
 import { api } from 'src/boot/axios';
+import type { Channel } from 'src/types';
 
 export interface Comment {
   id: number;
@@ -8,21 +9,13 @@ export interface Comment {
   likesCount: number;
   authorLiked: boolean;
   isCreatorLike: boolean;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  replies?: any;
-  channel: {
-    id: number;
-    username: string;
-    avatar: string;
-    url: string;
-  };
+  replies: Comment[];
+  channel: Channel;
 }
 
 export const commentService = {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async createReply(parentId: number, content: string): Promise<any> {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const { data } = await api.post<any>(`/comments/${parentId}/replies`, {
+  async createReply(parentId: number, content: string): Promise<Comment> {
+    const { data } = await api.post<Comment>(`/comments/${parentId}/replies`, {
       content
     });
     return data;

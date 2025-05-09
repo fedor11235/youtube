@@ -1,4 +1,5 @@
 import { WebSocketGateway, WebSocketServer, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
+import type { Notification } from '../../database/schema';
 import { Server, Socket } from 'socket.io';
 import { JwtService } from '@nestjs/jwt';
 
@@ -35,7 +36,7 @@ export class NotificationGateway implements OnGatewayConnection, OnGatewayDiscon
   }
 
   // Метод для отправки уведомления конкретному пользователю
-  async sendNotification(channelId: number, notification: any) {
+  async sendNotification(channelId: number, notification: Notification) {
     this.server.to(`channel_${channelId}`).emit('newNotification', notification);
   }
 

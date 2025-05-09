@@ -1,5 +1,5 @@
 import { Controller, Post, Delete, Get, Param, UseGuards, Req } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { SubscriptionService } from './subscription.service';
 
@@ -8,6 +8,13 @@ import { SubscriptionService } from './subscription.service';
 @UseGuards(JwtAuthGuard)
 export class SubscriptionController {
   constructor(private readonly subscriptionService: SubscriptionService) {}
+
+  @Get()
+  @ApiOperation({ summary: 'Get channel subscriptions' })
+  async getSubscriptions(@Req() req) {
+    return this.subscriptionService.getSubscriptions(req.user.id);
+  }
+
 
   @Post(':channelId')
   @ApiOperation({ summary: 'Subscribe to channel' })
@@ -19,12 +26,6 @@ export class SubscriptionController {
   @ApiOperation({ summary: 'Unsubscribe from channel' })
   async unsubscribe(@Req() req, @Param('channelId') channelId: string) {
     return this.subscriptionService.unsubscribe(req.user.id, channelId);
-  }
-
-  @Get()
-  @ApiOperation({ summary: 'Get channel subscriptions' })
-  async getSubscriptions(@Req() req) {
-    return this.subscriptionService.getSubscriptions(req.user.id);
   }
 
   @Get('subscribers/:channelId')
