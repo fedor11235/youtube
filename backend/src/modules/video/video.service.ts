@@ -228,18 +228,18 @@ export class VideoService {
     }));
   }
 
-  async searchVideos(query: string, tagNames: string[] = [], sort: string) {
+  async searchVideos(page: string, limit: string, query: string, tagNames: string[] = [], sort: string) {
     const orderByClause = (() => {
       switch (sort) {
         case 'most_viewed':
-          return sql`views DESC, videos.created_at DESC`;
+          return 'views DESC, videos.created_at DESC'
         case 'least_viewed':
-          return sql`views ASC, videos.created_at DESC`;
+          return 'views ASC, videos.created_at DESC'
         case 'oldest':
-          return sql`videos.created_at ASC`;
+          return 'videos.created_at ASC'
         case 'newest':
         default:
-          return sql`videos.created_at DESC`;
+          return 'videos.created_at DESC'
       }
     })();
   
@@ -265,6 +265,8 @@ export class VideoService {
         `
       : sql``;
   
+    const offset = (parseInt(page) - 1) * parseInt(limit);
+  
     const result = await this.drizzleService.db.execute(sql`
       SELECT 
         videos.id,
@@ -287,7 +289,8 @@ export class VideoService {
       GROUP BY 
         videos.id,
         channels.id
-      ORDER BY ${orderByClause}
+      ORDER BY ${sql.raw(orderByClause)}
+      LIMIT ${sql.raw(limit)} OFFSET ${sql.raw(offset.toString())}
     `);
   
     return result.rows.map(row => ({

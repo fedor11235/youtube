@@ -78,7 +78,7 @@
         </div>
 
     </div>
-    <div class="row q-col-gutter-md">
+    <div :offset="250" class="row q-col-gutter-md">
       <div
         v-for="video in videos"
         :key="video.id"
@@ -97,15 +97,17 @@
     <div v-if="error" class="row justify-center q-pa-md text-negative">
       {{ error }}
     </div>
+    <div ref="infiniteScrollTrigger" style="height: 1px;" />
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 // import { useVideo } from 'src/composable/useVideo'
 import videoService from 'src/services/video'
 import type { Video } from '../types/video'
 import VideoCardMain from 'components/VideoCardMain.vue';
+// import { useQuasar } from 'quasar'
 
 const videos = ref<Video[]>([])
 const loading = ref(false)
@@ -122,13 +124,43 @@ const sortOptions = [
 const selectedTags = ref([])
 const allVideos = ref<Video[]>([])
 const availableTags = ref<string[]>([])
+const page = ref(1)
+const limit = 50 // количество видео на странице
+const infiniteScrollTrigger = ref(null)
+const observer = ref<IntersectionObserver | null>(null)
+const hasMore = ref(true)
+
+const loadMoreVideos = async () => {
+  if (loading.value || !hasMore.value) return
+
+  try {
+    loading.value = true
+    page.value += 1
+    const newVideos = await videoService.searchVideos(
+      page.value,
+      limit,
+      searchQuery.value,
+      selectedTags.value,
+      sortBy.value?.value
+    )
+    if (newVideos.length < limit) {
+      hasMore.value = false
+    }
+    videos.value.push(...newVideos)
+  } catch (err) {
+    error.value = 'Не удалось загрузить дополнительные видео'
+    console.error(err)
+  } finally {
+    loading.value = false
+  }
+}
 
 const loadVideos = async () => {  
   try {
     loading.value = true
     error.value = null
     const [videosResponse, tagsResponse] = await Promise.all([
-      videoService.searchVideos('', [], ''),
+      videoService.searchVideos(page.value, limit, '', [], ''),
       videoService.getTags()
     ])
     allVideos.value = videosResponse
@@ -144,21 +176,24 @@ const loadVideos = async () => {
 
 const handleSearch = async () => {
   try {
-    loading.value = true;
-    error.value = '';
-    
+    loading.value = true
+    error.value = ''
+    page.value = 1
+    hasMore.value = true
+
     const searchResults = await videoService.searchVideos(
+      page.value,
+      limit,
       searchQuery.value,
       selectedTags.value,
       sortBy.value?.value
-    );
-    
-    videos.value = searchResults;
+    )
+    videos.value = searchResults
   } catch (err) {
-    console.error('Ошибка при поиске видео:', err);
-    error.value = 'Не удалось выполнить поиск';
+    console.error('Ошибка при поиске видео:', err)
+    error.value = 'Не удалось выполнить поиск'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 
@@ -167,8 +202,31 @@ const clearSearch = () => {
   videos.value = allVideos.value
 }
 
+const setupIntersectionObserver = () => {
+  if (!infiniteScrollTrigger.value) return
+
+  observer.value = new IntersectionObserver(entries => {
+    if (entries[0]?.isIntersecting) {
+      // eslint-disable-next-line @typescript-eslint/no-floating-promises
+      loadMoreVideos()
+    }
+  }, {
+    root: null,
+    rootMargin: '0px',
+    threshold: 1.0
+  })
+
+  observer.value.observe(infiniteScrollTrigger.value)
+}
 onMounted(async () => {
   await loadVideos()
+  setupIntersectionObserver()
+})
+
+onUnmounted(() => {
+  if (observer.value && infiniteScrollTrigger.value) {
+    observer.value.unobserve(infiniteScrollTrigger.value)
+  }
 })
 </script>
 

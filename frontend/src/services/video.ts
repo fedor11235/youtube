@@ -182,9 +182,15 @@ const videoService = {
     return data;
   },
 
-  async searchVideos(query: string, tags: string[] = [], sort: string): Promise<Video[]> {
+  async searchVideos(page: number, limit: number, query: string, tags: string[] = [], sort: string): Promise<Video[]> {
     try {
       const params = new URLSearchParams();
+      if (page) {
+        params.append('page', String(page));
+      }
+      if (limit) {
+        params.append('limit', String(limit));
+      }
       if (query) {
         params.append('q', query);
       }

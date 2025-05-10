@@ -59,10 +59,12 @@ export class VideoController {
   async searchVideos(
     @Query('q') query: string,
     @Query('tags') tags: string,
-    @Query('sort') sort: string
+    @Query('sort') sort: string,
+    @Query('page') page: string,
+    @Query('limit') limit: string
   ) {
     const tagNames = tags ? tags.split(',') : [];
-    return this.videoService.searchVideos(query, tagNames, sort);
+    return this.videoService.searchVideos(page, limit, query, tagNames, sort);
   }
 
   @Get('related/:id')
