@@ -62,34 +62,43 @@ export class VideoService {
   // }
 
   async getVideoById(id: number) {
-    const video = await this.drizzleService.db.select({
-        id: videos.id,
-        title: videos.title,
-        description: videos.description,
-        videoUrl: videos.videoUrl,
-        thumbnailUrl: videos.thumbnailUrl,
-        // views: videos.views,
-        createdAt: videos.createdAt,
-        duration: videos.duration,
-        channel: {
-          id: channels.id,
-          username: channels.username,
-          email: channels.email,
-          avatar: channels.avatar,
-          url: channels.url
-        }
-      })
-      .from(videos)
-      .where(eq(videos.id, id))
-      .leftJoin(channels, eq(videos.channelId, channels.id))
-      .limit(1);
-
-    if (!video.length) {
+    const [video] = await this.drizzleService.db.select({
+      id: videos.id,
+      title: videos.title,
+      description: videos.description,
+      videoUrl: videos.videoUrl,
+      thumbnailUrl: videos.thumbnailUrl,
+      createdAt: videos.createdAt,
+      duration: videos.duration,
+      channel: {
+        id: channels.id,
+        username: channels.username,
+        email: channels.email,
+        avatar: channels.avatar,
+        url: channels.url
+      }
+    })
+    .from(videos)
+    .leftJoin(channels, eq(videos.channelId, channels.id))
+    .where(eq(videos.id, id))
+    .limit(1);
+  
+    if (!video) {
       throw new NotFoundException('Video not found');
     }
-
-    return video[0];
-  }
+  
+    const [{ views }] = await this.drizzleService.db
+      .select({
+        views: sql<number>`COUNT(*)`.as('views')
+      })
+      .from(videoViews)
+      .where(eq(videoViews.videoId, id));
+  
+    return {
+      ...video,
+      views,
+    };
+  }  
 
   async deleteVideo(id: number, channelId: number) {
     const video = await this.drizzleService.db.select()

@@ -54,7 +54,7 @@
             <div class="row q-col-gutter-md">
               <template v-for="video in likedVideos" :key="video.id">
                 <div class="col-12">
-                  <LibraryVideoCard 
+                  <VideoCardLibrary 
                     :video="video" 
                     @remove="removeFromLiked(video.id)"
                   />
@@ -130,6 +130,7 @@ const loadLikedVideos = async () => {
   try {
     loadingLiked.value = true;
     likedVideos.value = await videoService.getLikedVideos();
+    console.log(likedVideos.value)
   } catch {
     $q.notify({
       type: 'negative',

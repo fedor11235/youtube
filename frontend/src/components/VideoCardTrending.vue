@@ -17,15 +17,15 @@
         </div>
 
         <div class="col q-pl-md">
+          <ChannelAvatar
+            :avatar="video.channel.avatar"
+            :url="video.channel.url"
+            :username="video.channel.username"
+            size="40px"
+            class="q-mr-md"
+          />
           <div class="text-h6 ellipsis-2-lines cursor-pointer">
             {{ video.title }}
-          </div>
-
-          <div class="row items-center q-mt-sm">
-            <q-avatar size="24px" class="q-mr-sm">
-              <img :src="getAvatar(video.channel.avatar)">
-            </q-avatar>
-            <span class="text-subtitle2">{{ video.channel.username }}</span>
           </div>
 
           <div class="text-grey q-mt-sm">
@@ -44,9 +44,10 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router';
-import { getThumbnail, getAvatar } from '../utils/avatar'
+import { getThumbnail } from '../utils/avatar'
 import type { Video } from 'src/types/video';
 import { formatDate } from '../utils/date'
+import ChannelAvatar from 'components/ChannelAvatar.vue';
 
 defineProps<{
   video: Video;

@@ -57,7 +57,6 @@ const loadLikeStatus = async () => {
     isLiked.value = await commentLikesService.hasChannelLiked(props.commentId);
     likesCount.value = await commentLikesService.getLikesCount(props.commentId);
     creatorLikesCount.value = await commentLikesService.checkCreatorLike(props.commentId);
-    console.log("creatorLikesCount.value: ", creatorLikesCount.value)
   } catch (error) {
     console.error('Ошибка при проверке лайка:', error);
   }
