@@ -53,8 +53,8 @@
                     <q-icon name="schedule" color="grey" />
                   </q-item-section>
                   <q-item-section>
-                    <div class="text-weight-medium">Мобильное приложение</div>
-                    <div class="text-caption">iOS и Android версии</div>
+                    <div class="text-weight-medium">Свои токены</div>
+                    <div class="text-caption">Ставить реакции, обмен на криптовалюту</div>
                   </q-item-section>
                 </q-item>
                 <q-item>
@@ -109,8 +109,8 @@
                     <q-icon name="schedule" color="grey" />
                   </q-item-section>
                   <q-item-section>
-                    <div class="text-weight-medium">Образовательная платформа</div>
-                    <div class="text-caption">Курсы и обучающие материалы</div>
+                    <div class="text-weight-medium">Рилсы</div>
+                    <div class="text-caption">Короткие видео</div>
                   </q-item-section>
                 </q-item>
               </q-list>

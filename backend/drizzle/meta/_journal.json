@@ -15,6 +15,13 @@
       "when": 1746885441371,
       "tag": "0002_next_mother_askani",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1746895129969,
+      "tag": "0003_parallel_loki",
+      "breakpoints": true
     }
   ]
 }

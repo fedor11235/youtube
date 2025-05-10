@@ -5,7 +5,7 @@
 
       <q-card class="feedback-form">
         <q-card-section>
-          <div class="text-body1 q-mb-md">
+          <div class="text-body1 q-mb-lg">
             Мы ценим ваше мнение и стремимся сделать наш сервис лучше. Пожалуйста, поделитесь своими мыслями или сообщите о проблеме.
           </div>
 

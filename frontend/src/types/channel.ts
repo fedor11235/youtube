@@ -9,7 +9,8 @@ export interface Channel {
   email: string;
   url: string;
   createdAt: string;
-  totalViews: number;
-  videosCount: number;
+  // totalViews: number;
+  totalVideo: number;
+  description: string;
   subscribersCount: number;
 }

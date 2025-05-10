@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { channels, videos } from '../../database/schema';
-import { eq, ilike, or, and } from 'drizzle-orm';
+import { channels, videos, videoViews } from '../../database/schema';
+import { eq, ilike, or, and, sql } from 'drizzle-orm';
 import * as path from 'path';
 import { promises as fs } from 'fs';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -54,27 +54,38 @@ export class ChannelSrvice {
     };
   }
 
-  async findById(id: string) {
+  async findByUrl(url: string) {
     const [channel] = await this.drizzleService.db
       .select({
-          id: channels.id,
-          email: channels.email,
-          username: channels.username,
-          avatar: channels.avatar,
-          banner: channels.banner,
-          isModel: channels.isModel,
-          createdAt: channels.createdAt,
-          description: channels.description,
-          url: channels.url
+        id: channels.id,
+        email: channels.email,
+        username: channels.username,
+        avatar: channels.avatar,
+        banner: channels.banner,
+        isModel: channels.isModel,
+        createdAt: channels.createdAt,
+        description: channels.description,
+        url: channels.url,
       })
       .from(channels)
-      .where(eq(channels.url, id));
-
+      .where(eq(channels.url, url));
+  
     if (!channel) {
-      throw new NotFoundException(`Пользователь с ID ${id} не найден`);
+      throw new NotFoundException(`Пользователь с URL ${url} не найден`);
     }
-
-    return channel;
+  
+    // Отдельно считаем totalVideo и totalViews:
+    const [{ totalVideo }] = await this.drizzleService.db
+      .select({
+        totalVideo: sql<number>`COUNT(*)`.as('totalVideo')
+      })
+      .from(videos)
+      .where(eq(videos.channelId, channel.id));
+  
+    return {
+      ...channel,
+      totalVideo
+    };
   }
 
   async searchChannels(query: string) {

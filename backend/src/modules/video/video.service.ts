@@ -119,26 +119,31 @@ export class VideoService {
         description: videos.description,
         videoUrl: videos.videoUrl,
         thumbnailUrl: videos.thumbnailUrl,
-        // views: videos.views,
         createdAt: videos.createdAt,
         channelId: videos.channelId,
         duration: videos.duration,
+        views: sql<number>`COUNT(video_views.id)`.as('views'),
         channel: {
           id: channels.id,
           username: channels.username,
-          avatar: channels.avatar
-        }
+          avatar: channels.avatar,
+        },
       })
       .from(videos)
+      .leftJoin(videoViews, eq(videoViews.videoId, videos.id))
       .innerJoin(channels, eq(channels.id, videos.channelId))
       .where(eq(videos.channelId, channelId))
+      .groupBy(
+        videos.id,
+        channels.id
+      )
       .orderBy(desc(videos.createdAt));
   
     return {
       videosChannel,
-      total: videosChannel.length
+      totalVideo: videosChannel.length
     };
-  }
+  }  
 
   async getLikedVideos(channelId: number) {
     return this.drizzleService.db

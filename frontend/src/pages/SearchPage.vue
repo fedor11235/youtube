@@ -63,7 +63,7 @@
                         </div>
                         <div class="text-caption">
                           <q-icon name="video_library" size="16px" class="q-mr-xs" />
-                          {{ channel.videosCount }} видео
+                          {{ channel.totalVideo }} видео
                         </div>
                       </div>
                     </div>

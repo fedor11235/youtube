@@ -21,16 +21,20 @@
             <h1 class="text-h4 q-mb-sm">{{ channel?.username }}</h1>
             <div class="channel-stats">
               <span class="stat-item">
-                <span class="stat-value">{{ channel?.totalViews || 0 }}</span>
+                <span class="stat-value">{{ channel?.totalVideo || 0 }}</span>
                 <span class="stat-label">видео</span>
               </span>
+              <span class="stat-separator">•</span>
+              <!-- <span class="stat-item">
+                <span class="stat-value">{{ channel?.totalViews || 0 }}</span>
+                <span class="stat-label">Количество просмотров</span>
+              </span> -->
               <span class="stat-separator">•</span>
               <span class="stat-item">
                 <span class="stat-value">{{ subscribersCount || 0 }}</span>
                 <span class="stat-label">подписчиков</span>
               </span>
             </div>
-            <p class="channel-bio q-mt-sm">{{ 'Нет описания' }}</p>
           </div>
 
           <div class="profile-actions">
@@ -43,7 +47,7 @@
               flat
             />
             <SubscribeButton
-              v-else-if="typeof videoUrl === 'string'"
+              v-else
               :channel-url="videoUrl"
               v-model:subscribers-count="subscribersCount"
             />
@@ -88,6 +92,7 @@
           <q-tab-panel name="about">
             <div class="text-h6">О пользователе</div>
             <p>Дата регистрации: {{ formatDate(channel?.createdAt || '') }}</p>
+            <p v-if="channel?.description">Описание: {{ channel?.description }}</p>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -117,7 +122,8 @@ const tab = ref('videos')
 const channel: Ref<Channel | null> = ref(null)
 const isSubscribed = ref(false);
 const subscribersCount = ref(0);
-const videoUrl = computed(() => route.params.id)
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const videoUrl: any = computed(() => route.params.url)
 const videos = ref<Video[]>([])
 
 const isOwnProfile = computed(() => {

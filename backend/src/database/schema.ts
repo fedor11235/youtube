@@ -22,7 +22,6 @@ export const videos = pgTable('videos', {
   videoUrl: varchar('video_url', { length: 255 }).notNull(),
   thumbnailUrl: varchar('thumbnail_url', { length: 255 }),
   createdAt: timestamp('created_at').defaultNow().notNull(),
-  // views: integer('views').default(0),
   duration: integer('duration')
 });
 

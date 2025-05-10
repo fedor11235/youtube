@@ -57,6 +57,6 @@ export class ChannelController {
   @Get(':id')
   @ApiOperation({ summary: 'Get channel by id' })
   async getChannelById(@Param('id') id: string) {
-    return this.channelSrvice.findById(id)
+    return this.channelSrvice.findByUrl(id)
   }
 }
