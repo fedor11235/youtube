@@ -16,6 +16,13 @@ export class ChannelController {
     return this.channelSrvice.searchChannels(query);
   }
 
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Search channels by query' })
+  async getProfile(@Req() req) {
+    return this.channelSrvice.getProfile(req.user.id);
+  }
+
   @Patch('profile')
   @UseGuards(JwtAuthGuard)
   async updateProfile(@Req() req, @Body() updateProfileDto: UpdateProfileDto) {

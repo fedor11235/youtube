@@ -61,7 +61,8 @@ const routes: RouteRecordRaw[] = [
       },
       {
         path: 'upload',
-        component: () => import('pages/UploadPage.vue')
+        component: () => import('pages/UploadPage.vue'),
+        meta: { requiresModel: true }
       },
       {
         path: 'trending',

@@ -11,7 +11,7 @@ class ProfileError extends Error {
 const profileService = {
   async getProfile() {
     try {
-      const response = await api.get('/auth/me')
+      const response = await api.get('/channels/me')
       return response.data
     } catch (error) {
       if (error instanceof Error) {
@@ -23,7 +23,7 @@ const profileService = {
 
   async updateProfile(data: Partial<Profile>) {
     try {
-      const response = await api.patch('/channel/profile', data)
+      const response = await api.patch('/channels/profile', data)
       return response.data
     } catch (error) {
       if (error instanceof Error) {
@@ -37,7 +37,7 @@ const profileService = {
     try {
       const formData = new FormData()
       formData.append('avatar', file)
-      const response = await api.post('/channel/avatar', formData, {
+      const response = await api.post('/channels/avatar', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }
@@ -55,7 +55,7 @@ const profileService = {
     try {
       const formData = new FormData()
       formData.append('banner', file)
-      const response = await api.post('/channel/banner', formData, {
+      const response = await api.post('/channels/banner', formData, {
         headers: {
           'Content-Type': 'multipart/form-data'
         }

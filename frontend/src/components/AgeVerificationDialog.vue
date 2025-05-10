@@ -36,8 +36,6 @@ const authStore = useAuthStore();
 
 const checkAgeVerification = () => {
   const isVerified = sessionStorage.getItem('ageVerified')
-  console.log("isVerified: ", isVerified)
-  console.log(authStore.isAuthenticated)
   if (!isVerified && !authStore.isAuthenticated) {
     showDialog.value = true
   }

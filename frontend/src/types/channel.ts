@@ -1,5 +1,6 @@
 export interface Channel {
   id: number;
+  isModel: boolean;
   name: string;
   avatar: string;
   banner: string;

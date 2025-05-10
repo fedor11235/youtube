@@ -30,6 +30,8 @@ export default defineRouter(function () {
       next('/login')
     } else if (to.meta.requiresGuest && authStore.isAuthenticated) {
       next('/')
+    } else if (to.meta.requiresModel && !authStore.isModel) {
+      next('/')
     } else {
       next()
     }

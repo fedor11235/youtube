@@ -13,7 +13,8 @@ export const useAuthStore = defineStore('auth', {
   }),
 
   getters: {
-    isAuthenticated: (state) => !!state.channel
+    isAuthenticated: (state) => !!state.channel,
+    isModel: (state) => !!state.channel?.isModel
   },
   
 
@@ -54,8 +55,7 @@ export const useAuthStore = defineStore('auth', {
     async checkAuth() {
       try {
         this.channel = await authService.getCurrentChannel()
-      } catch (err) {
-        console.error(err)
+      } catch {
         this.channel = null
       }
     },

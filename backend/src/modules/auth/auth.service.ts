@@ -109,43 +109,24 @@ export class AuthService {
   }
 
   async getCurrentChannel(channelId: number) {
-    const result = await this.drizzleService.db
+    const [result] = await this.drizzleService.db
     .select({
-      channel: {
-        id: channels.id,
-        email: channels.email,
-        username: channels.username,
-        createdAt: channels.createdAt,
-        avatar: channels.avatar,
-        banner: channels.banner,
-        url: channels.url
-      },
-      videos: {
-        id: videos.id,
-        title: videos.title,
-        description: videos.description,
-        videoUrl: videos.videoUrl,
-        thumbnailUrl: videos.thumbnailUrl,
-        createdAt: videos.createdAt,
-        views: videos.views
-      }
+      id: channels.id,
+      email: channels.email,
+      username: channels.username,
+      createdAt: channels.createdAt,
+      avatar: channels.avatar,
+      banner: channels.banner,
+      url: channels.url,
+      isModel: channels.isModel
     })
     .from(channels)
-    .leftJoin(videos, eq(videos.channelId, channels.id))
     .where(eq(channels.id, channelId));
 
-  if (!result.length) {
+  if (!result) {
     throw new NotFoundException('Пользователь не найден');
   }
 
-  const channelVideos = result
-    .filter(row => row?.videos?.id !== null)
-    .map(row => row.videos)
-    .sort((a, b) => b!.createdAt.getTime() - a!.createdAt.getTime());
-
-  return {
-    ...result[0].channel,
-    videos: channelVideos
-  };
+  return result;
   }
 }

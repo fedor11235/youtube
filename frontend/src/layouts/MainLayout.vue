@@ -3,7 +3,7 @@
     <q-header elevated class="bg-grey-2 text-black">
       <q-toolbar>
         <q-btn flat dense round icon="menu" @click="toggleLeftDrawer" />
-        
+
         <q-toolbar-title class="row items-center">
           <q-img src="../assets/logo.png" width="120px" />
         </q-toolbar-title>
@@ -25,7 +25,7 @@
           </q-list>
         </q-btn-dropdown>
 
-        <template v-if="authStore.isAuthenticated">
+        <template v-if="authStore.isAuthenticated && authStore.isModel">
           <q-btn round flat icon="video_call" class="q-mr-sm" to="/upload" />
         </template>
         
@@ -53,7 +53,6 @@
             @clear-all="clearAll"
           />
         </q-btn>
-        
         <template v-if="authStore.isAuthenticated">
           <q-btn-dropdown flat>
             <template v-slot:label>
