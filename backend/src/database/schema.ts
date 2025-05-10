@@ -8,6 +8,7 @@ export const channels = pgTable('channels', {
   avatar: varchar('avatar', { length: 255 }),
   banner: varchar('banner', { length: 255 }),
   isModel: boolean('is_model').default(false),
+  description: text('description'),
   passportPath: text('passport_path'),
   createdAt: timestamp('created_at').defaultNow(),
   url: varchar('url', { length: 255 }).notNull().unique(),

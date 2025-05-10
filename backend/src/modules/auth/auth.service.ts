@@ -118,6 +118,7 @@ export class AuthService {
       avatar: channels.avatar,
       banner: channels.banner,
       url: channels.url,
+      description: channels.description,
       isModel: channels.isModel
     })
     .from(channels)

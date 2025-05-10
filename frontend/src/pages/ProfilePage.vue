@@ -95,8 +95,8 @@
                 <div class="text-h6">Details</div>
                 <div class="row q-mt-md">
                   <div class="col-12 col-md-6">
-                    <!-- <div class="text-grey">Location</div>
-                    <div>{{ profile?.city }}, {{ profile?.country }}</div> -->
+                    <!-- <div class="text-grey">Location</div> -->
+                    <div>{{ profileForm.description }}</div>
                   </div>
                 </div>
               </q-card-section>
@@ -136,6 +136,14 @@
                   <q-input
                     v-model="profileForm.url"
                     label="Url"
+                    outlined
+                    :rules="[val => !!val || 'Email is required']"
+                  />
+                </div>
+                <div class="col-12 col-md-6">
+                  <q-input
+                    v-model="profileForm.description"
+                    label="Описание канала"
                     outlined
                   />
                 </div>
@@ -210,7 +218,6 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-// import { date } from 'quasar'
 import type { Profile } from '../types/profile'
 import profileService from '../services/profile'
 import { useQuasar } from 'quasar'
@@ -224,6 +231,7 @@ interface ProfileForm {
   username: string;
   email: string;
   url: string;
+  description: string;
 }
 
 const $q = useQuasar()
@@ -238,7 +246,8 @@ const isUploading = ref(false)
 const profileForm = ref<ProfileForm>({
   email: '',
   username: '',
-  url: ''
+  url: '',
+  description: ''
 })
 
 const newBanner = ref<File | null>(null)
@@ -354,7 +363,8 @@ onMounted(async () => {
       profileForm.value = {
         username: profile.value.username,
         email: profile.value.email,
-        url: profile.value.url
+        url: profile.value.url,
+        description: profile.value.description
       }
     }
   } catch (err) {

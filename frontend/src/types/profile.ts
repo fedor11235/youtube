@@ -10,5 +10,6 @@ export interface Profile {
   joinDate: Date;
   url: string;
   banner: string;
+  description: string;
   videos: Video[];
 }

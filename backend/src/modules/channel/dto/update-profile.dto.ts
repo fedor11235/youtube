@@ -13,4 +13,10 @@ export class UpdateProfileDto {
   @IsString()
   @Length(1, 100)
   url?: string;
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsString()
+  @Length(1, 100)
+  description: string
 }

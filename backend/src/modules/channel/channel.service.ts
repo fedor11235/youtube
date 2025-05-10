@@ -21,6 +21,7 @@ export class ChannelSrvice {
         avatar: channels.avatar,
         banner: channels.banner,
         url: channels.url,
+        description: channels.description,
         isModel: channels.isModel
       },
       videos: {
@@ -62,6 +63,7 @@ export class ChannelSrvice {
           banner: channels.banner,
           isModel: channels.isModel,
           createdAt: channels.createdAt,
+          description: channels.description,
           url: channels.url
       })
       .from(channels)
@@ -83,6 +85,7 @@ export class ChannelSrvice {
         email: channels.email,
         username: channels.username,
         avatar: channels.avatar,
+        description: channels.description,
         url: channels.url,
         createdAt: channels.createdAt
       })
