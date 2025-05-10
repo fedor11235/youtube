@@ -26,17 +26,17 @@ const videoService = {
     }
   },
   
-  async getVideos(): Promise<Video[]> {
-    try {
-      const response = await api.get('/videos')
-      return response.data
-    } catch (error) {
-      if (error instanceof Error) {
-        throw new VideoError(error.message)
-      }
-      throw new VideoError('Failed to fetch videos')
-    }
-  },
+  // async getVideos(): Promise<Video[]> {
+  //   try {
+  //     const response = await api.get('/videos')
+  //     return response.data
+  //   } catch (error) {
+  //     if (error instanceof Error) {
+  //       throw new VideoError(error.message)
+  //     }
+  //     throw new VideoError('Failed to fetch videos')
+  //   }
+  // },
 
   async getVideo(id: number): Promise<Video> {
     try {
@@ -182,7 +182,7 @@ const videoService = {
     return data;
   },
 
-  async searchVideos(query: string, tags: string[] = []): Promise<Video[]> {
+  async searchVideos(query: string, tags: string[] = [], sort: string): Promise<Video[]> {
     try {
       const params = new URLSearchParams();
       if (query) {
@@ -190,6 +190,10 @@ const videoService = {
       }
       if (tags.length > 0) {
         params.append('tags', tags.join(','));
+      }
+
+      if (sort) {
+        params.append('sort', sort);
       }
       
       const response = await api.get(`/videos/search?${params.toString()}`);

@@ -27,39 +27,39 @@ export class VideoService {
     return video;
   }
 
-  async getAllVideos() {
-    //const test = this.drizzleService.db.select(videos)
-    const result = await this.drizzleService.db
-      .select({
-        id: videos.id,
-        title: videos.title,
-        description: videos.description,
-        videoUrl: videos.videoUrl,
-        thumbnailUrl: videos.thumbnailUrl,
-        views: videos.views,
-        createdAt: videos.createdAt,
-        duration: videos.duration,
-        channel: {
-          id: channels.id,
-          username: channels.username,
-          email: channels.email,
-          avatar: channels.avatar,
-          url: channels.url
-        }
-      })
-      .from(videos)
-      .leftJoin(channels, eq(videos.channelId, channels.id));
+  // async getAllVideos() {
+  //   //const test = this.drizzleService.db.select(videos)
+  //   const result = await this.drizzleService.db
+  //     .select({
+  //       id: videos.id,
+  //       title: videos.title,
+  //       description: videos.description,
+  //       videoUrl: videos.videoUrl,
+  //       thumbnailUrl: videos.thumbnailUrl,
+  //       views: videos.views,
+  //       createdAt: videos.createdAt,
+  //       duration: videos.duration,
+  //       channel: {
+  //         id: channels.id,
+  //         username: channels.username,
+  //         email: channels.email,
+  //         avatar: channels.avatar,
+  //         url: channels.url
+  //       }
+  //     })
+  //     .from(videos)
+  //     .leftJoin(channels, eq(videos.channelId, channels.id));
   
-    return result.map((video) => ({
-      ...video,
-      channel: {
-        id: video.channel!.id,
-        username: video.channel!.username,
-        avatar: video.channel!.avatar || null,
-        url: video.channel!.url
-      },
-    }));
-  }
+  //   return result.map((video) => ({
+  //     ...video,
+  //     channel: {
+  //       id: video.channel!.id,
+  //       username: video.channel!.username,
+  //       avatar: video.channel!.avatar || null,
+  //       url: video.channel!.url
+  //     },
+  //   }));
+  // }
 
   async getVideoById(id: number) {
     const video = await this.drizzleService.db.select({
@@ -228,10 +228,25 @@ export class VideoService {
     }));
   }
 
-  async searchVideos(query: string, tagNames: string[] = []) {
-    const result = await this.drizzleService.db.execute(
+  async searchVideos(query: string, tagNames: string[] = [], sort: string) {
+    const orderByClause = (() => {
+      switch (sort) {
+        case 'most_viewed':
+          return sql`videos.views DESC, videos.created_at DESC`;
+        case 'least_viewed':
+          return sql`videos.views ASC, videos.created_at DESC`;
+        case 'oldest':
+          return sql`videos.created_at ASC`;
+        case 'newest':
+          return sql`videos.created_at DESC`;
+        default:
+          return sql`videos.created_at DESC`;
+      }
+    })();
+  
+    const queryParts = [
       sql`
-        SELECT DISTINCT ON (videos.id)
+        SELECT
           videos.id,
           videos.title,
           videos.description,
@@ -246,17 +261,37 @@ export class VideoService {
           channels.url
         FROM videos
         LEFT JOIN channels ON videos.channel_id = channels.id
-        ${query ? sql`WHERE videos.title ILIKE ${'%' + query + '%'} OR videos.description ILIKE ${'%' + query + '%'} OR channels.username ILIKE ${'%' + query + '%'}` : sql``}
-        ${tagNames.length > 0 ? sql`
-          INNER JOIN video_tags ON video_tags.video_id = videos.id
-          INNER JOIN tags ON tags.id = video_tags.tag_id
-          WHERE tags.name IN (${sql.join(tagNames, sql`, `)})
-        ` : sql``}
-        ORDER BY videos.id, videos.created_at DESC;
       `
-    );
+    ];
   
-    // Формируем результат с типами
+    if (tagNames.length > 0) {
+      queryParts.push(sql`
+        INNER JOIN video_tags ON video_tags.video_id = videos.id
+        INNER JOIN tags ON tags.id = video_tags.tag_id
+      `);
+    }
+  
+    const whereConditions: any[] = [];
+  
+    if (query) {
+      const likeQuery = `%${query}%`;
+      whereConditions.push(sql`videos.title ILIKE ${likeQuery}`);
+      whereConditions.push(sql`videos.description ILIKE ${likeQuery}`);
+      whereConditions.push(sql`channels.username ILIKE ${likeQuery}`);
+    }
+  
+    if (tagNames.length > 0) {
+      whereConditions.push(sql`tags.name IN (${sql.join(tagNames, sql`, `)})`);
+    }
+  
+    if (whereConditions.length > 0) {
+      queryParts.push(sql`WHERE ${sql.join(whereConditions, sql` AND `)}`);
+    }
+  
+    queryParts.push(sql`ORDER BY ${orderByClause}`);
+  
+    const result = await this.drizzleService.db.execute(sql.join(queryParts, sql`\n`));
+  
     return result.rows.map(row => ({
       id: row.id,
       title: row.title,
@@ -274,6 +309,8 @@ export class VideoService {
       },
     }));
   }
+  
+  
 
   async addVideoTags(videoId: number, tagNames: string[]): Promise<void> {
     // Получаем или создаем теги

@@ -49,19 +49,20 @@ export class VideoController {
     }
   }
 
-  @Get()
-  async getAllVideos() {
-    return this.videoService.getAllVideos();
-  }
+  // @Get()
+  // async getAllVideos() {
+  //   return this.videoService.getAllVideos();
+  // }
 
   @Get('search')
   @ApiOperation({ summary: 'Поиск видео' })
   async searchVideos(
     @Query('q') query: string,
-    @Query('tags') tags: string
+    @Query('tags') tags: string,
+    @Query('sort') sort: string
   ) {
     const tagNames = tags ? tags.split(',') : [];
-    return this.videoService.searchVideos(query, tagNames);
+    return this.videoService.searchVideos(query, tagNames, sort);
   }
 
   @Get('related/:id')

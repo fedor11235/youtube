@@ -4,7 +4,7 @@
     <div class="col-12 col-sm-8 col-md-6 q-mb-lg q-mt-sm">
       <div class="row q-col-gutter-md">
           <!-- Поисковая строка -->
-          <div class="col-12 col-sm-6">
+          <div class="col-12 col-sm-4">
             <q-input
               v-model="searchQuery"
               outlined
@@ -28,8 +28,24 @@
             </q-input>
           </div>
 
+          <div class="col-12 col-sm-4">
+            <q-select
+              v-model="sortBy"
+              :options="sortOptions"
+              label="Сортировка"
+              outlined
+              dense
+              @update:model-value="handleSearch"
+            >
+              <template v-slot:append>
+                <q-icon name="sort" />
+              </template>
+            </q-select>
+          </div>
+        
+          
           <!-- Выбор тегов -->
-          <div class="col-12 col-sm-6">
+          <div class="col-12 col-sm-4">
             <q-select
               v-model="selectedTags"
               outlined
@@ -59,7 +75,8 @@
               </template>
             </q-select>
           </div>
-      </div>
+        </div>
+
     </div>
     <div class="row q-col-gutter-md">
       <div
@@ -94,6 +111,14 @@ const videos = ref<Video[]>([])
 const loading = ref(false)
 const error = ref<string | null>(null)
 const searchQuery = ref('')
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const sortBy: any = ref('')
+const sortOptions = [
+  { label: 'Новые', value: 'newest' },
+  { label: 'Старые', value: 'oldest' },
+  { label: 'Популярные', value: 'most_viewed' },
+  { label: 'Менее популярные', value: 'least_viewed' }
+]
 const selectedTags = ref([])
 const allVideos = ref<Video[]>([])
 const availableTags = ref<string[]>([])
@@ -103,7 +128,7 @@ const loadVideos = async () => {
     loading.value = true
     error.value = null
     const [videosResponse, tagsResponse] = await Promise.all([
-      videoService.getVideos(),
+      videoService.searchVideos('', [], ''),
       videoService.getTags()
     ])
     allVideos.value = videosResponse
@@ -124,7 +149,8 @@ const handleSearch = async () => {
     
     const searchResults = await videoService.searchVideos(
       searchQuery.value,
-      selectedTags.value
+      selectedTags.value,
+      sortBy.value?.value
     );
     
     videos.value = searchResults;
