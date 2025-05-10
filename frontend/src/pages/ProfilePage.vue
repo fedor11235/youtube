@@ -44,7 +44,7 @@
             <h1 class="text-h4 q-mb-sm">{{ profile?.username }}</h1>
             <div class="channel-stats">
               <span class="stat-item">
-                <span class="stat-value">{{ profile?.totalViews || 0 }}</span>
+                <span class="stat-value">{{ profile?.totalVideo || 0 }}</span>
                 <span class="stat-label">видео</span>
               </span>
               <span class="stat-separator">•</span>
@@ -53,7 +53,7 @@
                 <span class="stat-label">подписчиков</span>
               </span>
             </div>
-            <p class="channel-bio q-mt-sm">{{ 'Нет описания' }}</p>
+            <p class="channel-bio q-mt-sm">{{ profile?.description }}</p>
           </div>
         </div>
 
@@ -71,8 +71,8 @@
         </q-tabs>
       </div>
     </div>
+    
     <div class="row q-col-gutter-lg">
-
       <div class="col-12">
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="videos">
@@ -152,55 +152,60 @@
                 />
               </div>
             </q-form>
-            <q-card class="q-mt-md">
-        <q-card-section>
-          <div class="text-h6">Настройки студии</div>
-          
-          <q-item tag="label" v-ripple>
-            <q-item-section>
-              <q-item-label>Включить режим студии</q-item-label>
-              <q-item-label caption>
-                Активируйте для доступа к расширенным функциям студии
-              </q-item-label>
-            </q-item-section>
-            <q-item-section side>
-              <q-toggle v-model="studioMode" @update:model-value="handleStudioModeChange" />
-            </q-item-section>
-          </q-item>
+            <q-card v-if="!profile?.isModel" class="q-mt-md">
+              <q-card-section>
+                <div class="text-h6">Настройки студии</div>
+                
+                <q-item tag="label" v-ripple>
+                  <q-item-section>
+                    <q-item-label>Включить режим студии</q-item-label>
+                    <q-item-label caption>
+                      Активируйте для доступа к расширенным функциям студии
+                    </q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-toggle v-model="studioMode" @update:model-value="handleStudioModeChange" />
+                  </q-item-section>
+                </q-item>
 
-          <div v-if="studioMode" class="q-mt-md">
-            <div class="text-subtitle2 q-mb-sm">Подтверждение возраста</div>
+                <div v-if="studioMode" class="q-mt-md">
+                  <div class="text-subtitle2 q-mb-sm">Подтверждение возраста</div>
 
-            <div v-if="!hasPassportPhoto" class="passport-upload q-pa-md">
-              <q-uploader
-                label="Загрузите фото паспорта"
-                accept=".jpg,.jpeg,.png"
-                :max-files="1"
-                @added="handlePassportUpload"
-                class="full-width"
-                flat
-                bordered
-                :disable="isUploading"
-              >
-                <template>
-                  <div class="row no-wrap items-center q-pa-sm">
-                    <q-icon name="add_photo_alternate" size="24px" class="q-mr-sm" />
-                    <div class="col">Загрузите фото паспорта для подтверждения возраста</div>
+                  <div v-if="!hasPassportPhoto" class="passport-upload q-pa-md">
+                    <q-uploader
+                      label="Загрузите фото паспорта"
+                      accept=".jpg,.jpeg,.png"
+                      :max-files="1"
+                      @added="handlePassportUpload"
+                      class="full-width"
+                      flat
+                      bordered
+                      :disable="isUploading"
+                    >
+                      <template>
+                        <div class="row no-wrap items-center q-pa-sm">
+                          <q-icon name="add_photo_alternate" size="24px" class="q-mr-sm" />
+                          <div class="col">Загрузите фото паспорта для подтверждения возраста</div>
+                        </div>
+                      </template>
+                    </q-uploader>
+                    <div class="text-caption q-mt-sm text-grey-7">
+                      Загружая изображение паспорта, вы подтверждаете, что документ принадлежит вам, и даёте согласие на обработку персональных данных в целях верификации возраста.
+                    </div>
                   </div>
-                </template>
-              </q-uploader>
-              <div class="text-caption q-mt-sm text-grey-7">
-                Загружая изображение паспорта, вы подтверждаете, что документ принадлежит вам, и даёте согласие на обработку персональных данных в целях верификации возраста.
-              </div>
-            </div>
-            
-            <div v-else class="passport-verified q-pa-sm">
-              <q-icon name="check_circle" color="positive" size="24px" class="q-mr-sm" />
-              <span class="text-positive">Паспорт загружен и ожидает проверки</span>
-            </div>
-          </div>
-        </q-card-section>
-      </q-card>
+                  
+                  <div v-else class="passport-verified q-pa-sm">
+                    <q-icon name="check_circle" color="positive" size="24px" class="q-mr-sm" />
+                    <span class="text-positive">Паспорт загружен и ожидает проверки</span>
+                  </div>
+                </div>
+              </q-card-section>
+            </q-card>
+            <q-card v-else class="q-mt-md">
+              <q-card-section>
+                <div class="text-h6">Ваш аккаунт подтвержденый</div>    
+              </q-card-section>
+            </q-card>
           </q-tab-panel>
         </q-tab-panels>
       </div>
@@ -213,7 +218,6 @@ import { ref, onMounted } from 'vue'
 import type { Profile } from '../types/profile'
 import profileService from '../services/profile'
 import { useQuasar } from 'quasar'
-// import { getAvatar, getBanner, getPassport } from '../utils/avatar'
 import { getAvatar, getBanner } from '../utils/avatar'
 import videoService from 'src/services/video'
 import studioService from '../services/studio'

@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
-import { channels, videos, videoViews } from '../../database/schema';
+import { channels, subscriptions, videos, videoViews } from '../../database/schema';
 import { eq, ilike, or, and, sql } from 'drizzle-orm';
 import * as path from 'path';
 import { promises as fs } from 'fs';
@@ -12,47 +12,63 @@ export class ChannelSrvice {
 
   async getProfile(channelId: number) {
     const result = await this.drizzleService.db
-    .select({
-      channel: {
-        id: channels.id,
-        email: channels.email,
-        username: channels.username,
-        createdAt: channels.createdAt,
-        avatar: channels.avatar,
-        banner: channels.banner,
-        url: channels.url,
-        description: channels.description,
-        isModel: channels.isModel,
-        hasPassportPhoto: channels.passportPath
-      },
-      videos: {
-        id: videos.id,
-        title: videos.title,
-        description: videos.description,
-        videoUrl: videos.videoUrl,
-        thumbnailUrl: videos.thumbnailUrl,
-        createdAt: videos.createdAt,
-        // views: videos.views
-      }
-    })
+      .select({
+        channel: {
+          id: channels.id,
+          email: channels.email,
+          username: channels.username,
+          createdAt: channels.createdAt,
+          avatar: channels.avatar,
+          banner: channels.banner,
+          url: channels.url,
+          description: channels.description,
+          isModel: channels.isModel,
+          hasPassportPhoto: channels.passportPath
+        },
+        videos: {
+          id: videos.id,
+          title: videos.title,
+          description: videos.description,
+          videoUrl: videos.videoUrl,
+          thumbnailUrl: videos.thumbnailUrl,
+          createdAt: videos.createdAt
+        }
+      })
       .from(channels)
       .leftJoin(videos, eq(videos.channelId, channels.id))
       .where(eq(channels.id, channelId));
-
+  
     if (!result.length) {
       throw new NotFoundException('Пользователь не найден');
     }
-
+  
     const channelVideos = result
       .filter(row => row?.videos?.id !== null)
       .map(row => row.videos)
       .sort((a, b) => b!.createdAt.getTime() - a!.createdAt.getTime());
-
+  
+    // Получаем количество видео
+    const [{ count: totalVideos }] = await this.drizzleService.db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(videos)
+      .where(eq(videos.channelId, channelId))
+      .execute();
+  
+    // Получаем количество подписчиков
+    const [{ count: totalSubscribers }] = await this.drizzleService.db
+      .select({ count: sql<number>`COUNT(*)` })
+      .from(subscriptions)
+      .where(eq(subscriptions.channelId, channelId))
+      .execute();
+  
     return {
       ...result[0].channel,
+      totalVideo: Number(totalVideos),
+      subscribers: Number(totalSubscribers),
       videos: channelVideos
     };
   }
+  
 
   async findByUrl(url: string) {
     const [channel] = await this.drizzleService.db

@@ -6,7 +6,9 @@ export interface Profile {
   username: string;
   avatar: string;
   subscribers: number;
-  totalViews: number;
+  isModel: boolean;
+  // totalViews: number;
+  totalVideo: number;
   joinDate: Date;
   url: string;
   banner: string;
