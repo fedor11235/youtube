@@ -32,7 +32,7 @@ export class ChannelSrvice {
         videoUrl: videos.videoUrl,
         thumbnailUrl: videos.thumbnailUrl,
         createdAt: videos.createdAt,
-        views: videos.views
+        // views: videos.views
       }
     })
       .from(channels)

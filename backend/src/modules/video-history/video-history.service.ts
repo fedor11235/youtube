@@ -25,7 +25,7 @@ export class VideoHistoryService {
         videoId: videos.id,
         title: videos.title,
         thumbnailUrl: videos.thumbnailUrl,
-        views: videos.views,
+        // views: videos.views,
         videoCreatedAt: videos.createdAt,
         channelId: channels.id,
         username: channels.username,
@@ -44,7 +44,7 @@ export class VideoHistoryService {
         id: row.videoId,
         title: row.title,
         thumbnailUrl: row.thumbnailUrl,
-        views: row.views,
+        // views: row.views,
         createdAt: row.videoCreatedAt,
         channel: {
           id: row.channelId,

@@ -59,7 +59,7 @@ export class FavoritesService {
         description: videos.description,
         thumbnailUrl: videos.thumbnailUrl,
         createdAt: videos.createdAt,
-        views: videos.views,
+        // views: videos.views,
         channel: {
           id: channels.id,
           username: channels.username,

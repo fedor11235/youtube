@@ -68,7 +68,7 @@ export class VideoService {
         description: videos.description,
         videoUrl: videos.videoUrl,
         thumbnailUrl: videos.thumbnailUrl,
-        views: videos.views,
+        // views: videos.views,
         createdAt: videos.createdAt,
         duration: videos.duration,
         channel: {
@@ -119,7 +119,7 @@ export class VideoService {
         description: videos.description,
         videoUrl: videos.videoUrl,
         thumbnailUrl: videos.thumbnailUrl,
-        views: videos.views,
+        // views: videos.views,
         createdAt: videos.createdAt,
         channelId: videos.channelId,
         duration: videos.duration,
@@ -148,7 +148,7 @@ export class VideoService {
         description: videos.description,
         thumbnailUrl: videos.thumbnailUrl,
         createdAt: videos.createdAt,
-        viewsCount: videos.views,
+        // viewsCount: videos.views,
         duration: videos.duration,
         channel: {
           id: channels.id,
@@ -202,7 +202,7 @@ export class VideoService {
         description: videos.description,
         videoUrl: videos.videoUrl,
         thumbnailUrl: videos.thumbnailUrl,
-        views: videos.views,
+        // views: videos.views,
         createdAt: videos.createdAt,
         duration: videos.duration,
         channel: {
@@ -232,65 +232,63 @@ export class VideoService {
     const orderByClause = (() => {
       switch (sort) {
         case 'most_viewed':
-          return sql`videos.views DESC, videos.created_at DESC`;
+          return sql`views DESC, videos.created_at DESC`;
         case 'least_viewed':
-          return sql`videos.views ASC, videos.created_at DESC`;
+          return sql`views ASC, videos.created_at DESC`;
         case 'oldest':
           return sql`videos.created_at ASC`;
         case 'newest':
-          return sql`videos.created_at DESC`;
         default:
           return sql`videos.created_at DESC`;
       }
     })();
   
-    const queryParts = [
-      sql`
-        SELECT
-          videos.id,
-          videos.title,
-          videos.description,
-          videos.video_url AS "videoUrl",
-          videos.thumbnail_url AS "thumbnailUrl",
-          videos.views,
-          videos.created_at AS "createdAt",
-          videos.duration,
-          channels.id AS "channelId",
-          channels.username,
-          channels.avatar,
-          channels.url
-        FROM videos
-        LEFT JOIN channels ON videos.channel_id = channels.id
-      `
-    ];
-  
-    if (tagNames.length > 0) {
-      queryParts.push(sql`
-        INNER JOIN video_tags ON video_tags.video_id = videos.id
-        INNER JOIN tags ON tags.id = video_tags.tag_id
-      `);
-    }
-  
-    const whereConditions: any[] = [];
+    const conditions: any[] = [];
   
     if (query) {
-      const likeQuery = `%${query}%`;
-      whereConditions.push(sql`videos.title ILIKE ${likeQuery}`);
-      whereConditions.push(sql`videos.description ILIKE ${likeQuery}`);
-      whereConditions.push(sql`channels.username ILIKE ${likeQuery}`);
+      const like = `%${query}%`;
+      conditions.push(sql`(videos.title ILIKE ${like} OR videos.description ILIKE ${like} OR channels.username ILIKE ${like})`);
     }
   
     if (tagNames.length > 0) {
-      whereConditions.push(sql`tags.name IN (${sql.join(tagNames, sql`, `)})`);
+      conditions.push(sql`tags.name IN (${sql.join(tagNames, sql`, `)})`);
     }
   
-    if (whereConditions.length > 0) {
-      queryParts.push(sql`WHERE ${sql.join(whereConditions, sql` AND `)}`);
-    }
+    const whereClause = conditions.length > 0
+      ? sql`WHERE ${sql.join(conditions, sql` AND `)}`
+      : sql``;
   
-    queryParts.push(sql`ORDER BY ${orderByClause}`);
+    const joinTags = tagNames.length > 0
+      ? sql`
+          INNER JOIN video_tags ON video_tags.video_id = videos.id
+          INNER JOIN tags ON tags.id = video_tags.tag_id
+        `
+      : sql``;
   
-    const result = await this.drizzleService.db.execute(sql.join(queryParts, sql`\n`));
+    const result = await this.drizzleService.db.execute(sql`
+      SELECT 
+        videos.id,
+        videos.title,
+        videos.description,
+        videos.video_url AS "videoUrl",
+        videos.thumbnail_url AS "thumbnailUrl",
+        COUNT(video_views.id)::int AS views,
+        videos.created_at AS "createdAt",
+        videos.duration,
+        channels.id AS "channelId",
+        channels.username,
+        channels.avatar,
+        channels.url
+      FROM videos
+      LEFT JOIN channels ON videos.channel_id = channels.id
+      LEFT JOIN video_views ON video_views.video_id = videos.id
+      ${joinTags}
+      ${whereClause}
+      GROUP BY 
+        videos.id,
+        channels.id
+      ORDER BY ${orderByClause}
+    `);
   
     return result.rows.map(row => ({
       id: row.id,
@@ -311,7 +309,6 @@ export class VideoService {
   }
   
   
-
   async addVideoTags(videoId: number, tagNames: string[]): Promise<void> {
     // Получаем или создаем теги
     const tagPromises = tagNames.map(async (name) => {
