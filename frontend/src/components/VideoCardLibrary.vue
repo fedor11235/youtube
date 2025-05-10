@@ -27,9 +27,13 @@
             </div>
             
             <div class="row items-center q-mt-sm">
-              <q-avatar size="24px" class="q-mr-sm">
-                <img :src="getAvatar(video.channel.avatar)">
-              </q-avatar>
+              <ChannelAvatar
+                :avatar="video.channel.avatar"
+                :url="video.channel.url"
+                :username="video.channel.username"
+                size="40px"
+                class="q-mr-md"
+              />
               <span class="text-subtitle2">{{ video.channel.username }}</span>
             </div>
 
@@ -51,9 +55,10 @@
 </template>
 
 <script setup lang="ts">
-import { getAvatar, getThumbnail } from '../utils/avatar'
+import { getThumbnail } from '../utils/avatar'
 import { formatDate } from '../utils/date'
 import type { LibraryVideo } from '../types/video'
+import ChannelAvatar from '../components/ChannelAvatar.vue'
 
 defineProps<{
   video: LibraryVideo

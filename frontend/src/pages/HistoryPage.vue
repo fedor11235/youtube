@@ -59,6 +59,7 @@ const clearConfirmDialog = ref(false);
 const loadHistory = async () => {
   try {
     history.value = await videoHistoryService.getHistory();
+    console.log(history.value )
   } catch {
     $q.notify({
       type: 'negative',
@@ -87,9 +88,8 @@ const clearHistory = async () => {
   }
 };
 
-onMounted(() => {
-  // eslint-disable-next-line @typescript-eslint/no-floating-promises
-  loadHistory();
+onMounted(async () => {
+  await loadHistory();
 });
 </script>
 

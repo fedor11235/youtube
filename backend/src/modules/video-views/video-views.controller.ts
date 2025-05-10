@@ -9,8 +9,7 @@ export class VideoViewsController {
   @Post(':videoId')
   @UseGuards(OptionalJwtAuthGuard)
   async addView(@Req() req, @Param('videoId') videoId: string) {
-    const channelId = req.channel?.id || null;
-    await this.videoViewsService.addView(channelId, parseInt(videoId));
+    await this.videoViewsService.addView(req.user?.id, parseInt(videoId));
     return { success: true };
   }
 

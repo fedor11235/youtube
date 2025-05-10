@@ -1,4 +1,4 @@
-import { Controller, Post, Get, Delete, Param, UseGuards, Request } from '@nestjs/common';
+import { Controller, Post, Get, Delete, Param, UseGuards, Request, Req } from '@nestjs/common';
 import { VideoHistoryService } from './video-history.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
@@ -9,19 +9,19 @@ export class VideoHistoryController {
 
   @Post(':videoId')
   async addToHistory(
-    @Request() req,
+    @Req() req,
     @Param('videoId') videoId: string
   ) {
     return this.videoHistoryService.addToHistory(req.user.id, parseInt(videoId));
   }
 
   @Get()
-  async getHistory(@Request() req) {
+  async getHistory(@Req() req) {
     return this.videoHistoryService.getHistory(req.user.id);
   }
 
   @Delete()
-  async clearHistory(@Request() req) {
+  async clearHistory(@Req() req) {
     return this.videoHistoryService.clearHistory(req.user.id);
   }
 }

@@ -8,47 +8,54 @@ export class VideoViewsService {
   constructor(private readonly drizzleService: DrizzleService) {}
 
   async addView(channelId: number | null, videoId: number) {
+    const now = new Date();
+  
     if (channelId) {
-      const recentView = await this.drizzleService.db
+      // Получаем количество просмотров этого пользователя за последние 24 часа
+      const recentViews = await this.drizzleService.db
         .select()
         .from(videoViews)
         .where(
           and(
             eq(videoViews.channelId, channelId),
-            eq(videoViews.videoId, videoId),
             sql`${videoViews.createdAt} > NOW() - INTERVAL '24 hours'`
           )
         )
         .execute();
-
-        this.drizzleService.db.insert(videoHistory)
-          .values({
-            channelId,
-            videoId,
-            watchedAt: new Date()
-          })
-          .execute();
-
-      if (recentView.length === 0) {
-        await this.drizzleService.db
-          .insert(videoViews)
-          .values({
-            channelId,
-            videoId,
-            createdAt: new Date(),
-          })
-          .execute();
+  
+      if (recentViews.length >= 50) {
+        // Лимит исчерпан — не засчитываем просмотр
+        return;
       }
-    } else {
-      await this.drizzleService.db
-        .insert(videoViews)
-        .values({
+  
+      // Проверка: был ли просмотр конкретного видео за 24ч
+      const hasViewedThisVideo = recentViews.some(view => view.videoId === videoId);
+  
+      // Записываем в историю в любом случае
+      await this.drizzleService.db.insert(videoHistory).values({
+        channelId,
+        videoId,
+        watchedAt: now
+      }).execute();
+  
+      // Если это видео ещё не просматривалось за последние 24ч — засчитываем просмотр
+      if (!hasViewedThisVideo) {
+        await this.drizzleService.db.insert(videoViews).values({
+          channelId,
           videoId,
-          createdAt: new Date(),
-        })
-        .execute();
+          createdAt: now
+        }).execute();
+      }
+  
+    } else {
+      // Анонимный пользователь — просто добавляем просмотр
+      await this.drizzleService.db.insert(videoViews).values({
+        videoId,
+        createdAt: now
+      }).execute();
     }
   }
+  
 
   async getViewsCount(videoId: number): Promise<number> {
     const result = await this.drizzleService.db
