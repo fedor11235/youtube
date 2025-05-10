@@ -4,7 +4,7 @@ export const channels = pgTable('channels', {
   id: serial('id').primaryKey(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   password: varchar('password', { length: 255 }).notNull(),
-  username: varchar('username', { length: 100 }),
+  username: varchar('username', { length: 100 }).notNull().unique(),
   avatar: varchar('avatar', { length: 255 }),
   banner: varchar('banner', { length: 255 }),
   isModel: boolean('is_model').default(false),

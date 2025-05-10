@@ -191,7 +191,7 @@ export class VideoService {
       )
       .groupBy(videos.id, channels.id)
       .orderBy(desc(sql`COUNT(${videoViews.id})`))
-      .limit(10);
+      .limit(50);
   }
 
   async getRelatedVideos(id: number) {

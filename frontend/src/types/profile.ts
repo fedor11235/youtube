@@ -11,5 +11,6 @@ export interface Profile {
   url: string;
   banner: string;
   description: string;
+  hasPassportPhoto: string;
   videos: Video[];
 }

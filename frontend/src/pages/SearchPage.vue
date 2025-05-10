@@ -32,7 +32,7 @@
             <!-- Баннер пользователя -->
             <div class="channel-banner">
               <img 
-                :src="channel.banner || 'https://picsum.photos/1200/300'" 
+                :src="getBanner(channel.banner)" 
                 class="banner-image"
                 alt="Channel banner"
               >
@@ -109,6 +109,7 @@
 import { ref } from 'vue'
 import { useChannelStore } from 'src/stores/channel'
 import { useAuthStore } from 'src/stores/auth'
+import { getBanner } from '../utils/avatar'
 import ChannelAvatar from '../components/ChannelAvatar.vue'
 import SubscribeButton from '../components/SubscribeButton.vue'
 import type { Channel } from 'src/types/channel'

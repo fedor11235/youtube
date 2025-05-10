@@ -73,10 +73,8 @@
     </div>
     <div class="row q-col-gutter-lg">
 
-      <!-- Profile Tabs -->
       <div class="col-12">
         <q-tab-panels v-model="tab" animated>
-          <!-- Videos Tab -->
           <q-tab-panel name="videos">
             <div  v-if="profile?.videos.length"  class="row q-col-gutter-md">
               <div v-for="video in profile?.videos" :key="video.id" class="col-12 col-sm-6 col-md-4">
@@ -88,14 +86,12 @@
             </div>
           </q-tab-panel>
 
-          <!-- About Tab -->
           <q-tab-panel name="about">
             <q-card flat bordered>
               <q-card-section>
                 <div class="text-h6">Details</div>
                 <div class="row q-mt-md">
                   <div class="col-12 col-md-6">
-                    <!-- <div class="text-grey">Location</div> -->
                     <div>{{ profileForm.description }}</div>
                   </div>
                 </div>
@@ -103,7 +99,6 @@
             </q-card>
           </q-tab-panel>
 
-          <!-- Settings Tab -->
           <q-tab-panel name="settings">
             <q-form @submit="updateProfile" class="q-gutter-md">
               <div class="row q-col-gutter-md">
@@ -176,8 +171,6 @@
           <div v-if="studioMode" class="q-mt-md">
             <div class="text-subtitle2 q-mb-sm">Подтверждение возраста</div>
 
-            
-            
             <div v-if="!hasPassportPhoto" class="passport-upload q-pa-md">
               <q-uploader
                 label="Загрузите фото паспорта"
@@ -198,9 +191,8 @@
               </q-uploader>
               <div class="text-caption q-mt-sm text-grey-7">
                 Загружая изображение паспорта, вы подтверждаете, что документ принадлежит вам, и даёте согласие на обработку персональных данных в целях верификации возраста.
+              </div>
             </div>
-
-          </div>
             
             <div v-else class="passport-verified q-pa-sm">
               <q-icon name="check_circle" color="positive" size="24px" class="q-mr-sm" />
@@ -221,6 +213,7 @@ import { ref, onMounted } from 'vue'
 import type { Profile } from '../types/profile'
 import profileService from '../services/profile'
 import { useQuasar } from 'quasar'
+// import { getAvatar, getBanner, getPassport } from '../utils/avatar'
 import { getAvatar, getBanner } from '../utils/avatar'
 import videoService from 'src/services/video'
 import studioService from '../services/studio'
@@ -280,8 +273,6 @@ const handlePassportUpload = async (files: readonly File[]) => {
       type: 'negative',
       message: 'Ошибка при загрузке паспорта. Пожалуйста, попробуйте снова.'
     })
-  } finally {
-    isUploading.value = false
   }
 }
 
@@ -366,6 +357,19 @@ onMounted(async () => {
         url: profile.value.url,
         description: profile.value.description
       }
+      studioMode.value = !!profile.value.hasPassportPhoto
+      isUploading.value = !!profile.value.hasPassportPhoto
+
+      // const passportUrl = getPassport(profile.value.hasPassportPhoto)
+
+      // const response = await fetch(passportUrl);
+      // const blob = await response.blob();
+
+      // const file = new File([blob], 'passport-example.jpg', {
+      //   type: blob.type,
+      // });
+
+      // uploader.value.addFiles([file]); // Добавить файл в q-uploader вручную
     }
   } catch (err) {
     console.error('Error fetching profile:', err)

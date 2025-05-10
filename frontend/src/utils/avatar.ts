@@ -27,3 +27,10 @@ export function getVideo(fileName: string | undefined) {
   }
   return 'https://cdn.quasar.dev/img/avatar.png'
 }
+
+export function getPassport(fileName: string | undefined) {
+  if(fileName) {
+    return 'http://localhost:3000/api/files/passport/' + fileName
+  }
+  return LogoImg
+}

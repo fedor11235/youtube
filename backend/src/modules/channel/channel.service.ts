@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { DrizzleService } from '../drizzle/drizzle.service';
 import { channels, videos } from '../../database/schema';
-import { eq, ilike, or } from 'drizzle-orm';
+import { eq, ilike, or, and } from 'drizzle-orm';
 import * as path from 'path';
 import { promises as fs } from 'fs';
 import { UpdateProfileDto } from './dto/update-profile.dto';
@@ -22,7 +22,8 @@ export class ChannelSrvice {
         banner: channels.banner,
         url: channels.url,
         description: channels.description,
-        isModel: channels.isModel
+        isModel: channels.isModel,
+        hasPassportPhoto: channels.passportPath
       },
       videos: {
         id: videos.id,
@@ -86,14 +87,18 @@ export class ChannelSrvice {
         username: channels.username,
         avatar: channels.avatar,
         description: channels.description,
+        banner: channels.banner,
         url: channels.url,
         createdAt: channels.createdAt
       })
       .from(channels)
       .where(
-        or(
-          ilike(channels.username, searchQuery),
-          ilike(channels.email, searchQuery)
+        and(
+          eq(channels.isModel, true),
+          or(
+            ilike(channels.username, searchQuery),
+            ilike(channels.email, searchQuery)
+          )
         )
       )
       .limit(20)

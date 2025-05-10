@@ -55,4 +55,15 @@ export class FilesController {
 
     res.sendFile(filePath);
   }
+
+  @Get('passport/:filename')
+  async getPassport(@Param('filename') filename: string, @Res() res: Response) {
+    const filePath = path.join(process.cwd(), 'uploads', 'passports', filename);
+
+    if (!fs.existsSync(filePath)) {
+      throw new NotFoundException('Файл не найден');
+    }
+
+    res.sendFile(filePath);
+  }
 }
